@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.shapesecurity</groupId>
-	<artifactId>shift</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
+	<artifactId>shape-functional-java</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Shift AST</name>
-	<description>Shift format ECMAScript 6 AST tooling</description>
-	<url>https://github.com/shapesecurity/shift-java</url>
+	<name>Shape Functional Java</name>
+	<description>Functional programming library</description>
+	<url>https://github.com/shapesecurity/shape-functional-java</url>
 
 	<developers>
 		<developer>
@@ -22,9 +22,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:git@github.com:shapesecurity/shift-java.git</connection>
-		<developerConnection>scm:git:git@github.com:shapesecurity/shift-java.git</developerConnection>
-		<url>git@github.com:shapesecurity/shift-java.git</url>
+		<connection>scm:git:git@github.com:shapesecurity/shape-functional-java.git</connection>
+		<developerConnection>scm:git:git@github.com:shapesecurity/shape-functional-java.git</developerConnection>
+		<url>git@github.com:shapesecurity/shape-functional-java.git</url>
 	</scm>
 
 	<licenses>
@@ -63,16 +63,6 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>18.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20090211</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.2.3</version>
 		</dependency>
 	</dependencies>
 
@@ -169,25 +159,6 @@
 						<exclude>**/BenchmarkTest.java</exclude>
 					</excludes>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>generated-sources/main/java</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
