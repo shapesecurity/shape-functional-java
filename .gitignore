@@ -5,3 +5,4 @@ target/
 *.iml
 .classpath
 .settings/
+maven-release.log
