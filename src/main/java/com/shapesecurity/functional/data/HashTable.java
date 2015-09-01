@@ -144,6 +144,16 @@ public abstract class HashTable<K, V> {
 
     public abstract <B> HashTable<K, B> map(@NotNull F<V, B> f);
 
+    public boolean containsKey(@NotNull K key) {
+        return this.containsKey(key, this.hasher.hash(key));
+    }
+
+    public abstract boolean containsKey(@NotNull K key, int hash);
+
+    public boolean containsValue(@NotNull V value) {
+        return this.find(p -> p.b == value).isJust();
+    }
+
     /**
      * An empty hash table.
      *
@@ -211,6 +221,11 @@ public abstract class HashTable<K, V> {
         @Override
         public <B> HashTable<K, B> map(@NotNull F<V, B> f) {
             return empty();
+        }
+
+        @Override
+        public boolean containsKey(@NotNull K key, int hash) {
+            return false;
         }
     }
 
@@ -353,6 +368,12 @@ public abstract class HashTable<K, V> {
         @Override
         public <B> Leaf<K, B> map(@NotNull F<V, B> f) {
             return new Leaf<>(this.hasher, this.dataList.map(pair -> pair.mapB(f)), baseHash, length);
+        }
+
+        @Override
+        public boolean containsKey(@NotNull K key, int hash) {
+            return hash == this.baseHash
+                    && this.dataList.exists(kvPair -> Leaf.this.hasher.eq(kvPair.a, key));
         }
     }
 
@@ -507,6 +528,16 @@ public abstract class HashTable<K, V> {
                 }
             }
             return new Fork<>(hasher, clone, length);
+        }
+
+        @Override
+        public boolean containsKey(@NotNull K key, int hash) {
+            for (int i = 0, ln = children.length; i < ln; i++) {
+                if (this.children[i].containsKey(key, hash)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
