@@ -313,23 +313,25 @@ public class HashTableTest extends TestBase {
     public void containsKeyTest() {
         HashTable<Integer, Unit> m = HashTable.empty();
 
-        assert !m.containsKey(0);
-        assert !m.containsKey(1);
-        assert !m.containsKey(2);
-        assert !m.containsKey(3);
+        assertFalse(m.containsKey(0));
+        assertFalse(m.containsKey(1));
+        assertFalse(m.containsKey(2));
+        assertFalse(m.containsKey(3));
 
         m = m.put(0, Unit.unit);
 
-        assert m.containsKey(0);
-        assert !m.containsKey(1);
-        assert !m.containsKey(2);
-        assert !m.containsKey(3);
+        assertTrue(m.containsKey(0));
+        assertFalse(m.containsKey(1));
+        assertFalse(m.containsKey(2));
+        assertFalse(m.containsKey(3));
 
         m = m.put(2, Unit.unit);
 
-        assert m.containsKey(0);
-        assert !m.containsKey(1);
-        assert m.containsKey(2);
-        assert !m.containsKey(3);
+        assertTrue(m.containsKey(0));
+        assertFalse(m.containsKey(1));
+        assertTrue(m.containsKey(2));
+        assertFalse(m.containsKey(3));
+
+
     }
 }
