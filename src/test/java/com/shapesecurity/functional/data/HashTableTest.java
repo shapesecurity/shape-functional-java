@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.TestBase;
+import com.shapesecurity.functional.Unit;
 
 import org.junit.Test;
 
@@ -306,5 +307,31 @@ public class HashTableTest extends TestBase {
         t.foreach(pair -> {
             assertEquals(Integer.parseInt(pair.a), pair.b - 1);
         });
+    }
+
+    @Test
+    public void containsKeyTest() {
+        HashTable<Integer, Unit> m = HashTable.empty();
+
+        assertFalse(m.containsKey(0));
+        assertFalse(m.containsKey(1));
+        assertFalse(m.containsKey(2));
+        assertFalse(m.containsKey(3));
+
+        m = m.put(0, Unit.unit);
+
+        assertTrue(m.containsKey(0));
+        assertFalse(m.containsKey(1));
+        assertFalse(m.containsKey(2));
+        assertFalse(m.containsKey(3));
+
+        m = m.put(2, Unit.unit);
+
+        assertTrue(m.containsKey(0));
+        assertFalse(m.containsKey(1));
+        assertTrue(m.containsKey(2));
+        assertFalse(m.containsKey(3));
+
+
     }
 }
