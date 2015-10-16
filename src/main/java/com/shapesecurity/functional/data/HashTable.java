@@ -532,12 +532,11 @@ public abstract class HashTable<K, V> {
 
         @Override
         public boolean containsKey(@NotNull K key, int hash) {
-            for (int i = 0, ln = children.length; i < ln; i++) {
-                if (this.children[i].containsKey(key, hash)) {
-                    return true;
-                }
+            int subHash = hash & 31;
+            if (this.children[subHash] == null) {
+                return false;
             }
-            return false;
+            return this.children[subHash].containsKey(key, hash >>> 5);
         }
     }
 }
