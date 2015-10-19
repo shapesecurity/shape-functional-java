@@ -416,6 +416,14 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract boolean exists(@NotNull F<A, Boolean> f);
 
     /**
+     * Tests using object identity whether this list contains the element <code>a</code>.
+     *
+     * @param a An element.
+     * @return Whether this list contains the element <code>a</code>.
+     */
+    public abstract boolean contains(@NotNull A a);
+
+    /**
      * Separates the list into a pair of lists such that 1. the concatenation of the lists is equal
      * to <code>this</code>; 2. The first list is the longest list that every element of the list
      * fails the predicate <code>f</code>.

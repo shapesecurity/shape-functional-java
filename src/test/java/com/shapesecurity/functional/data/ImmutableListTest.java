@@ -280,4 +280,10 @@ public class ImmutableListTest extends TestBase {
         assertEquals(85, range(100).drop(15).length);
         assertEquals(15, range(100).take(15).length);
     }
+
+    @Test
+    public void testExists() {
+        ImmutableList<Integer> list = ImmutableList.nil();
+        assertFalse(list.contains(0));
+    }
 }
