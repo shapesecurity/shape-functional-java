@@ -102,4 +102,46 @@ public interface Monoid<T> extends Semigroup<T> {
             return true;
         }
     }
+
+    public class ImmutableListAppend<T> implements Monoid<ImmutableList<T>> {
+        @NotNull
+        @Override
+        public ImmutableList<T> append(ImmutableList<T> ts, ImmutableList<T> t1) {
+            return ts.append(t1);
+        }
+
+        @NotNull
+        @Override
+        public ImmutableList<T> identity() {
+            return ImmutableList.nil();
+        }
+    }
+
+    public class ImmutableSetEqualityUnion<T> implements Monoid<ImmutableSet<T>> {
+        @NotNull
+        @Override
+        public ImmutableSet<T> append(ImmutableSet<T> ts, ImmutableSet<T> t1) {
+            return ts.union(t1);
+        }
+
+        @NotNull
+        @Override
+        public ImmutableSet<T> identity() {
+            return ImmutableSet.empty();
+        }
+    }
+
+    public class ImmutableSetIdentityUnion<T> implements Monoid<ImmutableSet<T>> {
+        @NotNull
+        @Override
+        public ImmutableSet<T> append(ImmutableSet<T> ts, ImmutableSet<T> t1) {
+            return ts.union(t1);
+        }
+
+        @NotNull
+        @Override
+        public ImmutableSet<T> identity() {
+            return ImmutableSet.emptyP();
+        }
+    }
 }
