@@ -16,8 +16,6 @@
 
 package com.shapesecurity.functional.data;
 
-import java.util.Objects;
-
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
