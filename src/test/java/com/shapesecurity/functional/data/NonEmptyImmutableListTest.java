@@ -55,13 +55,6 @@ public class NonEmptyImmutableListTest extends TestBase {
         assertEquals(list.tail(), ImmutableList.<Integer>nil());
     }
 
-    @Test
-    public void testExists() {
-        NonEmptyImmutableList<Integer> list = ImmutableList.list(1, 2, 3);
-        assertTrue(list.exists((x) -> x == 2));
-        assertFalse(list.exists((x) -> x == 4));
-    }
-
     // non-static
 
     @Test
@@ -115,5 +108,21 @@ public class NonEmptyImmutableListTest extends TestBase {
 
     private void testInit(NonEmptyImmutableList<Integer> list) {
         assertEquals(list.init(), list.take(list.length - 1));
+    }
+
+    @Test
+    public void testExists() {
+        NonEmptyImmutableList<Integer> list = ImmutableList.list(1, 2, 3);
+        assertTrue(list.exists((x) -> x == 2));
+        assertFalse(list.exists((x) -> x == 4));
+    }
+
+    @Test
+    public void testContains() {
+        NonEmptyImmutableList<Integer> list = ImmutableList.list(1, 2, 3);
+        NonEmptyImmutableList<ImmutableList<Integer>> listOfLists = ImmutableList.list(list);
+        assertTrue(listOfLists.contains(list));
+        assertFalse(listOfLists.contains(ImmutableList.list(1, 2, 3)));
+        assertFalse(listOfLists.contains(ImmutableList.nil()));
     }
 }

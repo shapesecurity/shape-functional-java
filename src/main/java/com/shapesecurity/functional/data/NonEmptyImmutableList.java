@@ -16,6 +16,8 @@
 
 package com.shapesecurity.functional.data;
 
+import java.util.Objects;
+
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
@@ -214,6 +216,11 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @Override
     public boolean exists(@NotNull F<T, Boolean> f) {
         return f.apply(this.head) || this.tail().exists(f);
+    }
+
+    @Override
+    public boolean contains(@NotNull T a) {
+        return this.head == a || this.tail().contains(a);
     }
 
     @NotNull

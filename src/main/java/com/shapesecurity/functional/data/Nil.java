@@ -142,6 +142,11 @@ public final class Nil<T> extends ImmutableList<T> {
         return false;
     }
 
+    @Override
+    public boolean contains(@NotNull T a) {
+        return false;
+    }
+
     @NotNull
     @Override
     public Pair<ImmutableList<T>, ImmutableList<T>> span(@NotNull F<T, Boolean> f) {
