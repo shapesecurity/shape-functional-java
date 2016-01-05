@@ -144,4 +144,18 @@ public interface Monoid<T> extends Semigroup<T> {
             return ImmutableSet.emptyP();
         }
     }
+
+    public class ConcatListAppend<T> implements Monoid<ConcatList<T>> {
+        @NotNull
+        @Override
+        public ConcatList<T> append(ConcatList<T> ts, ConcatList<T> t1) {
+            return ts.append(t1);
+        }
+
+        @NotNull
+        @Override
+        public ConcatList<T> identity() {
+            return ConcatList.nil();
+        }
+    }
 }
