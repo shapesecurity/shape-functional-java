@@ -141,11 +141,26 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     @NotNull
     @SafeVarargs
     public static <A> ImmutableList<A> from(@NotNull A... el) {
-        if (el.length == 0) {
+        return fromBounded(el, 0, el.length);
+    }
+
+    /**
+     * A helper constructor to create a potentially empty {@link ImmutableList} from part of an array.
+     *
+     * @param el  Elements of the list
+     * @param start The index to start conversion
+     * @param end The index before which the conversion stops. <code>end</code> will not be used as
+     *            an index to access <code>el</code>
+     * @param <A> The type of elements
+     * @return a <code>ImmutableList</code> of type <code>A</code>.
+     */
+    @NotNull
+    public static <A> ImmutableList<A> fromBounded(@NotNull A[] el, int start, int end) {
+        if (end == start) {
             return nil();
         }
-        NonEmptyImmutableList<A> l = cons(el[el.length - 1], ImmutableList.nil());
-        for (int i = el.length - 2; i >= 0; i--) {
+        NonEmptyImmutableList<A> l = cons(el[end - 1], ImmutableList.nil());
+        for (int i = end - 2; i >= start; i--) {
             l = cons(el[i], l);
         }
         return l;
@@ -375,6 +390,24 @@ public abstract class ImmutableList<A> implements Iterable<A> {
             l = l.maybeTail().just();
         }
         return target;
+    }
+
+    /**
+     * Converts this list into an array. <p> Due to type erasure, the type of the resulting array
+     * has to be determined at runtime. Fortunately, you can create a zero length array and this
+     * method can create an large enough array to contain all the elements. If the given array is
+     * large enough, this method will put elements in it.
+     *
+     * @param constructor The constructor of the target array
+     * @return The array that contains the elements. It may or may not be the same reference of
+     * <code>target</code>.
+     */
+    @SuppressWarnings("unchecked")
+    @NotNull
+    public final A[] toArray(@NotNull F<Integer, A[]> constructor) {
+        int length = this.length;
+        A[] target = constructor.apply(length);
+        return toArray(target);
     }
 
     /**
