@@ -52,7 +52,7 @@ public class NonEmptyImmutableListTest extends TestBase {
         NonEmptyImmutableList<Integer> list = ImmutableList.list(a);
         assertEquals(list.length, 1);
         assertEquals(list.head.intValue(), a);
-        assertEquals(list.tail(), ImmutableList.<Integer>nil());
+        assertEquals(list.tail(), ImmutableList.<Integer>empty());
     }
 
     // non-static
@@ -82,12 +82,12 @@ public class NonEmptyImmutableListTest extends TestBase {
 
     public void testEquals(NonEmptyImmutableList<Integer> list) {
         assertEquals(list, list);
-        assertNotEquals(list, ImmutableList.<Integer>nil());
+        assertNotEquals(list, ImmutableList.<Integer>empty());
     }
 
     @Test
     public void testReverse() {
-        assertEquals(ImmutableList.nil().reverse(), ImmutableList.nil());
+        assertEquals(ImmutableList.empty().reverse(), ImmutableList.empty());
         assertEquals(ImmutableList.list(1).reverse(), ImmutableList.list(1));
         assertEquals(ImmutableList.list(1, 2, 3).reverse(), ImmutableList.list(3, 2, 1));
     }
@@ -123,6 +123,6 @@ public class NonEmptyImmutableListTest extends TestBase {
         NonEmptyImmutableList<ImmutableList<Integer>> listOfLists = ImmutableList.list(list);
         assertTrue(listOfLists.contains(list));
         assertFalse(listOfLists.contains(ImmutableList.list(1, 2, 3)));
-        assertFalse(listOfLists.contains(ImmutableList.nil()));
+        assertFalse(listOfLists.contains(ImmutableList.empty()));
     }
 }

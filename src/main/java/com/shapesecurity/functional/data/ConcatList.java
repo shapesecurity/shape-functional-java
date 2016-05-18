@@ -39,12 +39,6 @@ public abstract class ConcatList<T> implements Iterable<T> {
         return (ConcatList<T>) EMPTY;
     }
 
-    @SuppressWarnings("unchecked")
-    @NotNull
-    public static <T> ConcatList<T> nil() {
-        return (ConcatList<T>) EMPTY;
-    }
-
     @NotNull
     public static <T> ConcatList<T> single(@NotNull T scope) {
         return new Leaf<>(scope);
@@ -57,7 +51,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
 
     @NotNull
     public final ImmutableList<T> toList() {
-        return this.toList(ImmutableList.nil());
+        return this.toList(ImmutableList.empty());
     }
 
     protected abstract ImmutableList<T> toList(@NotNull ImmutableList<T> acc);

@@ -33,8 +33,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class ImmutableListTest extends TestBase {
     protected void testWithSpecialLists(@NotNull Effect<ImmutableList<Integer>> f) {
-        f.apply(Nil.nil());
-        f.apply(ImmutableList.<Integer>nil());
+        f.apply(EmptyImmutableList.empty());
+        f.apply(ImmutableList.<Integer>empty());
         f.apply(ImmutableList.list(0));
         f.apply(ImmutableList.list(0, 1, 2));
         f.apply(ImmutableList.list(3, 2, 1));
@@ -42,19 +42,13 @@ public class ImmutableListTest extends TestBase {
     }
 
     @Test
-    public void testNil() {
-        ImmutableList<Integer> list = ImmutableList.nil();
+    public void testEmpty() {
+        ImmutableList<Integer> list = ImmutableList.empty();
         assertTrue(list.maybeHead().isNothing());
         assertTrue(list.maybeTail().isNothing());
         assertEquals(list, list);
-        assertEquals(list, ImmutableList.<Integer>nil());
+        assertEquals(list, ImmutableList.<Integer>empty());
         assertNotEquals(list, ImmutableList.cons(0, list));
-    }
-
-    @Test
-    public void testList() {
-        ImmutableList<Integer> list = ImmutableList.list();
-        assertEquals(list, ImmutableList.<Integer>nil());
     }
 
     @Test
@@ -94,7 +88,7 @@ public class ImmutableListTest extends TestBase {
         assertFalse(l.index(2).just() == 0);
         assertEquals(Maybe.<Integer>nothing(), l.index(5)); //index out of range returns nothing
         assertEquals(Maybe.<Integer>nothing(), l.index(-1));
-        assertEquals(Maybe.<Integer>nothing(), ImmutableList.<Integer>nil().index(1));
+        assertEquals(Maybe.<Integer>nothing(), ImmutableList.<Integer>empty().index(1));
     }
 
     @Test
@@ -122,7 +116,7 @@ public class ImmutableListTest extends TestBase {
         ImmutableList<Integer> list = ImmutableList.list(0, 1, 2, 3, 4);
         assertTrue(list.findMap(x -> x == 2 ? Maybe.just(x - 1) : Maybe.<Integer>nothing()).just() == 1);
         assertEquals(Maybe.<Integer>nothing(), list.findMap(x -> x == 5 ? Maybe.just(x - 1) : Maybe.<Integer>nothing()));
-        assertEquals(Maybe.<Integer>nothing(), ImmutableList.<Integer>nil().findMap(x -> x == 5 ? Maybe.just(x - 1) :
+        assertEquals(Maybe.<Integer>nothing(), ImmutableList.<Integer>empty().findMap(x -> x == 5 ? Maybe.just(x - 1) :
                 Maybe.<Integer>nothing()));
     }
 
@@ -213,9 +207,9 @@ public class ImmutableListTest extends TestBase {
             assertTrue(list.maybeHead().isJust());
             assertTrue(list.maybeTail().isJust());
             if (list.length == 1) {
-                assertEquals(ImmutableList.<Integer>nil(), list.maybeTail().just());
+                assertEquals(ImmutableList.<Integer>empty(), list.maybeTail().just());
             } else {
-                assertNotEquals(ImmutableList.<Integer>nil(), list.maybeTail().just());
+                assertNotEquals(ImmutableList.<Integer>empty(), list.maybeTail().just());
             }
         }
     }
@@ -231,7 +225,7 @@ public class ImmutableListTest extends TestBase {
 
     @Test
     public void testSpan() {
-        testSpan(ImmutableList.<Integer>nil(), 0, 0);
+        testSpan(ImmutableList.<Integer>empty(), 0, 0);
         testSpan(ImmutableList.list(1, 2, 3), 3, 0);
         testSpan(ImmutableList.list(10, 20, 30), 0, 3);
         testSpan(ImmutableList.list(5, 10, 15), 1, 2);
@@ -249,7 +243,7 @@ public class ImmutableListTest extends TestBase {
     }
 
     private void testZipWith(ImmutableList<Integer> list) {
-        ImmutableList<Integer> integers = list.zipWith((a, b) -> 0, ImmutableList.<Integer>nil());
+        ImmutableList<Integer> integers = list.zipWith((a, b) -> 0, ImmutableList.<Integer>empty());
         assertEquals(0, integers.length);
         integers = list.zipWith((a, b) -> a + b, list);
         list.foldLeft((l, integer) -> {
@@ -283,7 +277,7 @@ public class ImmutableListTest extends TestBase {
 
     @Test
     public void testExists() {
-        ImmutableList<Integer> list = ImmutableList.nil();
+        ImmutableList<Integer> list = ImmutableList.empty();
         assertFalse(list.contains(0));
     }
 

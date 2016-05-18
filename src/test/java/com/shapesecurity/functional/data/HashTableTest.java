@@ -46,7 +46,7 @@ public class HashTableTest extends TestBase {
 
     @Test
     public void simpleTests() {
-        HashTable<String, Integer> e = HashTable.empty();
+        HashTable<String, Integer> e = HashTable.emptyUsingEquality();
         int N = 100000;
         for (int i = 0; i < N; i++) {
             e = e.put(Integer.toString(i), i);
@@ -94,7 +94,7 @@ public class HashTableTest extends TestBase {
 
     @Test
     public void deletionTest() {
-        HashTable<String, Integer> e = HashTable.empty();
+        HashTable<String, Integer> e = HashTable.emptyUsingEquality();
         int N = 100000;
         for (int i = 0; i < N; i++) {
             e = e.put(Integer.toString(i), i);
@@ -152,7 +152,7 @@ public class HashTableTest extends TestBase {
 
     @Test
     public void traversalTests() {
-        HashTable<String, Integer> e = HashTable.empty();
+        HashTable<String, Integer> e = HashTable.emptyUsingEquality();
         int N = 10000;
         for (int i = 0; i < N; i++) {
             e = e.put(Integer.toString(i), i);
@@ -172,8 +172,8 @@ public class HashTableTest extends TestBase {
 
     @Test
     public void mergeTestSimple() {
-        HashTable<String, Integer> t1 = HashTable.empty();
-        HashTable<String, Integer> t2 = HashTable.empty();
+        HashTable<String, Integer> t1 = HashTable.emptyUsingEquality();
+        HashTable<String, Integer> t2 = HashTable.emptyUsingEquality();
         assertEquals(0, t1.merge(t2).length);
         t1 = t1.put("a", 1);
         assertEquals(1, t1.merge(t2).length);
@@ -186,8 +186,8 @@ public class HashTableTest extends TestBase {
 
     @Test
     public void mergeTest() {
-        HashTable<String, Integer> t1 = HashTable.empty();
-        HashTable<String, Integer> t2 = HashTable.empty();
+        HashTable<String, Integer> t1 = HashTable.emptyUsingEquality();
+        HashTable<String, Integer> t2 = HashTable.emptyUsingEquality();
         int N = 10000;
         int[] shuffled = shuffle(0x12345, N);
         for (int i = 0; i < N; i += 2) {
@@ -236,7 +236,7 @@ public class HashTableTest extends TestBase {
 
     @Test
     public void findTest() {
-        HashTable<String, Integer> t = HashTable.empty();
+        HashTable<String, Integer> t = HashTable.emptyUsingEquality();
         assertEquals(Maybe.<Pair<String, Integer>>nothing(), t.find(x -> x.a.equals("a")));
         int N = 1000;
         for (int i = 0; i < N; i++) {
@@ -251,7 +251,7 @@ public class HashTableTest extends TestBase {
     @Test
     public void findMapTest() {
         int N = 1000;
-        HashTable<String, Integer> empty = HashTable.<String, Integer>empty();
+        HashTable<String, Integer> empty = HashTable.<String, Integer>emptyUsingEquality();
         assertEquals(Maybe.<Integer>nothing(), empty.findMap(x -> Maybe.just(0)));
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> {
             return ht.put(Integer.toString(i), i);
@@ -264,34 +264,34 @@ public class HashTableTest extends TestBase {
 
     @Test
     public void foldLeftTest() {
-        HashTable.<String, Integer>empty().foldLeft((i, a) -> {
+        HashTable.<String, Integer>emptyUsingEquality().foldLeft((i, a) -> {
             throw new RuntimeException("not reached");
         }, 0);
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
-                HashTable.<String, Integer>empty());
+                HashTable.<String, Integer>emptyUsingEquality());
         assertEquals(N * (N - 1) / 2, (int) t.foldLeft((a, i) -> a + i.b, 0));
     }
 
     @Test
     public void foldRightTest() {
-        HashTable.<String, Integer>empty().foldRight((a, i) -> {
+        HashTable.<String, Integer>emptyUsingEquality().foldRight((a, i) -> {
             throw new RuntimeException("not reached");
         }, 0);
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
-                HashTable.<String, Integer>empty());
+                HashTable.<String, Integer>emptyUsingEquality());
         assertEquals(N * (N - 1) / 2, (int) t.foldRight((i, a) -> a + i.b, 0));
     }
 
     @Test
     public void forEachTest() {
-        HashTable.<String, Integer>empty().foreach((p) -> {
+        HashTable.<String, Integer>emptyUsingEquality().foreach((p) -> {
             throw new RuntimeException("not reached");
         });
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
-                HashTable.<String, Integer>empty());
+                HashTable.<String, Integer>emptyUsingEquality());
         int a[] = new int[1];
         t.foreach(entry -> a[0] += entry.b);
         assertEquals(N * (N - 1) / 2, a[0]);
@@ -299,10 +299,10 @@ public class HashTableTest extends TestBase {
 
     @Test
     public void mapTest() {
-        assertEquals(0, HashTable.<String, Integer>empty().map(x -> x + 1).length);
+        assertEquals(0, HashTable.<String, Integer>emptyUsingEquality().map(x -> x + 1).length);
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
-                HashTable.<String, Integer>empty());
+                HashTable.<String, Integer>emptyUsingEquality());
         t = t.map(x -> x + 1);
         t.foreach(pair -> {
             assertEquals(Integer.parseInt(pair.a), pair.b - 1);
@@ -311,7 +311,7 @@ public class HashTableTest extends TestBase {
 
     @Test
     public void containsKeyTest() {
-        HashTable<Integer, Unit> m = HashTable.empty();
+        HashTable<Integer, Unit> m = HashTable.emptyUsingEquality();
 
         assertFalse(m.containsKey(0));
         assertFalse(m.containsKey(1));

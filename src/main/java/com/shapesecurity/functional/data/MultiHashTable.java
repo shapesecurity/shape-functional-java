@@ -18,18 +18,18 @@ public class MultiHashTable<K, V> { // TODO should be elsewhere... and better
     }
 
     @NotNull
-    public static <K, V> MultiHashTable<K, V> empty() { // uses equality (.equals)
-        return new MultiHashTable<>(HashTable.empty());
+    public static <K, V> MultiHashTable<K, V> emptyUsingEquality() {
+        return new MultiHashTable<>(HashTable.emptyUsingEquality());
     }
 
     @NotNull
-    public static <K, V> MultiHashTable<K, V> emptyP() { // uses identity (==)
-        return new MultiHashTable<>(HashTable.emptyP());
+    public static <K, V> MultiHashTable<K, V> emptyUsingIdentity() {
+        return new MultiHashTable<>(HashTable.emptyUsingIdentity());
     }
 
     @NotNull
     public MultiHashTable<K, V> put(@NotNull K key, @NotNull V value) {
-        return new MultiHashTable<>(this.data.put(key, ImmutableList.cons(value, this.data.get(key).orJust(ImmutableList.nil()))));
+        return new MultiHashTable<>(this.data.put(key, ImmutableList.cons(value, this.data.get(key).orJust(ImmutableList.empty()))));
     }
 
     @NotNull
@@ -39,7 +39,7 @@ public class MultiHashTable<K, V> { // TODO should be elsewhere... and better
 
     @NotNull
     public ImmutableList<V> get(@NotNull K key) {
-        return this.data.get(key).orJust(ImmutableList.nil());
+        return this.data.get(key).orJust(ImmutableList.empty());
     }
 
     @NotNull
@@ -72,12 +72,12 @@ public class MultiHashTable<K, V> { // TODO should be elsewhere... and better
 
     @NotNull
     public final ImmutableList<ImmutableList<V>> values() {
-        return this.data.foldLeft((acc, p) -> acc.cons(p.b), ImmutableList.nil());
+        return this.data.foldLeft((acc, p) -> acc.cons(p.b), ImmutableList.empty());
     }
 
     @NotNull
     public final ImmutableList<V> gatherValues() {
-        return this.data.foldLeft((acc, p) -> acc.append(p.b), ImmutableList.nil());
+        return this.data.foldLeft((acc, p) -> acc.append(p.b), ImmutableList.empty());
     }
 
     @NotNull

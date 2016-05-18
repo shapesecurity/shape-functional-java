@@ -108,7 +108,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @Override
     public Maybe<ImmutableList<T>> maybeInit() {
         if (this.tail().isEmpty()) {
-            return Maybe.just(nil());
+            return Maybe.just(empty());
         }
         return this.tail().maybeInit().map(t -> t.cons(this.head));
     }
@@ -127,7 +127,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @NotNull
     public final ImmutableList<T> init() {
         if (this.tail().isEmpty()) {
-            return nil();
+            return empty();
         }
         return cons(this.head, ((NonEmptyImmutableList<T>) this.tail()).init());
     }
@@ -181,7 +181,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @Override
     public ImmutableList<T> take(int n) {
         if (n <= 0) {
-            return nil();
+            return empty();
         }
         @SuppressWarnings("unchecked")
         T[] result = (T[]) new Object[n];
@@ -265,7 +265,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
             if (f.apply(list.head)) {
                 return true;
             }
-            if (list.tail instanceof Nil) {
+            if (list.tail instanceof EmptyImmutableList) {
                 return false;
             }
             list = ((NonEmptyImmutableList<T>) list.tail);
@@ -279,7 +279,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
             if (list.head == a) {
                 return true;
             }
-            if (list.tail instanceof Nil) {
+            if (list.tail instanceof EmptyImmutableList) {
                 return false;
             }
             list = ((NonEmptyImmutableList<T>) list.tail);

@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> Value type
  */
 public abstract class HashTable<K, V> {
-    private final static Hasher<Object> DEFAULT_HASHER = new Hasher<Object>() {
+    private final static Hasher<Object> EQUALITY_HASHER = new Hasher<Object>() {
         @Override
         public int hash(@NotNull Object data) {
             return data.hashCode();
@@ -42,7 +42,8 @@ public abstract class HashTable<K, V> {
             return o.equals(b);
         }
     };
-    public final static Hasher<Object> EQUALITY_HASHER = new Hasher<Object>() {
+
+    public final static Hasher<Object> IDENTITY_HASHER = new Hasher<Object>() {
         @Override
         public int hash(@NotNull Object data) {
             return System.identityHashCode(data);
@@ -53,6 +54,7 @@ public abstract class HashTable<K, V> {
             return o == b;
         }
     };
+
     @NotNull
     public final Hasher<K> hasher;
     public final int length;
@@ -65,14 +67,14 @@ public abstract class HashTable<K, V> {
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public static <K> Hasher<K> defaultHasher() {
-        return (Hasher<K>) DEFAULT_HASHER;
+    public static <K> Hasher<K> equalityHasher() {
+        return (Hasher<K>) EQUALITY_HASHER;
     }
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public static <K> Hasher<K> equalityHasher() {
-        return (Hasher<K>) EQUALITY_HASHER;
+    public static <K> Hasher<K> identityHasher() {
+        return (Hasher<K>) IDENTITY_HASHER;
     }
 
     @NotNull
@@ -81,13 +83,13 @@ public abstract class HashTable<K, V> {
     }
 
     @NotNull
-    public static <K, V> HashTable<K, V> empty() {
-        return empty(HashTable.defaultHasher());
+    public static <K, V> HashTable<K, V> emptyUsingEquality() {
+        return empty(HashTable.equalityHasher());
     }
 
     @NotNull
-    public static <K, V> HashTable<K, V> emptyP() {
-        return empty(HashTable.equalityHasher());
+    public static <K, V> HashTable<K, V> emptyUsingIdentity() {
+        return empty(HashTable.identityHasher());
     }
 
     @NotNull
@@ -131,7 +133,7 @@ public abstract class HashTable<K, V> {
 
     @NotNull
     public ImmutableList<Pair<K, V>> entries() {
-        return this.foldRight((kvPair, pairs) -> pairs.cons(kvPair), ImmutableList.nil());
+        return this.foldRight((kvPair, pairs) -> pairs.cons(kvPair), ImmutableList.empty());
     }
 
     public abstract void foreach(@NotNull Effect<Pair<K, V>> e);
@@ -220,7 +222,7 @@ public abstract class HashTable<K, V> {
 
         @Override
         public <B> HashTable<K, B> map(@NotNull F<V, B> f) {
-            return empty();
+            return emptyUsingEquality();
         }
 
         @Override
@@ -282,10 +284,10 @@ public abstract class HashTable<K, V> {
                     return new Pair<>(true, p.b);
                 }
                 return new Pair<>(false, p.b.cons(i));
-            }, new Pair<>(false, ImmutableList.nil()));
+            }, new Pair<>(false, ImmutableList.empty()));
             if (result.a) {
                 if (this.length == 1) {
-                    return Maybe.just(HashTable.empty());
+                    return Maybe.just(HashTable.emptyUsingEquality());
                 }
                 return Maybe.just(new Leaf<>(this.hasher, result.b, this.baseHash, this.length - 1));
             }
@@ -329,7 +331,7 @@ public abstract class HashTable<K, V> {
                                     }
                                 }
                                 return result.cons(kvPair);
-                            }, ImmutableList.nil());
+                            }, ImmutableList.empty());
                     ImmutableList<Pair<K, V>> newList = ImmutableList.from(pairs).append(right);
                     return new Leaf<>(this.hasher, newList, this.baseHash, newList.length);
                 }
@@ -392,7 +394,7 @@ public abstract class HashTable<K, V> {
             int subHash = hash & 31;
             HashTable<K, V>[] cloned = Fork.this.children.clone();
             if (cloned[subHash] == null) {
-                cloned[subHash] = new Leaf<>(Fork.this.hasher, ImmutableList.nil(), hash >>> 5, 0);
+                cloned[subHash] = new Leaf<>(Fork.this.hasher, ImmutableList.empty(), hash >>> 5, 0);
             }
             int length1 = cloned[subHash].length;
             cloned[subHash] = cloned[subHash].put(key, value, hash >>> 5);

@@ -22,15 +22,15 @@ import com.shapesecurity.functional.Pair;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class Nil<T> extends ImmutableList<T> {
+public final class EmptyImmutableList<T> extends ImmutableList<T> {
     private final static int DEFAULT_HASH_CODE;
 
     static {
         int h = HashCodeBuilder.init();
-        DEFAULT_HASH_CODE = HashCodeBuilder.put(h, "Nil");
+        DEFAULT_HASH_CODE = HashCodeBuilder.put(h, "EmptyImmutableList");
     }
 
-    Nil() {
+    EmptyImmutableList() {
         super(0);
     }
 
@@ -84,13 +84,13 @@ public final class Nil<T> extends ImmutableList<T> {
     @NotNull
     @Override
     public <B> ImmutableList<B> map(@NotNull F<T, B> f) {
-        return nil();
+        return empty();
     }
 
     @NotNull
     @Override
     public <B> ImmutableList<B> mapWithIndex(@NotNull F2<Integer, T, B> f) {
-        return nil();
+        return empty();
     }
 
     @NotNull
@@ -150,7 +150,7 @@ public final class Nil<T> extends ImmutableList<T> {
     @NotNull
     @Override
     public Pair<ImmutableList<T>, ImmutableList<T>> span(@NotNull F<T, Boolean> f) {
-        return new Pair<>(nil(), nil());
+        return new Pair<>(empty(), empty());
     }
 
     @NotNull
@@ -182,7 +182,7 @@ public final class Nil<T> extends ImmutableList<T> {
     @NotNull
     @Override
     public <B, C> Pair<B, ImmutableList<C>> mapAccumL(@NotNull F2<B, T, Pair<B, C>> f, @NotNull B acc) {
-        return new Pair<>(acc, ImmutableList.nil());
+        return new Pair<>(acc, ImmutableList.empty());
     }
 
     @SuppressWarnings("unchecked")

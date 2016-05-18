@@ -13,12 +13,12 @@ public class ImmutableSet<T> {
         this.data = data;
     }
 
-    public static <T> ImmutableSet<T> empty() { // object equality (.equals)
-        return new ImmutableSet<>(HashTable.empty());
+    public static <T> ImmutableSet<T> emptyUsingEquality() {
+        return new ImmutableSet<>(HashTable.emptyUsingEquality());
     }
 
-    public static <T> ImmutableSet<T> emptyP() { // object identity (==)
-        return new ImmutableSet<>(HashTable.emptyP());
+    public static <T> ImmutableSet<T> emptyUsingIdentity() {
+        return new ImmutableSet<>(HashTable.emptyUsingIdentity());
     }
 
     public ImmutableSet<T> put(@NotNull T datum) {
@@ -43,6 +43,6 @@ public class ImmutableSet<T> {
 
     // Does not guarantee ordering of elements in resulting list.
     public ImmutableList<T> toList() {
-        return this.foldAbelian((v, acc) -> acc.cons(v), ImmutableList.nil());
+        return this.foldAbelian((v, acc) -> acc.cons(v), ImmutableList.empty());
     }
 }
