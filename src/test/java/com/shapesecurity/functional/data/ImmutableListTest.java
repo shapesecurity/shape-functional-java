@@ -286,4 +286,17 @@ public class ImmutableListTest extends TestBase {
         ImmutableList<Integer> list = ImmutableList.nil();
         assertFalse(list.contains(0));
     }
+
+    @Test
+    public void testContains() {
+        Object a = new Object();
+        Object b = new Object();
+        Object c = new Object();
+        Object d = new Object();
+        ImmutableList<Object> l = ImmutableList.from(a, b, c);
+        assertTrue(l.contains(a));
+        assertTrue(l.contains(b));
+        assertTrue(l.contains(c));
+        assertFalse(l.contains(d));
+    }
 }

@@ -24,6 +24,19 @@ public final class Pair<A, B> {
     public final A a;
     public final B b;
 
+    /**
+     * Constructor method to utilize type inference.
+     * @param a first component
+     * @param b second component
+     * @param <A> type of the first component
+     * @param <B> type of the second component
+     * @return the pair
+     */
+    @NotNull
+    public static <A, B> Pair<A, B> make(A a, B b) {
+        return new Pair<>(a, b);
+    }
+
     public Pair(A a, B b) {
         super();
         this.a = a;
