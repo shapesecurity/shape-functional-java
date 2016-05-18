@@ -451,6 +451,9 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     /**
      * Tests using object identity whether this list contains the element <code>a</code>.
      *
+     * WARNING: object identity is tests using the <code>==</code> operator.
+     *          To test if object exists by equality, use {@link #exists(F)}
+     *
      * @param a An element.
      * @return Whether this list contains the element <code>a</code>.
      */

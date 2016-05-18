@@ -282,6 +282,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
             if (list.tail instanceof Nil) {
                 return false;
             }
+            list = ((NonEmptyImmutableList<T>) list.tail);
         }
     }
 
