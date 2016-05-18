@@ -289,11 +289,14 @@ public class ImmutableListTest extends TestBase {
 
     @Test
     public void testContains() {
-        // NOTE: this works because integer boxing maintains identity for numbers that is between -128..127.
-        assertTrue(range(100).contains(0));
-        assertTrue(range(100).contains(50));
-        assertTrue(range(100).contains(99));
-        assertFalse(range(100).contains(100));
-        assertFalse(range(100).contains(-1));
+        Object a = new Object();
+        Object b = new Object();
+        Object c = new Object();
+        Object d = new Object();
+        ImmutableList<Object> l = ImmutableList.from(a, b, c);
+        assertTrue(l.contains(a));
+        assertTrue(l.contains(b));
+        assertTrue(l.contains(c));
+        assertFalse(l.contains(d));
     }
 }
