@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.shapesecurity.functional.Effect;
+import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.TestBase;
 
 import org.junit.Test;
@@ -124,5 +125,59 @@ public class NonEmptyImmutableListTest extends TestBase {
         assertTrue(listOfLists.contains(list));
         assertFalse(listOfLists.contains(ImmutableList.list(1, 2, 3)));
         assertFalse(listOfLists.contains(ImmutableList.empty()));
+    }
+
+    private static <A> ImmutableSet<A> set(A... as) {
+        return ImmutableSet.<A>emptyUsingIdentity().putAll(ImmutableList.from(as));
+    }
+
+    @Test
+    public void testUniq() {
+        ImmutableList<Object> list;
+        Object a = new Object();
+        Object b = new Object();
+        Object c = new Object();
+
+        list = ImmutableList.list(a, a, a);
+        assertEquals(ImmutableList.list(a), list.uniqByIdentity().toList());
+
+        list = ImmutableList.list(a, b, c);
+        assertEquals(set(a, b, c), list.uniqByIdentity());
+
+        list = ImmutableList.list(a, b, c, a, b, c, a, b, c);
+        assertEquals(set(a, b, c), list.uniqByIdentity());
+
+        list = ImmutableList.list(c, b, a, c, b, a, c, b, a);
+        assertEquals(set(a, b, c), list.uniqByIdentity());
+
+        ImmutableList<Integer> intList = range(5000, 6000);
+        ImmutableSet<Integer> intSet = ImmutableSet.<Integer>emptyUsingEquality().putAll(intList);
+        ImmutableSet<Integer> emptySet = ImmutableSet.emptyUsingEquality();
+        assertEquals(intSet, intList.uniqByEquality());
+        assertNotEquals(emptySet, intList.uniqByEquality());
+        assertEquals(intSet, intList.uniqByIdentity());
+        assertNotEquals(emptySet, intList.uniqByIdentity());
+    }
+
+    private static <A, B> Pair<A, B> p(A a, B b) {
+        return new Pair<>(a, b);
+    }
+
+    @Test
+    public void testUniqOn() {
+        ImmutableList<String> list =
+            ImmutableList.list("aardvark", "albatross", "alligator", "beaver", "crocodile");
+        assertEquals(set("aardvark", "beaver", "crocodile"), list.uniqByEqualityOn(s -> s.substring(0, 1)));
+        assertEquals(set("aardvark", "beaver", "crocodile"), list.uniqByEqualityOn(s -> s.charAt(0)));
+        assertEquals(set("aardvark", "albatross", "beaver", "crocodile"), list.uniqByEqualityOn(s -> s.substring(0, 2)));
+        assertEquals(set("aardvark", "albatross", "alligator", "crocodile"), list.uniqByEqualityOn(s -> s.charAt(s.length() - 1)));
+
+        Pair<String, Integer>
+            a0 = p("a", 0), a1 = p("a", 1), a2 = p("a", 2),
+            b0 = p("b", 0), b1 = p("b", 1), b2 = p("a", 2),
+            c0 = p("c", 0), c1 = p("c", 1), c2 = p("a", 2);
+        ImmutableList<Pair<String, Integer>> listOfPairs = ImmutableList.list(a0, a1, a2, b0, b2, b1, c0, c1, c2);
+        assertEquals(set(a0, b0, c0), listOfPairs.uniqByEqualityOn(p -> p.a));
+        assertEquals(set(a0, a1, a2), listOfPairs.uniqByEqualityOn(p -> p.b));
     }
 }

@@ -356,6 +356,36 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
         return new Pair<>(acc, from(result));
     }
 
+    @NotNull
+    @Override
+    public ImmutableSet<T> uniqByEquality() {
+        return ImmutableSet.<T>emptyUsingEquality().putAll(this);
+    }
+
+    @NotNull
+    @Override
+    public ImmutableSet<T> uniqByIdentity() {
+        return ImmutableSet.<T>emptyUsingIdentity().putAll(this);
+    }
+
+    @NotNull
+    @Override
+    public <B> ImmutableSet<T> uniqByEqualityOn(@NotNull F<T, B> f) {
+        ImmutableSet<B> set = ImmutableSet.<B>emptyUsingEquality().put(f.apply(this.head));
+        ImmutableSet<T> out = ImmutableSet.<T>emptyUsingIdentity().put(this.head);
+        ImmutableList<T> list = this.tail;
+        for (int i = 1; i < length; i++) {
+            T a = ((NonEmptyImmutableList<T>) list).head;
+            B b = f.apply(a);
+            if (!set.contains(b)) {
+                out = out.put(a);
+            }
+            set = set.put(b);
+            list = ((NonEmptyImmutableList<T>) list).tail;
+        }
+        return out;
+    }
+
     @Override
     protected int calcHashCode() {
         int start = HashCodeBuilder.init();

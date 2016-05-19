@@ -185,6 +185,24 @@ public final class EmptyImmutableList<T> extends ImmutableList<T> {
         return new Pair<>(acc, ImmutableList.empty());
     }
 
+    @NotNull
+    @Override
+    public ImmutableSet<T> uniqByEquality() {
+        return ImmutableSet.emptyUsingEquality();
+    }
+
+    @NotNull
+    @Override
+    public ImmutableSet<T> uniqByIdentity() {
+        return ImmutableSet.emptyUsingIdentity();
+    }
+
+    @NotNull
+    @Override
+    public <B> ImmutableSet<T> uniqByEqualityOn(@NotNull F<T, B> f) {
+        return ImmutableSet.emptyUsingEquality();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object o) {
