@@ -17,7 +17,6 @@
 package com.shapesecurity.functional.data;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -43,7 +42,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <A> The super type of all the elements.
  */
 public abstract class ImmutableList<A> implements Iterable<A> {
-    private static final ImmutableList<Object> NIL = new Nil<>();
+    private static final ImmutableList<Object> EMPTY = new EmptyImmutableList<>();
     @NotNull
     private final Thunk<Integer> hashCodeThunk = Thunk.from(this::calcHashCode);
 
@@ -70,14 +69,14 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     @NotNull
     public static <A> ImmutableList<A> from(@NotNull List<A> arrayList) {
         // Manual expansion of tail recursion.
-        ImmutableList<A> l = nil();
+        ImmutableList<A> l = empty();
         int size = arrayList.size();
         for (int i = size - 1; i >= 0; i--) {
             l = cons(arrayList.get(i), l);
         }
         return l;
     /* TODO: use Collection here if it doesn't incur performance penalties
-    ImmutableList<A> list = nil();
+    ImmutableList<A> list = empty();
     int size = collection.size();
     for (A element : collection) {
       list = cons(element, list);
@@ -101,13 +100,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     // Construction
 
     @SuppressWarnings("unchecked")
-    public static <T> ImmutableList<T> nil() {
-        return (ImmutableList<T>) NIL;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> ImmutableList<T> list() {
-        return (ImmutableList<T>) NIL;
+    public static <T> ImmutableList<T> empty() {
+        return (ImmutableList<T>) EMPTY;
     }
 
     /**
@@ -122,9 +116,9 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     @SafeVarargs
     public static <T> NonEmptyImmutableList<T> list(@NotNull T head, @NotNull T... el) {
         if (el.length == 0) {
-            return cons(head, ImmutableList.nil());
+            return cons(head, ImmutableList.empty());
         }
-        NonEmptyImmutableList<T> l = cons(el[el.length - 1], ImmutableList.nil());
+        NonEmptyImmutableList<T> l = cons(el[el.length - 1], ImmutableList.empty());
         for (int i = el.length - 2; i >= 0; i--) {
             l = cons(el[i], l);
         }
@@ -157,9 +151,9 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     @NotNull
     public static <A> ImmutableList<A> fromBounded(@NotNull A[] el, int start, int end) {
         if (end == start) {
-            return nil();
+            return empty();
         }
-        NonEmptyImmutableList<A> l = cons(el[end - 1], ImmutableList.nil());
+        NonEmptyImmutableList<A> l = cons(el[end - 1], ImmutableList.empty());
         for (int i = end - 2; i >= start; i--) {
             l = cons(el[i], l);
         }
@@ -320,7 +314,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     /**
      * Removes the first <code>n</code> elements of the list and return the rest of the List by
      * reference. If the original list contains less than <code>n</code> elements, returns an empty
-     * list as if it is returned by {@link #nil}.
+     * list as if it is returned by {@link #empty}.
      *
      * @param n The number of elements to skip.
      * @return A shared list containing at most <code>n</code> elements removed from the original

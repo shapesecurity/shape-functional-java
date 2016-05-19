@@ -113,7 +113,7 @@ public interface Monoid<T> extends Semigroup<T> {
         @NotNull
         @Override
         public ImmutableList<T> identity() {
-            return ImmutableList.nil();
+            return ImmutableList.empty();
         }
     }
 
@@ -127,7 +127,7 @@ public interface Monoid<T> extends Semigroup<T> {
         @NotNull
         @Override
         public ImmutableSet<T> identity() {
-            return ImmutableSet.empty();
+            return ImmutableSet.emptyUsingEquality();
         }
     }
 
@@ -141,7 +141,7 @@ public interface Monoid<T> extends Semigroup<T> {
         @NotNull
         @Override
         public ImmutableSet<T> identity() {
-            return ImmutableSet.emptyP();
+            return ImmutableSet.emptyUsingIdentity();
         }
     }
 
@@ -155,7 +155,7 @@ public interface Monoid<T> extends Semigroup<T> {
         @NotNull
         @Override
         public ConcatList<T> identity() {
-            return ConcatList.nil();
+            return ConcatList.empty();
         }
     }
 }

@@ -93,7 +93,7 @@ public abstract class TestBase {
 
     @NotNull
     public ImmutableList<Integer> range(final int lower, final int upper, final int step) {
-        ImmutableList<Integer> result = ImmutableList.nil();
+        ImmutableList<Integer> result = ImmutableList.empty();
         for (int i = upper - ((upper - lower + step - 1) % step + 1); i >= lower; i -= step) {
             result = result.cons(i);
         }

@@ -19,10 +19,7 @@ package com.shapesecurity.functional.data;
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.Thunk;
-import com.shapesecurity.functional.Unit;
 
-
-import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,12 +59,12 @@ public abstract class Maybe<A> {
 
     @NotNull
     public static <A> ImmutableList<A> catMaybes(@NotNull ImmutableList<Maybe<A>> l) {
-        return l.foldRight((a, b) -> a.maybe(b, c -> ImmutableList.cons(c, b)), ImmutableList.nil());
+        return l.foldRight((a, b) -> a.maybe(b, c -> ImmutableList.cons(c, b)), ImmutableList.empty());
     }
 
     @NotNull
     public static <A, B> ImmutableList<B> mapMaybe(@NotNull final F<A, B> f, @NotNull ImmutableList<Maybe<A>> l) {
-        return l.foldRight((a, b) -> a.maybe(b, v -> ImmutableList.cons(f.apply(v), b)), ImmutableList.nil());
+        return l.foldRight((a, b) -> a.maybe(b, v -> ImmutableList.cons(f.apply(v), b)), ImmutableList.empty());
     }
 
     @SuppressWarnings("BooleanParameter")
@@ -179,7 +176,7 @@ public abstract class Maybe<A> {
         @NotNull
         @Override
         public ImmutableList<A> toList() {
-            return ImmutableList.cons(this.value, ImmutableList.nil());
+            return ImmutableList.cons(this.value, ImmutableList.empty());
         }
 
         @NotNull
@@ -252,7 +249,7 @@ public abstract class Maybe<A> {
         @NotNull
         @Override
         public ImmutableList<A> toList() {
-            return ImmutableList.nil();
+            return ImmutableList.empty();
         }
 
         @NotNull

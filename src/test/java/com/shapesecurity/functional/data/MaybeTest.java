@@ -24,7 +24,6 @@ import static org.junit.Assert.fail;
 
 import com.shapesecurity.functional.TestBase;
 import com.shapesecurity.functional.Thunk;
-import com.shapesecurity.functional.Unit;
 
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
@@ -91,7 +90,7 @@ public class MaybeTest extends TestBase {
 
     @Test
     public void testToList() {
-        assertEquals(ImmutableList.<Integer>nil(), Maybe.<Integer>nothing().toList());
+        assertEquals(ImmutableList.<Integer>empty(), Maybe.<Integer>nothing().toList());
         assertEquals(ImmutableList.list(notNull), Maybe.just(notNull).toList());
     }
 
