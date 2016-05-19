@@ -21,8 +21,13 @@ public class ImmutableSet<T> {
         return new ImmutableSet<>(HashTable.emptyUsingIdentity());
     }
 
-    public ImmutableSet<T> put(@NotNull T datum) {
+    public <B extends T> ImmutableSet<T> put(@NotNull B datum) {
         return new ImmutableSet<>(this.data.put(datum, Unit.unit));
+    }
+
+    @NotNull
+    public <B extends T> ImmutableSet<T> putAll(@NotNull ImmutableList<B> list) {
+        return list.foldLeft(ImmutableSet::put, this);
     }
 
     public boolean contains(@NotNull T datum) {
@@ -44,5 +49,11 @@ public class ImmutableSet<T> {
     // Does not guarantee ordering of elements in resulting list.
     public ImmutableList<T> toList() {
         return this.foldAbelian((v, acc) -> acc.cons(v), ImmutableList.empty());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof ImmutableSet && this.data.length == ((ImmutableSet) other).data.length && this.data.foldLeft((memo, pair) -> memo && ((ImmutableSet) other).data.containsKey(pair.a), true);
     }
 }

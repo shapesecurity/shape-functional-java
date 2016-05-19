@@ -616,6 +616,15 @@ public abstract class ImmutableList<A> implements Iterable<A> {
         return l.maybeHead();
     }
 
+    @NotNull
+    public abstract ImmutableSet<A> uniqByEquality();
+
+    @NotNull
+    public abstract ImmutableSet<A> uniqByIdentity();
+
+    @NotNull
+    public abstract <B> ImmutableSet<A> uniqByEqualityOn(@NotNull F<A, B> f);
+
     @Override
     public abstract boolean equals(Object o);
 }
