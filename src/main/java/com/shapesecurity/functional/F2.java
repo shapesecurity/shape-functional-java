@@ -25,7 +25,7 @@ public interface F2<A, B, R> {
 
     @NotNull
     public default R applyTuple(@NotNull Pair<A, B> args) {
-        return apply(args.a, args.b);
+        return apply(args.left, args.right);
     }
 
     @NotNull

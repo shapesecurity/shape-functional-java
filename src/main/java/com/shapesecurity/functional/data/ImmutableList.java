@@ -114,7 +114,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      */
     @NotNull
     @SafeVarargs
-    public static <T> NonEmptyImmutableList<T> list(@NotNull T head, @NotNull T... el) {
+    public static <T> NonEmptyImmutableList<T> of(@NotNull T head, @NotNull T... el) {
         if (el.length == 0) {
             return cons(head, ImmutableList.empty());
         }
@@ -183,8 +183,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
                 if (this.curr.isEmpty()) {
                     throw new NoSuchElementException();
                 }
-                A head = this.curr.maybeHead().just();
-                this.curr = this.curr.maybeTail().just();
+                A head = this.curr.maybeHead().fromJust();
+                this.curr = this.curr.maybeTail().fromJust();
                 return head;
             }
 
@@ -237,7 +237,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     /**
      * Returns the head of the {@link ImmutableList}.
      *
-     * @return Maybe.just(head of the list), or Maybe.nothing() if the list is empty.
+     * @return Maybe.of(head of the list), or Maybe.empty() if the list is empty.
      */
     @NotNull
     public abstract Maybe<A> maybeHead();
@@ -245,7 +245,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     /**
      * Returns the last of the {@link ImmutableList}.
      *
-     * @return Maybe.just(last of the list), or Maybe.nothing() if the list is empty.
+     * @return Maybe.of(last of the list), or Maybe.empty() if the list is empty.
      */
     @NotNull
     public abstract Maybe<A> maybeLast();
@@ -253,7 +253,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     /**
      * Returns the tail of the {@link ImmutableList}.
      *
-     * @return Maybe.just(tail of the list), or Maybe.nothing() if the list is empty.
+     * @return Maybe.of(tail of the list), or Maybe.empty() if the list is empty.
      */
     @NotNull
     public abstract Maybe<ImmutableList<A>> maybeTail();
@@ -262,7 +262,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * Returns the init of the {@link ImmutableList}. The init of a List is defined as the rest of
      * List removing the last element.
      *
-     * @return Maybe.just(init of the list), or Maybe.nothing() if the list is empty.
+     * @return Maybe.of(init of the list), or Maybe.empty() if the list is empty.
      */
     @NotNull
     public abstract Maybe<ImmutableList<A>> maybeInit();
@@ -326,8 +326,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     /**
      * Specialize this type to be a {@link NonEmptyImmutableList} if possible.
      *
-     * @return Returns is <code>Maybe.just(this)</code> if this is indeed non-empty. Otherwise
-     * returns <code>Maybe.nothing()</code>.
+     * @return Returns is <code>Maybe.of(this)</code> if this is indeed non-empty. Otherwise
+     * returns <code>Maybe.empty()</code>.
      */
     @NotNull
     public abstract Maybe<NonEmptyImmutableList<A>> toNonEmptyList();
@@ -338,8 +338,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      *
      * @param f   The function to receive the head and tail if they exist.
      * @param <B> The return type of <code>f</code>
-     * @return If the list is an non-empty list, returns <code>Maybe.just(f(head, tail))</code>;
-     * otherwise returns <code>Maybe.nothing()</code>.
+     * @return If the list is an non-empty list, returns <code>Maybe.of(f(head, tail))</code>;
+     * otherwise returns <code>Maybe.empty()</code>.
      */
     @NotNull
     public abstract <B> Maybe<B> decons(@NotNull F2<A, ImmutableList<A>, B> f);
@@ -380,8 +380,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
         }
         ImmutableList<A> l = this;
         for (int i = 0; i < length; i++) {
-            target[i] = l.maybeHead().just();
-            l = l.maybeTail().just();
+            target[i] = l.maybeHead().fromJust();
+            l = l.maybeTail().fromJust();
         }
         return target;
     }
@@ -414,8 +414,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
         ImmutableList<A> list = this;
         Maybe<A> head;
         while ((head = list.maybeHead()).isJust()) {
-            f.e(head.just());
-            list = list.maybeTail().just();
+            f.e(head.fromJust());
+            list = list.maybeTail().fromJust();
         }
     }
 
@@ -502,8 +502,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * satisfies the predicate without testing the rest of the list.
      *
      * @param f The predicate.
-     * @return <code>Maybe.just(the found element)</code> if an element is found or
-     * <code>Maybe.nothing()</code> if none is found.
+     * @return <code>Maybe.of(the found element)</code> if an element is found or
+     * <code>Maybe.empty()</code> if none is found.
      */
     @NotNull
     public final Maybe<A> find(@NotNull F<A, Boolean> f) {
@@ -512,21 +512,21 @@ public abstract class ImmutableList<A> implements Iterable<A> {
             NonEmptyImmutableList<A> selfNel = (NonEmptyImmutableList<A>) self;
             boolean result = f.apply(selfNel.head);
             if (result) {
-                return Maybe.just(selfNel.head);
+                return Maybe.of(selfNel.head);
             }
             self = selfNel.tail();
         }
-        return Maybe.nothing();
+        return Maybe.empty();
     }
 
     /**
      * Run <code>f</code> on each element of the list and return the result immediately if it is a
-     * <code>Maybe.just</code>. Other wise return <code>Maybe.nothing()</code>
+     * <code>Maybe.of</code>. Other wise return <code>Maybe.empty()</code>
      *
      * @param f   The predicate.
      * @param <B> The type of the result of the mapping function.
-     * @return <code>Maybe.just(the found element)</code> if an element is found or
-     * <code>Maybe.nothing()</code> if none is found.
+     * @return <code>Maybe.of(the found element)</code> if an element is found or
+     * <code>Maybe.empty()</code> if none is found.
      */
     @NotNull
     public final <B> Maybe<B> findMap(@NotNull F<A, Maybe<B>> f) {
@@ -539,7 +539,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
             }
             self = selfNel.tail();
         }
-        return Maybe.nothing();
+        return Maybe.empty();
     }
 
     /**
@@ -597,21 +597,21 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * indicate whether the element can be found or not.
      *
      * @param index The index.
-     * @return <code>Maybe.just(found element)</code>if the element can be retrieved; or
-     * <code>Maybe.nothing()</code> if index out of range().
+     * @return <code>Maybe.of(found element)</code>if the element can be retrieved; or
+     * <code>Maybe.empty()</code> if index out of range().
      */
     @NotNull
     public final Maybe<A> index(int index) {
         ImmutableList<A> l = this;
         if (index < 0) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
         while (index > 0) {
             if (l.isEmpty()) {
-                return Maybe.nothing();
+                return Maybe.empty();
             }
             index--;
-            l = l.maybeTail().just();
+            l = l.maybeTail().fromJust();
         }
         return l.maybeHead();
     }

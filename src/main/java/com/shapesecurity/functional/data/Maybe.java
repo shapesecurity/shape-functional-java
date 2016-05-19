@@ -33,21 +33,21 @@ public abstract class Maybe<A> {
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public static <A> Maybe<A> nothing() {
+    public static <A> Maybe<A> empty() {
         return (Maybe<A>) NOTHING;
     }
 
     @NotNull
-    public static <A> Maybe<A> just(@NotNull A a) {
+    public static <A> Maybe<A> of(@NotNull A a) {
         return new Just<>(a);
     }
 
     @NotNull
     public static <A> Maybe<A> fromNullable(@Nullable A a) {
         if (a == null) {
-            return nothing();
+            return empty();
         }
-        return just(a);
+        return of(a);
     }
 
     @Nullable
@@ -71,9 +71,9 @@ public abstract class Maybe<A> {
     @NotNull
     public static <A> Maybe<A> iff(boolean test, @NotNull A a) {
         if (test) {
-            return just(a);
+            return of(a);
         }
-        return nothing();
+        return empty();
     }
 
     public abstract boolean eq(@NotNull Maybe<A> maybe);
@@ -88,7 +88,7 @@ public abstract class Maybe<A> {
     public abstract int hashCode();
 
     @NotNull
-    public abstract A just() throws NullPointerException;
+    public abstract A fromJust() throws NullPointerException;
 
     @NotNull
     public abstract <B> B maybe(@NotNull B def, @NotNull F<A, B> f);
@@ -148,7 +148,7 @@ public abstract class Maybe<A> {
 
         @Override
         public boolean eq(@NotNull Maybe<A> maybe) {
-            return maybe instanceof Just && maybe.just().equals(this.value);
+            return maybe instanceof Just && maybe.fromJust().equals(this.value);
         }
 
         @Override
@@ -158,7 +158,7 @@ public abstract class Maybe<A> {
 
         @NotNull
         @Override
-        public A just() throws NullPointerException {
+        public A fromJust() throws NullPointerException {
             return this.value;
         }
 
@@ -194,7 +194,7 @@ public abstract class Maybe<A> {
         @NotNull
         @Override
         public <B> Maybe<B> map(@NotNull F<A, B> f) {
-            return Maybe.just(f.apply(this.value));
+            return Maybe.of(f.apply(this.value));
         }
 
         @NotNull
@@ -206,7 +206,7 @@ public abstract class Maybe<A> {
         @NotNull
         @Override
         public Maybe<A> filter(@NotNull F<A, Boolean> f) {
-            return f.apply(this.value) ? this : Maybe.nothing();
+            return f.apply(this.value) ? this : Maybe.empty();
         }
     }
 
@@ -231,8 +231,8 @@ public abstract class Maybe<A> {
 
         @NotNull
         @Override
-        public A just() throws NullPointerException {
-            throw new NullPointerException("Maybe.just failed");
+        public A fromJust() throws NullPointerException {
+            throw new NullPointerException("Maybe.fromJust failed");
         }
 
         @NotNull

@@ -153,7 +153,7 @@ public abstract class HashTable<K, V> {
     public abstract boolean containsKey(@NotNull K key, int hash);
 
     public boolean containsValue(@NotNull V value) {
-        return this.find(p -> p.b == value).isJust();
+        return this.find(p -> p.right == value).isJust();
     }
 
     /**
@@ -170,19 +170,19 @@ public abstract class HashTable<K, V> {
         @NotNull
         @Override
         protected HashTable<K, V> put(@NotNull K key, @NotNull V value, int hash) {
-            return new Leaf<>(this.hasher, ImmutableList.list(new Pair<>(key, value)), hash, 1);
+            return new Leaf<>(this.hasher, ImmutableList.of(new Pair<>(key, value)), hash, 1);
         }
 
         @NotNull
         @Override
         protected Maybe<HashTable<K, V>> remove(@NotNull K key, int hash) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
 
         @NotNull
         @Override
         protected Maybe<V> get(@NotNull K key, int hash) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
 
         @NotNull
@@ -211,13 +211,13 @@ public abstract class HashTable<K, V> {
         @NotNull
         @Override
         public Maybe<Pair<K, V>> find(@NotNull F<Pair<K, V>, Boolean> f) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
 
         @NotNull
         @Override
         public <R> Maybe<R> findMap(@NotNull F<Pair<K, V>, Maybe<R>> f) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
 
         @Override
@@ -257,13 +257,13 @@ public abstract class HashTable<K, V> {
                     if (found) {
                         return new Pair<>(true, kvPair);
                     }
-                    if (Leaf.this.hasher.eq(kvPair.a, key)) {
+                    if (Leaf.this.hasher.eq(kvPair.left, key)) {
                         return new Pair<>(true, new Pair<>(key, value));
                     }
                     return new Pair<>(false, kvPair);
                 }, false);
-                if (result.a) {
-                    return new Leaf<>(this.hasher, result.b, hash, this.length);
+                if (result.left) {
+                    return new Leaf<>(this.hasher, result.right, hash, this.length);
                 }
                 return new Leaf<>(this.hasher, this.dataList.cons(new Pair<>(key, value)), hash, this.length + 1);
             }
@@ -274,24 +274,24 @@ public abstract class HashTable<K, V> {
         @Override
         protected Maybe<HashTable<K, V>> remove(@NotNull final K key, int hash) {
             if (this.baseHash != hash) {
-                return Maybe.nothing();
+                return Maybe.empty();
             }
             Pair<Boolean, ImmutableList<Pair<K, V>>> result = this.dataList.foldRight((i, p) -> {
-                if (p.a) {
-                    return new Pair<>(true, p.b.cons(i));
+                if (p.left) {
+                    return new Pair<>(true, p.right.cons(i));
                 }
-                if (Leaf.this.hasher.eq(i.a, key)) {
-                    return new Pair<>(true, p.b);
+                if (Leaf.this.hasher.eq(i.left, key)) {
+                    return new Pair<>(true, p.right);
                 }
-                return new Pair<>(false, p.b.cons(i));
+                return new Pair<>(false, p.right.cons(i));
             }, new Pair<>(false, ImmutableList.empty()));
-            if (result.a) {
+            if (result.left) {
                 if (this.length == 1) {
-                    return Maybe.just(HashTable.emptyUsingEquality());
+                    return Maybe.of(HashTable.emptyUsingEquality());
                 }
-                return Maybe.just(new Leaf<>(this.hasher, result.b, this.baseHash, this.length - 1));
+                return Maybe.of(new Leaf<>(this.hasher, result.right, this.baseHash, this.length - 1));
             }
-            return Maybe.nothing();
+            return Maybe.empty();
         }
 
         @SuppressWarnings("unchecked")
@@ -306,10 +306,10 @@ public abstract class HashTable<K, V> {
         @Override
         protected Maybe<V> get(@NotNull final K key, final int hash) {
             if (this.baseHash != hash) {
-                return Maybe.nothing();
+                return Maybe.empty();
             }
-            Maybe<Pair<K, V>> pairMaybe = this.dataList.find(kvPair -> Leaf.this.hasher.eq(kvPair.a, key));
-            return pairMaybe.map(p -> p.b);
+            Maybe<Pair<K, V>> pairMaybe = this.dataList.find(kvPair -> Leaf.this.hasher.eq(kvPair.left, key));
+            return pairMaybe.map(p -> p.right);
         }
 
         @SuppressWarnings("unchecked")
@@ -325,8 +325,8 @@ public abstract class HashTable<K, V> {
                     ImmutableList<Pair<K, V>> right = leaf.dataList.foldLeft(
                             (@NotNull ImmutableList<Pair<K, V>> result, @NotNull Pair<K, V> kvPair) -> {
                                 for (int i = 0; i < pairs.length; i++) {
-                                    if (Leaf.this.hasher.eq(pairs[i].a, kvPair.a)) {
-                                        pairs[i] = new Pair<>(pairs[i].a, merger.apply(pairs[i].b, kvPair.b));
+                                    if (Leaf.this.hasher.eq(pairs[i].left, kvPair.left)) {
+                                        pairs[i] = new Pair<>(pairs[i].left, merger.apply(pairs[i].right, kvPair.right));
                                         return result;
                                     }
                                 }
@@ -369,13 +369,13 @@ public abstract class HashTable<K, V> {
 
         @Override
         public <B> Leaf<K, B> map(@NotNull F<V, B> f) {
-            return new Leaf<>(this.hasher, this.dataList.map(pair -> pair.mapB(f)), baseHash, length);
+            return new Leaf<>(this.hasher, this.dataList.map(pair -> pair.mapRight(f)), baseHash, length);
         }
 
         @Override
         public boolean containsKey(@NotNull K key, int hash) {
             return hash == this.baseHash
-                    && this.dataList.exists(kvPair -> Leaf.this.hasher.eq(kvPair.a, key));
+                    && this.dataList.exists(kvPair -> Leaf.this.hasher.eq(kvPair.left, key));
         }
     }
 
@@ -406,7 +406,7 @@ public abstract class HashTable<K, V> {
         protected Maybe<HashTable<K, V>> remove(@NotNull K key, int hash) {
             final int subHash = hash & 31;
             if (this.children[subHash] == null) {
-                return Maybe.nothing();
+                return Maybe.empty();
             }
             Maybe<HashTable<K, V>> removed = this.children[subHash].remove(key, hash >>> 5);
             return removed.map(newChild -> {
@@ -421,7 +421,7 @@ public abstract class HashTable<K, V> {
         protected Maybe<V> get(@NotNull K key, int hash) {
             int subHash = hash & 31;
             if (this.children[subHash] == null) {
-                return Maybe.nothing();
+                return Maybe.empty();
             }
             return this.children[subHash].get(key, hash >>> 5);
         }
@@ -501,7 +501,7 @@ public abstract class HashTable<K, V> {
                     }
                 }
             }
-            return Maybe.nothing();
+            return Maybe.empty();
         }
 
         @NotNull
@@ -517,7 +517,7 @@ public abstract class HashTable<K, V> {
                     }
                 }
             }
-            return Maybe.nothing();
+            return Maybe.empty();
         }
 
         @SuppressWarnings("unchecked")

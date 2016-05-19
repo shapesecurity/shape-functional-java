@@ -39,6 +39,15 @@ public abstract class ConcatList<T> implements Iterable<T> {
         return (ConcatList<T>) EMPTY;
     }
 
+    @SafeVarargs
+    public static <T> ConcatList<T> of(T head, T... tail) {
+        ConcatList<T> concatList = ConcatList.single(head);
+        for (T t : tail) {
+            concatList = concatList.append1(t);
+        }
+        return concatList;
+    }
+
     @NotNull
     public static <T> ConcatList<T> single(@NotNull T scope) {
         return new Leaf<>(scope);
@@ -135,7 +144,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
         @NotNull
         @Override
         public Maybe<T> find(@NotNull F<T, Boolean> f) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
 
         @NotNull
@@ -147,13 +156,13 @@ public abstract class ConcatList<T> implements Iterable<T> {
         @NotNull
         @Override
         public Maybe<T> index(int index) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
 
         @NotNull
         @Override
         public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
-            return Maybe.nothing();
+            return Maybe.empty();
         }
 
         @Override
@@ -225,9 +234,9 @@ public abstract class ConcatList<T> implements Iterable<T> {
         @Override
         public Maybe<T> find(@NotNull F<T, Boolean> f) {
             if (f.apply(this.data)) {
-                return Maybe.just(this.data);
+                return Maybe.of(this.data);
             }
-            return Maybe.nothing();
+            return Maybe.empty();
         }
 
         @NotNull
@@ -245,7 +254,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
         @NotNull
         @Override
         public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
-            return index == 0 ? Maybe.just(single(element)) : Maybe.nothing();
+            return index == 0 ? Maybe.of(single(element)) : Maybe.empty();
         }
 
         @Override
@@ -342,7 +351,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
         @Override
         public Maybe<T> index(int index) {
             if (index >= this.length) {
-                return Maybe.nothing();
+                return Maybe.empty();
             }
             return index < this.left.length ? this.left.index(index) : this.right.index(index - this.left.length);
         }
@@ -351,17 +360,17 @@ public abstract class ConcatList<T> implements Iterable<T> {
         @Override
         public Maybe<ConcatList<T>> update(int index, @NotNull T element) {
             if (index >= this.length) {
-                return Maybe.nothing();
+                return Maybe.empty();
             }
             ConcatList<T> left = this.left;
             ConcatList<T> right = this.right;
 
             if (index < this.left.length) {
-                left = left.update(index, element).just();
+                left = left.update(index, element).fromJust();
             } else {
-                right = right.update(index - this.left.length, element).just();
+                right = right.update(index - this.left.length, element).fromJust();
             }
-            return Maybe.just(left.append(right));
+            return Maybe.of(left.append(right));
         }
 
         @Override

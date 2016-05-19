@@ -24,10 +24,14 @@ import org.jetbrains.annotations.NotNull;
 public final class Either<A, B> {
     private final Object data;
 
-    private final int tag;
+    private enum Tag {
+        LEFT, RIGHT;
+    }
+
+    private final Tag tag;
 
     // class local
-    private Either(Object data, int tag) {
+    private Either(Object data, Tag tag) {
         super();
         this.data = data;
         this.tag = tag;
@@ -35,12 +39,12 @@ public final class Either<A, B> {
 
     @NotNull
     public static <A, B> Either<A, B> left(@NotNull A a) {
-        return new Either<>(a, 0);
+        return new Either<>(a, Tag.LEFT);
     }
 
     @NotNull
     public static <A, B> Either<A, B> right(@NotNull B b) {
-        return new Either<>(b, 1);
+        return new Either<>(b, Tag.RIGHT);
     }
 
     @NotNull
@@ -49,16 +53,16 @@ public final class Either<A, B> {
     }
 
     public final boolean isLeft() {
-        return tag == 0;
+        return tag == Tag.LEFT;
     }
 
     public final boolean isRight() {
-        return tag == 1;
+        return tag == Tag.RIGHT;
     }
 
     @SuppressWarnings("unchecked")
     public <X> X either(F<A, X> f1, F<B, X> f2) {
-        if (tag == 0) {
+        if (tag == Tag.LEFT) {
             return f1.apply((A) data);
         } else {
             return f2.apply((B) data);
@@ -67,7 +71,7 @@ public final class Either<A, B> {
 
     @SuppressWarnings("unchecked")
     public void foreach(@NotNull Effect<A> f1, @NotNull Effect<B> f2) {
-        if (tag == 0) {
+        if (tag == Tag.RIGHT) {
             f1.apply((A) data);
         } else {
             f2.apply((B) data);
@@ -81,24 +85,24 @@ public final class Either<A, B> {
 
     @NotNull
     public <X> Either<X, B> mapLeft(@NotNull F<A, X> f) {
-        return map(a -> f.apply(a), b -> b);
+        return map(f, b -> b);
     }
 
     @NotNull
     public <Y> Either<A, Y> mapRight(@NotNull F<B, Y> f) {
-        return map(a -> a, b -> f.apply(b));
+        return map(a -> a, f);
     }
 
     @SuppressWarnings("unchecked")
     @NotNull
     public Maybe<A> left() {
-        return tag == 0 ? Maybe.just((A) data) : Maybe.nothing();
+        return tag == Tag.LEFT ? Maybe.of((A) data) : Maybe.empty();
     }
 
     @SuppressWarnings("unchecked")
     @NotNull
     public Maybe<B> right() {
-        return tag == 1 ? Maybe.just((B) data) : Maybe.nothing();
+        return tag == Tag.RIGHT ? Maybe.of((B) data) : Maybe.empty();
     }
 
     public boolean eq(Either<A, B> either) {
@@ -107,7 +111,7 @@ public final class Either<A, B> {
 
     @Override
     public int hashCode() {
-        return (0b10101010 << tag) ^ this.data.hashCode();
+        return (0b10101010 << tag.ordinal()) ^ this.data.hashCode();
     }
 
     @SuppressWarnings("unchecked")

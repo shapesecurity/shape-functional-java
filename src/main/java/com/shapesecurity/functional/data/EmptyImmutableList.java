@@ -54,25 +54,25 @@ public final class EmptyImmutableList<T> extends ImmutableList<T> {
     @NotNull
     @Override
     public Maybe<T> maybeHead() {
-        return Maybe.nothing();
+        return Maybe.empty();
     }
 
     @NotNull
     @Override
     public Maybe<T> maybeLast() {
-        return Maybe.nothing();
+        return Maybe.empty();
     }
 
     @NotNull
     @Override
     public Maybe<ImmutableList<T>> maybeTail() {
-        return Maybe.nothing();
+        return Maybe.empty();
     }
 
     @NotNull
     @Override
     public Maybe<ImmutableList<T>> maybeInit() {
-        return Maybe.nothing();
+        return Maybe.empty();
     }
 
     @NotNull
@@ -108,13 +108,13 @@ public final class EmptyImmutableList<T> extends ImmutableList<T> {
     @NotNull
     @Override
     public Maybe<NonEmptyImmutableList<T>> toNonEmptyList() {
-        return Maybe.nothing();
+        return Maybe.empty();
     }
 
     @NotNull
     @Override
     public <B> Maybe<B> decons(@NotNull F2<T, ImmutableList<T>, B> f) {
-        return Maybe.nothing();
+        return Maybe.empty();
     }
 
     @SuppressWarnings("unchecked")
