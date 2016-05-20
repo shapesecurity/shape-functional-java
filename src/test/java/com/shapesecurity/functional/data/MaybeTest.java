@@ -35,20 +35,20 @@ public class MaybeTest extends TestBase {
 
     @Test
     public void testFromNullable() {
-        assertEquals(Maybe.just(3), Maybe.fromNullable(notNull));
-        assertEquals(Maybe.<Integer>nothing(), Maybe.fromNullable(nulled));
+        assertEquals(Maybe.of(3), Maybe.fromNullable(notNull));
+        assertEquals(Maybe.<Integer>empty(), Maybe.fromNullable(nulled));
     }
 
     @Test
     public void testToNullable() {
-        assertEquals((Integer) 3, Maybe.just(notNull).toNullable());
-        assertEquals(null, Maybe.<Integer>nothing().toNullable());
+        assertEquals((Integer) 3, Maybe.of(notNull).toNullable());
+        assertEquals(null, Maybe.<Integer>empty().toNullable());
     }
 
     @Test
     public void testIff() {
-        assertEquals(Maybe.just(3), Maybe.iff(true, notNull));
-        assertEquals(Maybe.<Integer>nothing(), Maybe.iff(false, notNull));
+        assertEquals(Maybe.of(3), Maybe.iff(true, notNull));
+        assertEquals(Maybe.<Integer>empty(), Maybe.iff(false, notNull));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class MaybeTest extends TestBase {
     }
 
     private void testCatMaybes(ImmutableList<Integer> list) {
-        assertEquals(list, Maybe.catMaybes(list.map(Maybe::just)));
+        assertEquals(list, Maybe.catMaybes(list.map(Maybe::of)));
     }
 
     @Test
@@ -66,40 +66,40 @@ public class MaybeTest extends TestBase {
     }
 
     private void testMapMaybe(ImmutableList<Integer> list) {
-        assertEquals(list.map(x -> x + 1), Maybe.mapMaybe(x -> x + 1, list.<Maybe<Integer>>map(Maybe::just)));
+        assertEquals(list.map(x -> x + 1), Maybe.mapMaybe(x -> x + 1, list.<Maybe<Integer>>map(Maybe::of)));
     }
 
     @Test
     public void testBind() {
-        assertEquals(Maybe.fromNullable(notNull + 1), Maybe.just(notNull).bind(x -> Maybe.just(
+        assertEquals(Maybe.fromNullable(notNull + 1), Maybe.of(notNull).bind(x -> Maybe.of(
                 x + 1))); //not fully sure why I am responsible for wrapping A into a Maybe<A>
-        assertEquals(Maybe.<Integer>nothing(), Maybe.fromNullable(nulled));
+        assertEquals(Maybe.<Integer>empty(), Maybe.fromNullable(nulled));
     }
 
     @Test
     public void testForEach() {
         Maybe.fromNullable(nulled).foreach(x -> {
-            fail("Maybe.forEach should not execute f on a nothing"); //should never call f
+            fail("Maybe.forEach should not execute f on a empty"); //should never call f
         });
         final int[] effect = {0};
         Maybe.fromNullable(notNull).foreach(x -> {
             effect[0] += 1;
         });
-        assertEquals(1, effect[0]);//just should be side effected into incrementing once and only once
+        assertEquals(1, effect[0]);//of should be side effected into incrementing once and only once
     }
 
     @Test
     public void testToList() {
-        assertEquals(ImmutableList.<Integer>empty(), Maybe.<Integer>nothing().toList());
-        assertEquals(ImmutableList.list(notNull), Maybe.just(notNull).toList());
+        assertEquals(ImmutableList.<Integer>empty(), Maybe.<Integer>empty().toList());
+        assertEquals(ImmutableList.of(notNull), Maybe.of(notNull).toList());
     }
 
     @Test
     public void testEq() {
-        assertTrue(Maybe.fromNullable(notNull).eq(Maybe.just(notNull)));
-        assertFalse(Maybe.fromNullable(notNull).eq(Maybe.just(notNull + 1)));
-        assertFalse(Maybe.fromNullable(notNull).eq(Maybe.<Integer>nothing()));
-        assertTrue(Maybe.fromNullable(nulled).eq(Maybe.<Integer>nothing()));
+        assertTrue(Maybe.fromNullable(notNull).eq(Maybe.of(notNull)));
+        assertFalse(Maybe.fromNullable(notNull).eq(Maybe.of(notNull + 1)));
+        assertFalse(Maybe.fromNullable(notNull).eq(Maybe.<Integer>empty()));
+        assertTrue(Maybe.fromNullable(nulled).eq(Maybe.<Integer>empty()));
         assertFalse(Maybe.fromNullable(nulled).eq(Maybe.fromNullable(notNull)));
     }
 
@@ -122,8 +122,8 @@ public class MaybeTest extends TestBase {
 
     @Test
     public void testFlatMap() {
-        assertEquals(Maybe.just(notNull + 1), Maybe.fromNullable(notNull).flatMap(x -> Maybe.fromNullable(x + 1)));
-        assertEquals(Maybe.<Integer>nothing(), Maybe.fromNullable(nulled).flatMap(x -> Maybe.fromNullable(x + 1)));
+        assertEquals(Maybe.of(notNull + 1), Maybe.fromNullable(notNull).flatMap(x -> Maybe.fromNullable(x + 1)));
+        assertEquals(Maybe.<Integer>empty(), Maybe.fromNullable(nulled).flatMap(x -> Maybe.fromNullable(x + 1)));
     }
 
     @Test
@@ -140,12 +140,12 @@ public class MaybeTest extends TestBase {
 
     @Test
     public void testJust() {
-        assertEquals(notNull, Maybe.fromNullable(notNull).just());
+        assertEquals(notNull, Maybe.fromNullable(notNull).fromJust());
         try {
-            Integer i = Maybe.fromNullable(nulled).just();
+            Integer i = Maybe.fromNullable(nulled).fromJust();
             fail("Did not throw NullPointerException");
         } catch (NullPointerException e) {
-            //do nothing we pass
+            // do nothing
         }
     }
 }

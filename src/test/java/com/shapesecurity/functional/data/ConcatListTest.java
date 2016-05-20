@@ -57,12 +57,12 @@ public class ConcatListTest {
 
     @Test
     public void findTest() {
-        assertEquals(Maybe.<Integer>nothing(), ConcatList.<Integer>empty().find(F.constant(true)));
+        assertEquals(Maybe.<Integer>empty(), ConcatList.<Integer>empty().find(F.constant(true)));
         int N = (1 << 15) - 1;
         ConcatList<Integer> list = gen(N);
-        assertEquals(0, (int) list.find(F.constant(true)).just());
-        assertEquals(Maybe.<Integer>nothing(), list.find(F.constant(false)));
-        assertEquals(N - 1, (int) list.find(x -> x >= N - 1).just());
+        assertEquals(0, (int) list.find(F.constant(true)).fromJust());
+        assertEquals(Maybe.<Integer>empty(), list.find(F.constant(false)));
+        assertEquals(N - 1, (int) list.find(x -> x >= N - 1).fromJust());
     }
 
     @Test
@@ -130,13 +130,13 @@ public class ConcatListTest {
         int N = (1 << 15) - 1;
         ConcatList<Integer> list = gen(N);
         for (int i = 0; i < N; i++) {
-            assertEquals(i, (int) list.index(i).just());
+            assertEquals(i, (int) list.index(i).fromJust());
         }
         for (int i = 0; i < N; i++) {
-            list = list.update(i, i + 1).just();
+            list = list.update(i, i + 1).fromJust();
         }
         for (int i = 0; i < N; i++) {
-            assertEquals(i + 1, (int) list.index(i).just());
+            assertEquals(i + 1, (int) list.index(i).fromJust());
         }
     }
 }

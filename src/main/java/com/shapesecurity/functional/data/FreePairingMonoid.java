@@ -24,6 +24,6 @@ public final class FreePairingMonoid<A, B> implements Monoid<Pair<A, B>> {
     @NotNull
     @Override
     public Pair<A, B> append(Pair<A, B> a, Pair<A, B> b) {
-        return new Pair<>(monoidA.append(a.a, b.a), monoidB.append(a.b, b.b));
+        return new Pair<>(monoidA.append(a.left, b.left), monoidB.append(a.right, b.right));
     }
 }

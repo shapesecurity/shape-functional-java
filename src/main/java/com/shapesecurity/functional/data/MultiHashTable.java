@@ -67,17 +67,17 @@ public class MultiHashTable<K, V> { // TODO should be elsewhere... and better
     // version: key is used
     @NotNull
     public <B> HashTable<K, B> toHashTable(@NotNull F2<K, ImmutableList<V>, B> conversion) {
-        return this.data.foldLeft((acc, p) -> acc.put(p.a, conversion.apply(p.a, p.b)), HashTable.empty(this.data.hasher));
+        return this.data.foldLeft((acc, p) -> acc.put(p.left, conversion.apply(p.left, p.right)), HashTable.empty(this.data.hasher));
     }
 
     @NotNull
     public final ImmutableList<ImmutableList<V>> values() {
-        return this.data.foldLeft((acc, p) -> acc.cons(p.b), ImmutableList.empty());
+        return this.data.foldLeft((acc, p) -> acc.cons(p.right), ImmutableList.empty());
     }
 
     @NotNull
     public final ImmutableList<V> gatherValues() {
-        return this.data.foldLeft((acc, p) -> acc.append(p.b), ImmutableList.empty());
+        return this.data.foldLeft((acc, p) -> acc.append(p.right), ImmutableList.empty());
     }
 
     @NotNull

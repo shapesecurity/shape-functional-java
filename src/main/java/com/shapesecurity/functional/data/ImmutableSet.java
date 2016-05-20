@@ -39,7 +39,7 @@ public class ImmutableSet<T> {
     }
 
     public <A> A foldAbelian(@NotNull F2<T, A, A> f, @NotNull A init) {
-        return this.data.foldRight((p, acc) -> f.apply(p.a, acc), init);
+        return this.data.foldRight((p, acc) -> f.apply(p.left, acc), init);
     }
 
     public ImmutableSet<T> union(@NotNull ImmutableSet<T> other) {
@@ -54,6 +54,6 @@ public class ImmutableSet<T> {
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object other) {
-        return other instanceof ImmutableSet && this.data.length == ((ImmutableSet) other).data.length && this.data.foldLeft((memo, pair) -> memo && ((ImmutableSet) other).data.containsKey(pair.a), true);
+        return other instanceof ImmutableSet && this.data.length == ((ImmutableSet) other).data.length && this.data.foldLeft((memo, pair) -> memo && ((ImmutableSet) other).data.containsKey(pair.left), true);
     }
 }

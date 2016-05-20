@@ -33,9 +33,9 @@ public class NonEmptyImmutableListTest extends TestBase {
     // Helpers
 
     private void testWithSpecialLists(@NotNull Effect<NonEmptyImmutableList<Integer>> f) {
-        f.apply(ImmutableList.list(0));
-        f.apply(ImmutableList.list(0, 1, 2));
-        f.apply(ImmutableList.list(3, 2, 1));
+        f.apply(ImmutableList.of(0));
+        f.apply(ImmutableList.of(0, 1, 2));
+        f.apply(ImmutableList.of(3, 2, 1));
         f.apply(LONG_LIST);
     }
 
@@ -50,7 +50,7 @@ public class NonEmptyImmutableListTest extends TestBase {
     @Test
     public void testList() {
         int a = rand();
-        NonEmptyImmutableList<Integer> list = ImmutableList.list(a);
+        NonEmptyImmutableList<Integer> list = ImmutableList.of(a);
         assertEquals(list.length, 1);
         assertEquals(list.head.intValue(), a);
         assertEquals(list.tail(), ImmutableList.<Integer>empty());
@@ -65,8 +65,8 @@ public class NonEmptyImmutableListTest extends TestBase {
 
     private void testHeadTail(NonEmptyImmutableList<Integer> list) {
         int a = rand();
-        assertEquals(list.maybeHead().just(), list.head);
-        assertEquals(list.maybeTail().just(), list.tail());
+        assertEquals(list.maybeHead().fromJust(), list.head);
+        assertEquals(list.maybeTail().fromJust(), list.tail());
         assertEquals(ImmutableList.cons(a, list).tail(), list);
         assertEquals(Integer.valueOf(a), ImmutableList.cons(a, list).head);
     }
@@ -89,8 +89,8 @@ public class NonEmptyImmutableListTest extends TestBase {
     @Test
     public void testReverse() {
         assertEquals(ImmutableList.empty().reverse(), ImmutableList.empty());
-        assertEquals(ImmutableList.list(1).reverse(), ImmutableList.list(1));
-        assertEquals(ImmutableList.list(1, 2, 3).reverse(), ImmutableList.list(3, 2, 1));
+        assertEquals(ImmutableList.of(1).reverse(), ImmutableList.of(1));
+        assertEquals(ImmutableList.of(1, 2, 3).reverse(), ImmutableList.of(3, 2, 1));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class NonEmptyImmutableListTest extends TestBase {
     }
 
     private void testLast(NonEmptyImmutableList<Integer> list) {
-        assertEquals(list.last(), list.index(list.length - 1).just());
+        assertEquals(list.last(), list.index(list.length - 1).fromJust());
     }
 
     @Test
@@ -113,20 +113,21 @@ public class NonEmptyImmutableListTest extends TestBase {
 
     @Test
     public void testExists() {
-        NonEmptyImmutableList<Integer> list = ImmutableList.list(1, 2, 3);
+        NonEmptyImmutableList<Integer> list = ImmutableList.of(1, 2, 3);
         assertTrue(list.exists((x) -> x == 2));
         assertFalse(list.exists((x) -> x == 4));
     }
 
     @Test
     public void testContains() {
-        NonEmptyImmutableList<Integer> list = ImmutableList.list(1, 2, 3);
-        NonEmptyImmutableList<ImmutableList<Integer>> listOfLists = ImmutableList.list(list);
+        NonEmptyImmutableList<Integer> list = ImmutableList.of(1, 2, 3);
+        NonEmptyImmutableList<ImmutableList<Integer>> listOfLists = ImmutableList.of(list);
         assertTrue(listOfLists.contains(list));
-        assertFalse(listOfLists.contains(ImmutableList.list(1, 2, 3)));
+        assertFalse(listOfLists.contains(ImmutableList.of(1, 2, 3)));
         assertFalse(listOfLists.contains(ImmutableList.empty()));
     }
 
+    @SafeVarargs
     private static <A> ImmutableSet<A> set(A... as) {
         return ImmutableSet.<A>emptyUsingIdentity().putAll(ImmutableList.from(as));
     }
@@ -138,16 +139,16 @@ public class NonEmptyImmutableListTest extends TestBase {
         Object b = new Object();
         Object c = new Object();
 
-        list = ImmutableList.list(a, a, a);
-        assertEquals(ImmutableList.list(a), list.uniqByIdentity().toList());
+        list = ImmutableList.of(a, a, a);
+        assertEquals(ImmutableList.of(a), list.uniqByIdentity().toList());
 
-        list = ImmutableList.list(a, b, c);
+        list = ImmutableList.of(a, b, c);
         assertEquals(set(a, b, c), list.uniqByIdentity());
 
-        list = ImmutableList.list(a, b, c, a, b, c, a, b, c);
+        list = ImmutableList.of(a, b, c, a, b, c, a, b, c);
         assertEquals(set(a, b, c), list.uniqByIdentity());
 
-        list = ImmutableList.list(c, b, a, c, b, a, c, b, a);
+        list = ImmutableList.of(c, b, a, c, b, a, c, b, a);
         assertEquals(set(a, b, c), list.uniqByIdentity());
 
         ImmutableList<Integer> intList = range(5000, 6000);
@@ -166,7 +167,7 @@ public class NonEmptyImmutableListTest extends TestBase {
     @Test
     public void testUniqOn() {
         ImmutableList<String> list =
-            ImmutableList.list("aardvark", "albatross", "alligator", "beaver", "crocodile");
+            ImmutableList.of("aardvark", "albatross", "alligator", "beaver", "crocodile");
         assertEquals(set("aardvark", "beaver", "crocodile"), list.uniqByEqualityOn(s -> s.substring(0, 1)));
         assertEquals(set("aardvark", "beaver", "crocodile"), list.uniqByEqualityOn(s -> s.charAt(0)));
         assertEquals(set("aardvark", "albatross", "beaver", "crocodile"), list.uniqByEqualityOn(s -> s.substring(0, 2)));
@@ -176,8 +177,8 @@ public class NonEmptyImmutableListTest extends TestBase {
             a0 = p("a", 0), a1 = p("a", 1), a2 = p("a", 2),
             b0 = p("b", 0), b1 = p("b", 1), b2 = p("a", 2),
             c0 = p("c", 0), c1 = p("c", 1), c2 = p("a", 2);
-        ImmutableList<Pair<String, Integer>> listOfPairs = ImmutableList.list(a0, a1, a2, b0, b2, b1, c0, c1, c2);
-        assertEquals(set(a0, b0, c0), listOfPairs.uniqByEqualityOn(p -> p.a));
-        assertEquals(set(a0, a1, a2), listOfPairs.uniqByEqualityOn(p -> p.b));
+        ImmutableList<Pair<String, Integer>> listOfPairs = ImmutableList.of(a0, a1, a2, b0, b2, b1, c0, c1, c2);
+        assertEquals(set(a0, b0, c0), listOfPairs.uniqByEqualityOn(p -> p.left));
+        assertEquals(set(a0, a1, a2), listOfPairs.uniqByEqualityOn(p -> p.right));
     }
 }

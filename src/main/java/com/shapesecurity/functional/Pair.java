@@ -21,56 +21,64 @@ import com.shapesecurity.functional.data.HashCodeBuilder;
 import org.jetbrains.annotations.NotNull;
 
 public final class Pair<A, B> {
-    public final A a;
-    public final B b;
+    public final A left;
+    public final B right;
 
     /**
      * Constructor method to utilize type inference.
-     * @param a first component
-     * @param b second component
+     * @param left first component
+     * @param right second component
      * @param <A> type of the first component
      * @param <B> type of the second component
      * @return the pair
      */
     @NotNull
-    public static <A, B> Pair<A, B> make(A a, B b) {
-        return new Pair<>(a, b);
+    public static <A, B> Pair<A, B> of(A left, B right) {
+        return new Pair<>(left, right);
     }
 
-    public Pair(A a, B b) {
+    public Pair(A left, B right) {
         super();
-        this.a = a;
-        this.b = b;
+        this.left = left;
+        this.right = right;
+    }
+
+    public A left() {
+        return this.left;
+    }
+
+    public B right() {
+        return this.right;
     }
 
     @NotNull
     public Pair<B, A> swap() {
-        return new Pair<>(this.b, this.a);
+        return new Pair<>(this.right, this.left);
     }
 
     @NotNull
-    public <A1> Pair<A1, B> mapA(@NotNull F<A, A1> f) {
-        return new Pair<>(f.apply(this.a), this.b);
+    public <A1> Pair<A1, B> mapLeft(@NotNull F<A, A1> f) {
+        return new Pair<>(f.apply(this.left), this.right);
     }
 
     @NotNull
-    public <B1> Pair<A, B1> mapB(@NotNull F<B, B1> f) {
-        return new Pair<>(this.a, f.apply(this.b));
+    public <B1> Pair<A, B1> mapRight(@NotNull F<B, B1> f) {
+        return new Pair<>(this.left, f.apply(this.right));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {
         return obj == this || obj instanceof Pair &&
-                ((Pair<A, B>) obj).a.equals(this.a) &&
-                ((Pair<A, B>) obj).b.equals(this.b);
+                ((Pair<A, B>) obj).left.equals(this.left) &&
+                ((Pair<A, B>) obj).right.equals(this.right);
     }
 
     @Override
     public int hashCode() {
-        int hash = HashCodeBuilder.put(HashCodeBuilder.init(), "Tuple2");
-        hash = HashCodeBuilder.put(hash, this.a);
-        return HashCodeBuilder.put(hash, this.b);
+        int hash = HashCodeBuilder.put(HashCodeBuilder.init(), "Pair");
+        hash = HashCodeBuilder.put(hash, this.left);
+        return HashCodeBuilder.put(hash, this.right);
     }
 }
 

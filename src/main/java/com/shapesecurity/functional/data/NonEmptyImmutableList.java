@@ -86,14 +86,14 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @NotNull
     @Override
     public Maybe<T> maybeHead() {
-        return Maybe.just(this.head);
+        return Maybe.of(this.head);
     }
 
     @NotNull
     @Override
     public Maybe<T> maybeLast() {
         if (this.tail().isEmpty()) {
-            return Maybe.just(this.head);
+            return Maybe.of(this.head);
         }
         return this.tail().maybeLast();
     }
@@ -101,14 +101,14 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @NotNull
     @Override
     public Maybe<ImmutableList<T>> maybeTail() {
-        return Maybe.just(this.tail());
+        return Maybe.of(this.tail());
     }
 
     @NotNull
     @Override
     public Maybe<ImmutableList<T>> maybeInit() {
         if (this.tail().isEmpty()) {
-            return Maybe.just(empty());
+            return Maybe.of(empty());
         }
         return this.tail().maybeInit().map(t -> t.cons(this.head));
     }
@@ -212,13 +212,13 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @NotNull
     @Override
     public Maybe<NonEmptyImmutableList<T>> toNonEmptyList() {
-        return Maybe.just(this);
+        return Maybe.of(this);
     }
 
     @NotNull
     @Override
     public <B> Maybe<B> decons(@NotNull F2<T, ImmutableList<T>, B> f) {
-        return Maybe.just(f.apply(this.head, this.tail()));
+        return Maybe.of(f.apply(this.head, this.tail()));
     }
 
     @NotNull
@@ -303,7 +303,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
             }
             list = ((NonEmptyImmutableList<T>) list).tail;
         }
-        return Pair.make(fromBounded(result, 0, j), list);
+        return new Pair<>(fromBounded(result, 0, j), list);
     }
 
     @NotNull
@@ -349,8 +349,8 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
         ImmutableList<T> list = this;
         for (int i = 0; i < length; i++) {
             Pair<B, C> pair = f.apply(acc, ((NonEmptyImmutableList<T>) list).head);
-            acc = pair.a;
-            result[i] = pair.b;
+            acc = pair.left;
+            result[i] = pair.right;
             list = ((NonEmptyImmutableList<T>) list).tail;
         }
         return new Pair<>(acc, from(result));

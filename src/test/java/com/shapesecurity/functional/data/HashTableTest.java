@@ -62,30 +62,30 @@ public class HashTableTest extends TestBase {
         assertEquals(N + 2, e3.length);
         assertEquals(N + 1, e4.length);
 
-        assertEquals(Maybe.<Integer>nothing(), e.get("a"));
-        assertEquals(Maybe.<Integer>nothing(), e.get("b"));
-        assertEquals(Maybe.<Integer>nothing(), e.get("c"));
+        assertEquals(Maybe.<Integer>empty(), e.get("a"));
+        assertEquals(Maybe.<Integer>empty(), e.get("b"));
+        assertEquals(Maybe.<Integer>empty(), e.get("c"));
 
-        assertEquals(Maybe.just(3), e1.get("a"));
-        assertEquals(Maybe.<Integer>nothing(), e1.get("b"));
-        assertEquals(Maybe.<Integer>nothing(), e1.get("c"));
+        assertEquals(Maybe.of(3), e1.get("a"));
+        assertEquals(Maybe.<Integer>empty(), e1.get("b"));
+        assertEquals(Maybe.<Integer>empty(), e1.get("c"));
 
-        assertEquals(Maybe.just(3), e2.get("a"));
-        assertEquals(Maybe.just(3), e2.get("b"));
-        assertEquals(Maybe.<Integer>nothing(), e2.get("c"));
+        assertEquals(Maybe.of(3), e2.get("a"));
+        assertEquals(Maybe.of(3), e2.get("b"));
+        assertEquals(Maybe.<Integer>empty(), e2.get("c"));
 
-        assertEquals(Maybe.just(3), e3.get("a"));
-        assertEquals(Maybe.<Integer>nothing(), e3.get("b"));
-        assertEquals(Maybe.just(3), e3.get("c"));
+        assertEquals(Maybe.of(3), e3.get("a"));
+        assertEquals(Maybe.<Integer>empty(), e3.get("b"));
+        assertEquals(Maybe.of(3), e3.get("c"));
 
-        assertEquals(Maybe.just(4), e4.get("a"));
-        assertEquals(Maybe.<Integer>nothing(), e4.get("b"));
-        assertEquals(Maybe.<Integer>nothing(), e4.get("c"));
+        assertEquals(Maybe.of(4), e4.get("a"));
+        assertEquals(Maybe.<Integer>empty(), e4.get("b"));
+        assertEquals(Maybe.<Integer>empty(), e4.get("c"));
 
         e4 = e4.put("a", 5);
-        assertEquals(Maybe.just(5), e4.get("a"));
-        assertEquals(Maybe.<Integer>nothing(), e4.get("b"));
-        assertEquals(Maybe.<Integer>nothing(), e4.get("c"));
+        assertEquals(Maybe.of(5), e4.get("a"));
+        assertEquals(Maybe.<Integer>empty(), e4.get("b"));
+        assertEquals(Maybe.<Integer>empty(), e4.get("c"));
     }
 
     long next(long seed) {
@@ -103,15 +103,15 @@ public class HashTableTest extends TestBase {
 
         for (int i = 0; i < N / 2; i++) {
             String key = Integer.toString(shuffled[i]);
-            assertEquals(Maybe.just(shuffled[i]), e.get(key));
+            assertEquals(Maybe.of(shuffled[i]), e.get(key));
             e = e.remove(key);
-            assertEquals(Maybe.<Integer>nothing(), e.get(key));
+            assertEquals(Maybe.<Integer>empty(), e.get(key));
             assertEquals(N - i - 1, e.length);
             assertEquals(e.length, e.remove(key).length);
         }
         for (int i = N / 2; i < N; i++) {
             String key = Integer.toString(shuffled[i]);
-            assertEquals(Maybe.just(shuffled[i]), e.get(key));
+            assertEquals(Maybe.of(shuffled[i]), e.get(key));
         }
     }
 
@@ -126,14 +126,14 @@ public class HashTableTest extends TestBase {
 
         for (int i = 0; i < N / 2; i++) {
             String key = Integer.toString(shuffled[i]);
-            assertEquals(Maybe.just(shuffled[i]), e.get(key));
+            assertEquals(Maybe.of(shuffled[i]), e.get(key));
             e = e.remove(key);
-            assertEquals(Maybe.<Integer>nothing(), e.get(key));
+            assertEquals(Maybe.<Integer>empty(), e.get(key));
             assertEquals(N - i - 1, e.length);
         }
         for (int i = N / 2; i < N; i++) {
             String key = Integer.toString(shuffled[i]);
-            assertEquals(Maybe.just(shuffled[i]), e.get(key));
+            assertEquals(Maybe.of(shuffled[i]), e.get(key));
         }
     }
 
@@ -162,9 +162,9 @@ public class HashTableTest extends TestBase {
         final int[] count = new int[1];
         assertEquals(N, e.length);
         e.entries().foreach(p -> {
-            assertEquals(p.a, Integer.toString(p.b));
-            assertFalse(visited[p.b]);
-            visited[p.b] = true;
+            assertEquals(p.left, Integer.toString(p.right));
+            assertFalse(visited[p.right]);
+            visited[p.right] = true;
             count[0]++;
         });
         assertEquals(N, count[0]);
@@ -181,7 +181,7 @@ public class HashTableTest extends TestBase {
         assertEquals(2, t1.merge(t2).length);
         t2 = t2.put("b", 2);
         assertEquals(2, t1.merge(t2).length);
-        assertEquals(2, (int) t1.merge(t2).get("b").just());
+        assertEquals(2, (int) t1.merge(t2).get("b").fromJust());
     }
 
     @Test
@@ -227,24 +227,24 @@ public class HashTableTest extends TestBase {
         }
 
         for (int i = 0; i < N; i++) {
-            assertEquals((Integer) i, t.get(Integer.toString(i)).just());
+            assertEquals((Integer) i, t.get(Integer.toString(i)).fromJust());
         }
         for (int i = 0; i < N; i++) {
-            assertEquals(Maybe.<Integer>nothing(), t.get(Integer.toString(i + N)));
+            assertEquals(Maybe.<Integer>empty(), t.get(Integer.toString(i + N)));
         }
     }
 
     @Test
     public void findTest() {
         HashTable<String, Integer> t = HashTable.emptyUsingEquality();
-        assertEquals(Maybe.<Pair<String, Integer>>nothing(), t.find(x -> x.a.equals("a")));
+        assertEquals(Maybe.<Pair<String, Integer>>empty(), t.find(x -> x.left.equals("a")));
         int N = 1000;
         for (int i = 0; i < N; i++) {
             t = t.put(Integer.toString(i), i);
         }
         for (int i = 0; i < N; i++) {
             int iFinal = i;
-            assertEquals(i, (int) t.find(x -> x.b == iFinal).just().b);
+            assertEquals(i, (int) t.find(x -> x.right == iFinal).fromJust().right);
         }
     }
 
@@ -252,13 +252,13 @@ public class HashTableTest extends TestBase {
     public void findMapTest() {
         int N = 1000;
         HashTable<String, Integer> empty = HashTable.<String, Integer>emptyUsingEquality();
-        assertEquals(Maybe.<Integer>nothing(), empty.findMap(x -> Maybe.just(0)));
+        assertEquals(Maybe.<Integer>empty(), empty.findMap(x -> Maybe.of(0)));
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> {
             return ht.put(Integer.toString(i), i);
         }, empty);
 
         range(0, N).foreach(i -> {
-            assertEquals(Integer.toString(i), t.findMap(x -> Maybe.iff(x.b.equals(i), x.a)).just());
+            assertEquals(Integer.toString(i), t.findMap(x -> Maybe.iff(x.right.equals(i), x.left)).fromJust());
         });
     }
 
@@ -270,7 +270,7 @@ public class HashTableTest extends TestBase {
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
                 HashTable.<String, Integer>emptyUsingEquality());
-        assertEquals(N * (N - 1) / 2, (int) t.foldLeft((a, i) -> a + i.b, 0));
+        assertEquals(N * (N - 1) / 2, (int) t.foldLeft((a, i) -> a + i.right, 0));
     }
 
     @Test
@@ -281,7 +281,7 @@ public class HashTableTest extends TestBase {
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
                 HashTable.<String, Integer>emptyUsingEquality());
-        assertEquals(N * (N - 1) / 2, (int) t.foldRight((i, a) -> a + i.b, 0));
+        assertEquals(N * (N - 1) / 2, (int) t.foldRight((i, a) -> a + i.right, 0));
     }
 
     @Test
@@ -293,7 +293,7 @@ public class HashTableTest extends TestBase {
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
                 HashTable.<String, Integer>emptyUsingEquality());
         int a[] = new int[1];
-        t.foreach(entry -> a[0] += entry.b);
+        t.foreach(entry -> a[0] += entry.right);
         assertEquals(N * (N - 1) / 2, a[0]);
     }
 
@@ -305,7 +305,7 @@ public class HashTableTest extends TestBase {
                 HashTable.<String, Integer>emptyUsingEquality());
         t = t.map(x -> x + 1);
         t.foreach(pair -> {
-            assertEquals(Integer.parseInt(pair.a), pair.b - 1);
+            assertEquals(Integer.parseInt(pair.left), pair.right - 1);
         });
     }
 
