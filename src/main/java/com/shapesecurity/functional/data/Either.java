@@ -71,7 +71,7 @@ public final class Either<A, B> {
 
     @SuppressWarnings("unchecked")
     public void foreach(@NotNull Effect<A> f1, @NotNull Effect<B> f2) {
-        if (tag == Tag.RIGHT) {
+        if (tag == Tag.LEFT) {
             f1.apply((A) data);
         } else {
             f2.apply((B) data);
