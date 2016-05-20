@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.shapesecurity.functional.F;
 
@@ -66,6 +67,9 @@ public class EitherTest {
         assertEquals(Either.right(3), Either.right(3));
         assertNotEquals(Either.left(3), Either.right(3));
         assertNotEquals(Either.right(3), Either.left(3));
+
+        Either.<Integer, Integer>left(1).foreach(x -> { assertEquals(1, x.intValue()); }, x -> { fail(); });
+        Either.<Integer, Integer>right(1).foreach(x -> { fail(); }, x -> { assertEquals(1, x.intValue()); });
     }
 
     @Test
