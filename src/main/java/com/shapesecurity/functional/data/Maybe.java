@@ -37,9 +37,22 @@ public abstract class Maybe<A> {
         return (Maybe<A>) NOTHING;
     }
 
+    @SuppressWarnings("unchecked")
+    @NotNull
+    @Deprecated
+    public static <A> Maybe<A> nothing() {
+        return Maybe.empty();
+    }
+
     @NotNull
     public static <A> Maybe<A> of(@NotNull A a) {
         return new Just<>(a);
+    }
+
+    @NotNull
+    @Deprecated
+    public static <A> Maybe<A> just(@NotNull A a) {
+        return Maybe.of(a);
     }
 
     @NotNull
@@ -89,6 +102,10 @@ public abstract class Maybe<A> {
 
     @NotNull
     public abstract A fromJust() throws NullPointerException;
+
+    @NotNull
+    @Deprecated
+    public abstract A just() throws NullPointerException;
 
     @NotNull
     public abstract <B> B maybe(@NotNull B def, @NotNull F<A, B> f);
@@ -164,6 +181,13 @@ public abstract class Maybe<A> {
 
         @NotNull
         @Override
+        @Deprecated
+        public A just() throws NullPointerException {
+            return this.fromJust();
+        }
+
+        @NotNull
+        @Override
         public <B> B maybe(@NotNull B def, @NotNull F<A, B> f) {
             return f.apply(this.value);
         }
@@ -233,6 +257,13 @@ public abstract class Maybe<A> {
         @Override
         public A fromJust() throws NullPointerException {
             throw new NullPointerException("Maybe.fromJust failed");
+        }
+
+        @NotNull
+        @Override
+        @Deprecated
+        public A just() throws NullPointerException {
+            return this.fromJust();
         }
 
         @NotNull

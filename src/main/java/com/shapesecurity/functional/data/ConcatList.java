@@ -39,6 +39,13 @@ public abstract class ConcatList<T> implements Iterable<T> {
         return (ConcatList<T>) EMPTY;
     }
 
+    @SuppressWarnings("unchecked")
+    @NotNull
+    @Deprecated
+    public static <T> ConcatList<T> nil() {
+        return ConcatList.empty();
+    }
+
     @SafeVarargs
     public static <T> ConcatList<T> of(T head, T... tail) {
         ConcatList<T> concatList = ConcatList.single(head);

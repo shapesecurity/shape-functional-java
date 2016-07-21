@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ImmutableListTest extends TestBase {
     protected void testWithSpecialLists(@NotNull Effect<ImmutableList<Integer>> f) {
-        f.apply(EmptyImmutableList.empty());
+        f.apply(Nil.empty());
         f.apply(ImmutableList.<Integer>empty());
         f.apply(ImmutableList.of(0));
         f.apply(ImmutableList.of(0, 1, 2));

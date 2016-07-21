@@ -24,6 +24,11 @@ public final class Pair<A, B> {
     public final A left;
     public final B right;
 
+    @Deprecated
+    public final A a;
+    @Deprecated
+    public final B b;
+
     /**
      * Constructor method to utilize type inference.
      * @param left first component
@@ -37,10 +42,17 @@ public final class Pair<A, B> {
         return new Pair<>(left, right);
     }
 
+    @NotNull
+    @Deprecated
+    public static <A, B> Pair<A, B> make(A left, B right) {
+        return Pair.of(left, right);
+    }
+
     public Pair(A left, B right) {
         super();
-        this.left = left;
-        this.right = right;
+        this.left = this.a = left;
+        this.right = this.b = right;
+
     }
 
     public A left() {
@@ -62,8 +74,20 @@ public final class Pair<A, B> {
     }
 
     @NotNull
+    @Deprecated
+    public <A1> Pair<A1, B> mapA(@NotNull F<A, A1> f) {
+        return this.mapLeft(f);
+    }
+
+    @NotNull
     public <B1> Pair<A, B1> mapRight(@NotNull F<B, B1> f) {
         return new Pair<>(this.left, f.apply(this.right));
+    }
+
+    @NotNull
+    @Deprecated
+    public <B1> Pair<A, B1> mapB(@NotNull F<B, B1> f) {
+        return this.mapRight(f);
     }
 
     @SuppressWarnings("unchecked")

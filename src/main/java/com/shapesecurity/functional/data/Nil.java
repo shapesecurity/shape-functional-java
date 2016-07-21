@@ -22,15 +22,15 @@ import com.shapesecurity.functional.Pair;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class EmptyImmutableList<T> extends ImmutableList<T> {
+public final class Nil<T> extends ImmutableList<T> {
     private final static int DEFAULT_HASH_CODE;
 
     static {
         int h = HashCodeBuilder.init();
-        DEFAULT_HASH_CODE = HashCodeBuilder.put(h, "EmptyImmutableList");
+        DEFAULT_HASH_CODE = HashCodeBuilder.put(h, "Nil");
     }
 
-    EmptyImmutableList() {
+    Nil() {
         super(0);
     }
 

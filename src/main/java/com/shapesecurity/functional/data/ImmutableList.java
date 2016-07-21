@@ -42,7 +42,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <A> The super type of all the elements.
  */
 public abstract class ImmutableList<A> implements Iterable<A> {
-    private static final ImmutableList<Object> EMPTY = new EmptyImmutableList<>();
+    private static final ImmutableList<Object> EMPTY = new Nil<>();
     @NotNull
     private final Thunk<Integer> hashCodeThunk = Thunk.from(this::calcHashCode);
 
@@ -85,6 +85,12 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      */
     }
 
+    @NotNull
+    @Deprecated
+    public static <A> ImmutableList<A> list(@NotNull List<A> arrayList) {
+    	return ImmutableList.from(arrayList);
+    }
+
     /**
      * Prepends "cons" an head element to a {@link ImmutableList}.
      *
@@ -102,6 +108,18 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     @SuppressWarnings("unchecked")
     public static <T> ImmutableList<T> empty() {
         return (ImmutableList<T>) EMPTY;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Deprecated
+    public static <T> ImmutableList<T> nil() {
+        return ImmutableList.empty();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Deprecated
+    public static <T> ImmutableList<T> list() {
+        return ImmutableList.empty();
     }
 
     /**
@@ -136,6 +154,13 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     @SafeVarargs
     public static <A> ImmutableList<A> from(@NotNull A... el) {
         return fromBounded(el, 0, el.length);
+    }
+
+    @NotNull
+    @SafeVarargs
+    @Deprecated
+    public static <T> NonEmptyImmutableList<T> list(@NotNull T head, @NotNull T... el) {
+        return ImmutableList.of(head, el);
     }
 
     /**

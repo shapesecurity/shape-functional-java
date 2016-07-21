@@ -265,7 +265,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
             if (f.apply(list.head)) {
                 return true;
             }
-            if (list.tail instanceof EmptyImmutableList) {
+            if (list.tail instanceof Nil) {
                 return false;
             }
             list = ((NonEmptyImmutableList<T>) list.tail);
@@ -279,7 +279,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
             if (list.head == a) {
                 return true;
             }
-            if (list.tail instanceof EmptyImmutableList) {
+            if (list.tail instanceof Nil) {
                 return false;
             }
             list = ((NonEmptyImmutableList<T>) list.tail);
