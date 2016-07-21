@@ -73,6 +73,13 @@ public abstract class HashTable<K, V> {
 
     @SuppressWarnings("unchecked")
     @NotNull
+    @Deprecated
+    public static <K> Hasher<K> defaultHasher() {
+        return HashTable.equalityHasher();
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
     public static <K> Hasher<K> identityHasher() {
         return (Hasher<K>) IDENTITY_HASHER;
     }
@@ -90,6 +97,18 @@ public abstract class HashTable<K, V> {
     @NotNull
     public static <K, V> HashTable<K, V> emptyUsingIdentity() {
         return empty(HashTable.identityHasher());
+    }
+
+    @NotNull
+    @Deprecated
+    public static <K, V> HashTable<K, V> empty() {
+        return HashTable.emptyUsingEquality();
+    }
+
+    @NotNull
+    @Deprecated
+    public static <K, V> HashTable<K, V> emptyP() {
+        return HashTable.emptyUsingIdentity();
     }
 
     @NotNull

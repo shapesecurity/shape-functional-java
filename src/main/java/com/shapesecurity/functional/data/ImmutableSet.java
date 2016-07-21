@@ -21,6 +21,16 @@ public class ImmutableSet<T> {
         return new ImmutableSet<>(HashTable.emptyUsingIdentity());
     }
 
+    @Deprecated
+    public static <T> ImmutableSet<T> empty() {
+        return ImmutableSet.emptyUsingEquality();
+    }
+
+    @Deprecated
+    public static <T> ImmutableSet<T> emptyP() {
+        return ImmutableSet.emptyUsingIdentity();
+    }
+
     public <B extends T> ImmutableSet<T> put(@NotNull B datum) {
         return new ImmutableSet<>(this.data.put(datum, Unit.unit));
     }

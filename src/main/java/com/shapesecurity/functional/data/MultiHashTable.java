@@ -28,6 +28,18 @@ public class MultiHashTable<K, V> { // TODO should be elsewhere... and better
     }
 
     @NotNull
+    @Deprecated
+    public static <K, V> MultiHashTable<K, V> empty() {
+        return MultiHashTable.emptyUsingEquality();
+    }
+
+    @NotNull
+    @Deprecated
+    public static <K, V> MultiHashTable<K, V> emptyP() {
+        return MultiHashTable.emptyUsingIdentity();
+    }
+
+    @NotNull
     public MultiHashTable<K, V> put(@NotNull K key, @NotNull V value) {
         return new MultiHashTable<>(this.data.put(key, ImmutableList.cons(value, this.data.get(key).orJust(ImmutableList.empty()))));
     }
