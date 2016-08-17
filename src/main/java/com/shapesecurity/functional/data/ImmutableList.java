@@ -20,6 +20,8 @@ import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
@@ -411,6 +413,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
         return target;
     }
 
+
     /**
      * Converts this list into an array. <p> Due to type erasure, the type of the resulting array
      * has to be determined at runtime. Fortunately, you can create a zero length array and this
@@ -427,6 +430,15 @@ public abstract class ImmutableList<A> implements Iterable<A> {
         int length = this.length;
         A[] target = constructor.apply(length);
         return toArray(target);
+    }
+
+    /**
+     * Converts the ImmutableList into a java.util List.
+     * @return The java list containing all the elements
+     */
+    @NotNull
+    public List<A> toList() {
+        return StreamSupport.stream(this.spliterator(), true).collect(Collectors.toList());
     }
 
     /**

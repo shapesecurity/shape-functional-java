@@ -28,6 +28,7 @@ import com.shapesecurity.functional.TestBase;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -292,5 +293,16 @@ public class ImmutableListTest extends TestBase {
         assertTrue(l.contains(b));
         assertTrue(l.contains(c));
         assertFalse(l.contains(d));
+    }
+
+    @Test
+    public void testToList() {
+        ImmutableList<String> l = ImmutableList.from("a", "b", "c");
+        List<String> jl = l.toList();
+
+        assertEquals("a", jl.get(0));
+        assertEquals("b", jl.get(1));
+        assertEquals("c", jl.get(2));
+        assertEquals(3, jl.size());
     }
 }
