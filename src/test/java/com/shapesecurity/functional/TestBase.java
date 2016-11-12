@@ -69,10 +69,13 @@ public abstract class TestBase {
     // static
 
     static protected NonEmptyImmutableList<Integer> LONG_LIST = ImmutableList.of(rand());
-
+    static protected NonEmptyImmutableList<Integer> LONG_INT_LIST = ImmutableList.of(0);
     static {
         for (int i = 0; i < 1000; i++) {
             LONG_LIST = LONG_LIST.cons(rand());
+        }
+        for (int i = 0; i < 1 << 14; i++) {
+            LONG_INT_LIST = LONG_INT_LIST.cons(i);
         }
     }
 
