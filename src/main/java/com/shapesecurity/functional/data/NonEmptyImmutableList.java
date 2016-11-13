@@ -25,6 +25,7 @@ import com.shapesecurity.functional.Pair;
 import org.jetbrains.annotations.NotNull;
 
 public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
+    public static final int HASH_START = HashCodeBuilder.put(HashCodeBuilder.init(), "List");
     @NotNull
     public final T head;
 
@@ -39,7 +40,15 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
 
     @NotNull
     public ImmutableList<T> tail() {
-        return tail;
+        return this.tail;
+    }
+
+    @NotNull
+    private T[] toObjectArray() {
+        int length = this.length;
+        Object[] target = new Object[length];
+        //noinspection unchecked
+        return (T[]) ((ImmutableList<Object>) this).toArray(target);
     }
 
     @SuppressWarnings("unchecked")
@@ -52,8 +61,22 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
             return false;
         }
 
-        NonEmptyImmutableList<T> list = (NonEmptyImmutableList<T>) o;
-        return this.head.equals(list.head) && this.tail().equals(list.tail());
+        // Manually expanded tail recursion
+        ImmutableList<T> l = this;
+        ImmutableList<T> r = (ImmutableList<T>) o;
+        while (l instanceof NonEmptyImmutableList && r instanceof NonEmptyImmutableList) {
+            if (l == r) {
+                return true;
+            }
+            NonEmptyImmutableList<T> nelL = (NonEmptyImmutableList<T>) l;
+            NonEmptyImmutableList<T> nelR = (NonEmptyImmutableList<T>) r;
+            if (!nelL.head.equals(nelR.head)) {
+                return false;
+            }
+            l = nelL.tail;
+            r = nelR.tail;
+        }
+        return l == r;
     }
 
     @NotNull
@@ -70,7 +93,11 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @NotNull
     @Override
     public <A> A foldRight(@NotNull F2<? super T, A, A> f, @NotNull A init) {
-        return f.apply(this.head, this.tail().foldRight(f, init));
+        T[] list = this.toObjectArray();
+        for (int i = this.length - 1; i >= 0; i--) {
+            init = f.apply(list[i], init);
+        }
+        return init;
     }
 
     @NotNull
@@ -80,7 +107,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
 
     @NotNull
     public T reduceRight(@NotNull F2<? super T, T, T> f) {
-        return this.init().foldRight(f, this.last());
+        return this.reverse().reduceLeft(f.flip());
     }
 
     @NotNull
@@ -92,54 +119,47 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @NotNull
     @Override
     public Maybe<T> maybeLast() {
-        if (this.tail().isEmpty()) {
-            return Maybe.of(this.head);
-        }
-        return this.tail().maybeLast();
+        return Maybe.of(this.last());
     }
+
 
     @NotNull
     @Override
     public Maybe<ImmutableList<T>> maybeTail() {
-        return Maybe.of(this.tail());
+        return Maybe.of(this.tail);
     }
 
     @NotNull
     @Override
     public Maybe<ImmutableList<T>> maybeInit() {
-        if (this.tail().isEmpty()) {
-            return Maybe.of(empty());
-        }
-        return this.tail().maybeInit().map(t -> t.cons(this.head));
+        return Maybe.of(this.init());
     }
 
     @NotNull
-    public final T last() {
-        NonEmptyImmutableList<T> nel = this;
+    public T last() {
+        NonEmptyImmutableList<T> other = this;
         while (true) {
-            if (nel.tail().isEmpty()) {
-                return nel.head;
+            if (other.tail instanceof NonEmptyImmutableList) {
+                other = ((NonEmptyImmutableList<T>) other.tail);
+            } else {
+                return other.head;
             }
-            nel = (NonEmptyImmutableList<T>) nel.tail();
         }
     }
 
     @NotNull
-    public final ImmutableList<T> init() {
-        if (this.tail().isEmpty()) {
-            return empty();
-        }
-        return cons(this.head, ((NonEmptyImmutableList<T>) this.tail()).init());
+    public ImmutableList<T> init() {
+        return fromBounded(this.toObjectArray(), 0, this.length - 1);
     }
 
     @NotNull
     @Override
     public ImmutableList<T> filter(@NotNull F<T, Boolean> f) {
         @SuppressWarnings("unchecked")
-        T[] result = (T[]) new Object[length];
+        T[] result = (T[]) new Object[this.length];
         ImmutableList<T> list = this;
         int j = 0;
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < this.length; i++) {
             T el = ((NonEmptyImmutableList<T>) list).head;
             if (f.apply(el)) {
                 result[j] = el;
@@ -154,9 +174,9 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @Override
     public <B> NonEmptyImmutableList<B> map(@NotNull F<T, B> f) {
         @SuppressWarnings("unchecked")
-        B[] result = (B[]) new Object[length];
+        B[] result = (B[]) new Object[this.length];
         ImmutableList<T> list = this;
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < this.length; i++) {
             result[i] = f.apply(((NonEmptyImmutableList<T>) list).head);
             list = ((NonEmptyImmutableList<T>) list).tail;
         }
@@ -248,8 +268,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
         if (list.length == 0) {
             return this;
         }
-        @SuppressWarnings("unchecked")
-        T[] copy = toArray((T[]) new Object[length]);
+        T[] copy = this.toObjectArray();
         @SuppressWarnings("unchecked")
         ImmutableList<T> listT = (ImmutableList<T>) list;
         for (int i = copy.length - 1; i >= 0; i--) {
@@ -290,10 +309,10 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @Override
     public Pair<ImmutableList<T>, ImmutableList<T>> span(@NotNull F<T, Boolean> f) {
         @SuppressWarnings("unchecked")
-        T[] result = (T[]) new Object[length];
+        T[] result = (T[]) new Object[this.length];
         ImmutableList<T> list = this;
         int j = 0;
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < this.length; i++) {
             T el = ((NonEmptyImmutableList<T>) list).head;
             if (f.apply(el)) {
                 result[j] = el;
@@ -325,29 +344,28 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @NotNull
     @Override
     public ImmutableList<T> removeAll(@NotNull F<T, Boolean> f) {
-        return filter(x -> !f.apply(x));
+        return this.filter(x -> !f.apply(x));
     }
 
     @NotNull
     @Override
     public NonEmptyImmutableList<T> reverse() {
-        @SuppressWarnings("unchecked")
-        T[] result = (T[]) new Object[length];
         ImmutableList<T> list = this;
-        for (int i = 0; i < length; i++) {
-            result[length - i - 1] = ((NonEmptyImmutableList<T>) list).head;
+        ImmutableList<T> acc = empty();
+        while (list instanceof NonEmptyImmutableList) {
+            acc = acc.cons(((NonEmptyImmutableList<T>) list).head);
             list = ((NonEmptyImmutableList<T>) list).tail;
         }
-        return (NonEmptyImmutableList<T>) from(result);
+        return (NonEmptyImmutableList<T>) acc;
     }
 
     @NotNull
     @Override
     public <B, C> Pair<B, ImmutableList<C>> mapAccumL(@NotNull F2<B, T, Pair<B, C>> f, @NotNull B acc) {
         @SuppressWarnings("unchecked")
-        C[] result = (C[]) new Object[length];
+        C[] result = (C[]) new Object[this.length];
         ImmutableList<T> list = this;
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < this.length; i++) {
             Pair<B, C> pair = f.apply(acc, ((NonEmptyImmutableList<T>) list).head);
             acc = pair.left;
             result[i] = pair.right;
@@ -374,7 +392,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
         ImmutableSet<B> set = ImmutableSet.<B>emptyUsingEquality().put(f.apply(this.head));
         ImmutableSet<T> out = ImmutableSet.<T>emptyUsingIdentity().put(this.head);
         ImmutableList<T> list = this.tail;
-        for (int i = 1; i < length; i++) {
+        for (int i = 1; i < this.length; i++) {
             T a = ((NonEmptyImmutableList<T>) list).head;
             B b = f.apply(a);
             if (!set.contains(b)) {
@@ -388,10 +406,9 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
 
     @Override
     protected int calcHashCode() {
-        int start = HashCodeBuilder.init();
-        start = HashCodeBuilder.put(start, "List");
-        start = HashCodeBuilder.put(start, head);
-        return HashCodeBuilder.put(start, tail);
+        int start = HASH_START;
+        start = HashCodeBuilder.put(start, this.head);
+        return HashCodeBuilder.put(start, this.tail);
     }
 }
 

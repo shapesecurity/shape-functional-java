@@ -16,30 +16,29 @@
 
 package com.shapesecurity.functional.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import java.util.ArrayList;
 
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.TestBase;
 
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.jetbrains.annotations.NotNull;
+import org.junit.Test;
 
 public class ImmutableListTest extends TestBase {
     protected void testWithSpecialLists(@NotNull Effect<ImmutableList<Integer>> f) {
         f.apply(Nil.empty());
-        f.apply(ImmutableList.<Integer>empty());
+        f.apply(ImmutableList.empty());
         f.apply(ImmutableList.of(0));
         f.apply(ImmutableList.of(0, 1, 2));
         f.apply(ImmutableList.of(3, 2, 1));
         f.apply(LONG_LIST);
+        f.apply(LONG_INT_LIST);
     }
 
     @Test
@@ -107,7 +106,7 @@ public class ImmutableListTest extends TestBase {
 
     private void testFrom(ImmutableList<Integer> list) {
         final ArrayList<Integer> arrList = new ArrayList<>();
-        list.foreach(arrList::add);
+        list.forEach(arrList::add);
         ImmutableList<Integer> listP = ImmutableList.from(arrList);
         assertEquals(list, listP);
     }
@@ -216,6 +215,21 @@ public class ImmutableListTest extends TestBase {
     }
 
     @Test
+    public void testReverse() {
+        ImmutableList<Integer> l = ImmutableList.empty();
+        for (int i = 0; i < 10000; i++) {
+            l = l.cons(i);
+        }
+        l = l.reverse();
+        for (int i = 0; i < 10000; i++) {
+            assertTrue(l instanceof NonEmptyImmutableList);
+            assertEquals(i, (int) ((NonEmptyImmutableList<Integer>) l).head);
+            l = ((NonEmptyImmutableList<Integer>) l).tail;
+        }
+        assertTrue(l instanceof Nil);
+    }
+
+    @Test
     public void testEquals() {
         testWithSpecialLists(this::testEquals);
     }
@@ -283,6 +297,32 @@ public class ImmutableListTest extends TestBase {
     }
 
     @Test
+    public void testFoldLeft() {
+        testWithSpecialLists(this::testFoldLeft);
+    }
+
+    private void testFoldLeft(@NotNull ImmutableList<Integer> integers) {
+        int total = 0;
+        for (int i : integers) {
+            total += i;
+        }
+        assertEquals((Integer) total, integers.foldLeft((a, b) -> a + b, 0));
+    }
+
+    @Test
+    public void testFoldRight() {
+        testWithSpecialLists(this::testFoldRight);
+    }
+
+    private void testFoldRight(@NotNull ImmutableList<Integer> integers) {
+        int total = 0;
+        for (int i : integers) {
+            total += i;
+        }
+        assertEquals((Integer) total, integers.foldRight((a, b) -> a + b, 0));
+    }
+
+    @Test
     public void testContains() {
         Object a = new Object();
         Object b = new Object();
@@ -293,16 +333,5 @@ public class ImmutableListTest extends TestBase {
         assertTrue(l.contains(b));
         assertTrue(l.contains(c));
         assertFalse(l.contains(d));
-    }
-
-    @Test
-    public void testToList() {
-        ImmutableList<String> l = ImmutableList.from("a", "b", "c");
-        List<String> jl = l.toList();
-
-        assertEquals("a", jl.get(0));
-        assertEquals("b", jl.get(1));
-        assertEquals("c", jl.get(2));
-        assertEquals(3, jl.size());
     }
 }
