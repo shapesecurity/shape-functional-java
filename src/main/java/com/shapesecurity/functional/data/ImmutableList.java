@@ -20,16 +20,15 @@ import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.function.Consumer;
 
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
-import com.shapesecurity.functional.Thunk;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An immutable singly linked list implementation. None of the operations in {@link ImmutableList}
@@ -45,8 +44,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class ImmutableList<A> implements Iterable<A> {
     private static final ImmutableList<Object> EMPTY = new Nil<>();
-    @NotNull
-    private final Thunk<Integer> hashCodeThunk = Thunk.from(this::calcHashCode);
+    @Nullable
+    private volatile Integer hashCode = null;
 
     /**
      * The length of the list.
@@ -191,12 +190,36 @@ public abstract class ImmutableList<A> implements Iterable<A> {
 
     @Override
     public final int hashCode() {
-        return this.hashCodeThunk.get();
+        // Manually expanded thunk
+        Integer hashCodeCached = this.hashCode;
+        if (hashCodeCached == null) {
+            // This is safe because calcHashCode has no side-effects.
+            int hc = this.calcHashCode();
+            this.hashCode = hc;
+            return hc;
+        } else {
+            return hashCodeCached;
+        }
+    }
+
+    /**
+     * This function is provided by Iterable that can be used to avoid a creation
+     * of an Iterator instance.
+     * @param action The action to be performed for each element
+     */
+    @Override
+    public void forEach(@NotNull Consumer<? super A> action) {
+        // Manually expanded recursion.
+        ImmutableList<A> list = this;
+        while (list instanceof NonEmptyImmutableList) {
+            A head = ((NonEmptyImmutableList<A>) list).head;
+            action.accept(head);
+            list = ((NonEmptyImmutableList<A>) list).tail;
+        }
     }
 
     @Override
     public Iterator<A> iterator() {
-
         return new Iterator<A>() {
             private ImmutableList<A> curr = ImmutableList.this;
 
@@ -207,12 +230,12 @@ public abstract class ImmutableList<A> implements Iterable<A> {
 
             @Override
             public A next() {
-                if (this.curr.isEmpty()) {
-                    throw new NoSuchElementException();
+                if (this.curr instanceof NonEmptyImmutableList) {
+                    NonEmptyImmutableList<A> nel = (NonEmptyImmutableList<A>) this.curr;
+                    this.curr = nel.tail;
+                    return nel.head;
                 }
-                A head = this.curr.maybeHead().fromJust();
-                this.curr = this.curr.maybeTail().fromJust();
-                return head;
+                throw new NoSuchElementException();
             }
 
             @Override
@@ -407,12 +430,11 @@ public abstract class ImmutableList<A> implements Iterable<A> {
         }
         ImmutableList<A> l = this;
         for (int i = 0; i < length; i++) {
-            target[i] = l.maybeHead().fromJust();
-            l = l.maybeTail().fromJust();
+            target[i] = ((NonEmptyImmutableList<A>) l).head;
+            l = ((NonEmptyImmutableList<A>) l).tail;
         }
         return target;
     }
-
 
     /**
      * Converts this list into an array. <p> Due to type erasure, the type of the resulting array
@@ -433,27 +455,13 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     }
 
     /**
-     * Converts the ImmutableList into a java.util List.
-     * @return The java list containing all the elements
-     */
-    @NotNull
-    public List<A> toList() {
-        return StreamSupport.stream(this.spliterator(), true).collect(Collectors.toList());
-    }
-
-    /**
      * Runs an effect function across all the elements.
-     *
+     * @deprecated Use {@link #forEach(Consumer)} instead.
      * @param f The Effect function.
      */
+    @Deprecated
     public final void foreach(@NotNull Effect<A> f) {
-        // Hand expanded recursion.
-        ImmutableList<A> list = this;
-        Maybe<A> head;
-        while ((head = list.maybeHead()).isJust()) {
-            f.e(head.fromJust());
-            list = list.maybeTail().fromJust();
-        }
+        this.forEach(f::e);
     }
 
     public abstract boolean isEmpty();
@@ -648,7 +656,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
                 return Maybe.empty();
             }
             index--;
-            l = l.maybeTail().fromJust();
+            l = ((NonEmptyImmutableList<A>) l).tail;
         }
         return l.maybeHead();
     }

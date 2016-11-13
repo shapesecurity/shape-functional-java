@@ -16,16 +16,33 @@
 
 package com.shapesecurity.functional.data;
 
+import java.util.function.IntFunction;
+
+import com.shapesecurity.functional.F;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.shapesecurity.functional.F;
-
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+@RunWith(Parameterized.class)
 public class ConcatListTest {
+    @SuppressWarnings("unchecked")
+    private final static IntFunction<ConcatList<Integer>>[] DATA = new IntFunction[]{
+        ConcatListTest::gen,
+        ConcatListTest::genLL,
+        ConcatListTest::genRL
+    };
+
+    @Parameterized.Parameters
+    public static IntFunction<ConcatList<Integer>>[] data() {
+        return DATA;
+    }
+
     private static ConcatList<Integer> gen(int size) {
         return gen(0, size);
     }
@@ -40,6 +57,25 @@ public class ConcatListTest {
             return gen(start, half).append(gen(start + half, size - half));
         }
     }
+
+    private static ConcatList<Integer> genLL(int size) {
+        ConcatList<Integer> acc = ConcatList.empty();
+        for (int i = 0; i < size; i++) {
+            acc = ConcatList.single(size - 1 - i).append(acc);
+        }
+        return acc;
+    }
+
+    private static ConcatList<Integer> genRL(int size) {
+        ConcatList<Integer> acc = ConcatList.empty();
+        for (int i = 0; i < size; i++) {
+            acc = acc.append1(i);
+        }
+        return acc;
+    }
+
+    @Parameterized.Parameter
+    public IntFunction<ConcatList<Integer>> generator;
 
     @Test
     public void simpleTest() {
@@ -59,7 +95,17 @@ public class ConcatListTest {
     public void findTest() {
         assertEquals(Maybe.<Integer>empty(), ConcatList.<Integer>empty().find(F.constant(true)));
         int N = (1 << 15) - 1;
-        ConcatList<Integer> list = gen(N);
+        ConcatList<Integer> list = generator.apply(N);
+        assertEquals(0, (int) list.find(F.constant(true)).fromJust());
+        assertEquals(Maybe.<Integer>empty(), list.find(F.constant(false)));
+        assertEquals(N - 1, (int) list.find(x -> x >= N - 1).fromJust());
+
+        list = genLL(N);
+        assertEquals(0, (int) list.find(F.constant(true)).fromJust());
+        assertEquals(Maybe.<Integer>empty(), list.find(F.constant(false)));
+        assertEquals(N - 1, (int) list.find(x -> x >= N - 1).fromJust());
+
+        list = genRL(N);
         assertEquals(0, (int) list.find(F.constant(true)).fromJust());
         assertEquals(Maybe.<Integer>empty(), list.find(F.constant(false)));
         assertEquals(N - 1, (int) list.find(x -> x >= N - 1).fromJust());
@@ -70,7 +116,7 @@ public class ConcatListTest {
         assertFalse(ConcatList.<Integer>empty().exists(F.constant(false)));
         assertFalse(ConcatList.<Integer>empty().exists(F.constant(true)));
         int N = (1 << 15) - 1;
-        ConcatList<Integer> list = gen(N);
+        ConcatList<Integer> list = generator.apply(N);
         assertTrue(list.exists(F.constant(true)));
         assertFalse(list.exists(F.constant(false)));
         assertTrue(list.exists(x -> x >= N - 1));
@@ -79,7 +125,7 @@ public class ConcatListTest {
 
     @Test
     public void monoidTest() {
-        Monoid<ConcatList<Integer>> m = ConcatList.<Integer>monoid();
+        Monoid<ConcatList<Integer>> m = ConcatList.monoid();
         assertEquals(0, m.identity().length);
         assertEquals(0, m.append(m.identity(), m.identity()).length);
         assertEquals(1, m.append(m.identity(), ConcatList.single(3)).length);
@@ -96,7 +142,7 @@ public class ConcatListTest {
             return 0;
         }, 0);
         int N = (1 << 15) - 1;
-        ConcatList<Integer> list = gen(N);
+        ConcatList<Integer> list = generator.apply(N);
         list.foldLeft((result, el) -> {
             assertEquals(result, el);
             return result + 1;
@@ -111,7 +157,7 @@ public class ConcatListTest {
     public void reverseTest() {
         assertEquals(0, ConcatList.<Integer>empty().reverse().length);
         int N = (1 << 15) - 1;
-        ConcatList<Integer> list = gen(N).reverse();
+        ConcatList<Integer> list = generator.apply(N).reverse();
         list.foldRight((result, el) -> {
             assertEquals(result, el);
             return result + 1;
@@ -122,13 +168,13 @@ public class ConcatListTest {
     public void toListTest() {
         assertEquals(0, ConcatList.<Integer>empty().toList().length);
         assertEquals(1, ConcatList.single(1).toList().length);
-        assertEquals(15, gen(15).toList().length);
+        assertEquals(15, generator.apply(15).toList().length);
     }
 
     @Test
     public void indexUpdateTest() {
-        int N = (1 << 15) - 1;
-        ConcatList<Integer> list = gen(N);
+        int N = (1 << 12) - 1;
+        ConcatList<Integer> list = generator.apply(N);
         for (int i = 0; i < N; i++) {
             assertEquals(i, (int) list.index(i).fromJust());
         }

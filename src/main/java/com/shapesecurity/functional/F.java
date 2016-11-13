@@ -47,5 +47,11 @@ public interface F<A, R> {
     public default <C> F<C, R> compose(@NotNull final F<C, A> f) {
         return c -> this.apply(f.apply(c));
     }
+
+
+    @NotNull
+    public default <B> F<A, B> then(@NotNull final F<R, B> f) {
+        return c -> f.apply(this.apply(c));
+    }
 }
 

@@ -16,6 +16,10 @@
 
 package com.shapesecurity.functional.data;
 
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.Thunk;
@@ -24,11 +28,18 @@ import com.shapesecurity.functional.Thunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class Maybe<A> {
-    private final static Maybe<Object> NOTHING = new Nothing<>();
+public final class Maybe<A> {
+    private final static int NOTHING_HASH_CODE = HashCodeBuilder.put(HashCodeBuilder.init(), "Nothing");
+
+    @SuppressWarnings("unchecked")
+    private final static Maybe NOTHING = new Maybe(null);
+
+    @Nullable
+    private final A value;
 
     // class local
-    private Maybe() {
+    private Maybe(@Nullable A value) {
+        this.value = value;
     }
 
     @SuppressWarnings("unchecked")
@@ -46,7 +57,7 @@ public abstract class Maybe<A> {
 
     @NotNull
     public static <A> Maybe<A> of(@NotNull A a) {
-        return new Just<>(a);
+        return new Maybe<>(a);
     }
 
     @NotNull
@@ -64,7 +75,9 @@ public abstract class Maybe<A> {
     }
 
     @Nullable
-    public abstract A toNullable();
+    public A toNullable() {
+        return this.value;
+    }
 
     public static <A> Maybe<A> join(@NotNull Maybe<Maybe<A>> m) {
         return m.flatMap((a) -> a);
@@ -89,7 +102,9 @@ public abstract class Maybe<A> {
         return empty();
     }
 
-    public abstract boolean eq(@NotNull Maybe<A> maybe);
+    public boolean eq(@NotNull Maybe<A> maybe) {
+        return Objects.equals(maybe.value, this.value);
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -98,39 +113,68 @@ public abstract class Maybe<A> {
     }
 
     @Override
-    public abstract int hashCode();
+    public int hashCode() {
+        return this.value == null ? NOTHING_HASH_CODE :
+               HashCodeBuilder.put(this.value.hashCode(), "Just");
+    }
 
     @NotNull
-    public abstract A fromJust() throws NullPointerException;
+    public A fromJust() throws NullPointerException {
+        return Objects.requireNonNull(this.value);
+    }
 
     @NotNull
     @Deprecated
-    public abstract A just() throws NullPointerException;
-
-    @NotNull
-    public abstract <B> B maybe(@NotNull B def, @NotNull F<A, B> f);
-
-    public final void foreach(@NotNull Effect<A> f) {
-        map(f);
+    public A just() throws NullPointerException {
+        return this.fromJust();
     }
 
-    public abstract boolean isJust();
+    @NotNull
+    public <B> B maybe(@NotNull B def, @NotNull F<A, B> f) {
+        return this.value == null ? def : f.apply(this.value);
+    }
+
+    public final void foreach(@NotNull Effect<A> f) {
+        this.map(f);
+    }
+
+    public boolean isJust() {
+        return this.value != null;
+    }
 
     public final boolean isNothing() {
         return !this.isJust();
     }
 
     @NotNull
-    public abstract ImmutableList<A> toList();
+    public ImmutableList<A> toList() {
+        return this.value == null ? ImmutableList.empty() : ImmutableList.from(this.value);
+    }
 
     @NotNull
-    public abstract A orJust(@NotNull A a);
+    public A orJust(@NotNull A a) {
+        return this.value == null ? a : this.value;
+    }
+
+    /**
+     * @deprecated Use {@link #orJustLazy(Supplier)} instead.
+     */
+    @NotNull
+    @Deprecated
+    public A orJustLazy(@NotNull Thunk<A> a) {
+        return this.value == null ? a.get() : this.value;
+    }
 
     @NotNull
-    public abstract A orJustLazy(@NotNull Thunk<A> a);
+    public A orJustLazy(@NotNull Supplier<A> a) {
+        return this.value == null ? a.get() : this.value;
+    }
 
     @NotNull
-    public abstract <B> Maybe<B> map(@NotNull F<A, B> f);
+    public <B> Maybe<B> map(@NotNull F<A, B> f) {
+        //noinspection unchecked
+        return this.value == null ? ((Maybe<B>) this) : of(f.apply(this.value));
+    }
 
     @NotNull
     public final <B> Maybe<B> bind(@NotNull F<A, Maybe<B>> f) {
@@ -138,181 +182,18 @@ public abstract class Maybe<A> {
     }
 
     @NotNull
-    public abstract <B> Maybe<B> flatMap(@NotNull F<A, Maybe<B>> f);
-
-    @NotNull
-    public abstract Maybe<A> filter(@NotNull F<A, Boolean> f);
-
-    private static class Just<A> extends Maybe<A> {
-        @NotNull
-        private final A value;
-        private Thunk<Integer> hashCodeThunk = Thunk.from(this::calcHashCode);
-
-        private Just(@NotNull A value) {
-            super();
-            this.value = value;
-        }
-
-        private int calcHashCode() {
-            return HashCodeBuilder.put(this.value.hashCode(), "Just");
-        }
-
-        @Nullable
-        @Override
-        public A toNullable() {
-            return value;
-        }
-
-        @Override
-        public boolean eq(@NotNull Maybe<A> maybe) {
-            return maybe instanceof Just && maybe.fromJust().equals(this.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return this.hashCodeThunk.get();
-        }
-
-        @NotNull
-        @Override
-        public A fromJust() throws NullPointerException {
-            return this.value;
-        }
-
-        @NotNull
-        @Override
-        @Deprecated
-        public A just() throws NullPointerException {
-            return this.fromJust();
-        }
-
-        @NotNull
-        @Override
-        public <B> B maybe(@NotNull B def, @NotNull F<A, B> f) {
-            return f.apply(this.value);
-        }
-
-        @Override
-        public boolean isJust() {
-            return true;
-        }
-
-        @NotNull
-        @Override
-        public ImmutableList<A> toList() {
-            return ImmutableList.cons(this.value, ImmutableList.empty());
-        }
-
-        @NotNull
-        @Override
-        public A orJust(@NotNull A a) {
-            return this.value;
-        }
-
-        @NotNull
-        @Override
-        public A orJustLazy(@NotNull Thunk<A> a) {
-            return this.value;
-        }
-
-        @NotNull
-        @Override
-        public <B> Maybe<B> map(@NotNull F<A, B> f) {
-            return Maybe.of(f.apply(this.value));
-        }
-
-        @NotNull
-        @Override
-        public <B> Maybe<B> flatMap(@NotNull F<A, Maybe<B>> f) {
-            return f.apply(this.value);
-        }
-
-        @NotNull
-        @Override
-        public Maybe<A> filter(@NotNull F<A, Boolean> f) {
-            return f.apply(this.value) ? this : Maybe.empty();
-        }
+    public <B> Maybe<B> flatMap(@NotNull F<A, Maybe<B>> f) {
+        //noinspection unchecked
+        return this.value == null ? ((Maybe<B>) this) : f.apply(this.value);
     }
 
-    private static class Nothing<A> extends Maybe<A> {
-        private final static int HASH_CODE = HashCodeBuilder.put(HashCodeBuilder.init(), "Nothing");
+    @NotNull
+    public Maybe<A> filter(@NotNull F<A, Boolean> f) {
+        return this.filter((Predicate<A>) f::apply);
+    }
 
-        @Nullable
-        @Override
-        public A toNullable() {
-            return null;
-        }
-
-        @Override
-        public boolean eq(@NotNull Maybe<A> maybe) {
-            return maybe == this;
-        }
-
-        @Override
-        public final int hashCode() {
-            return HASH_CODE;
-        }
-
-        @NotNull
-        @Override
-        public A fromJust() throws NullPointerException {
-            throw new NullPointerException("Maybe.fromJust failed");
-        }
-
-        @NotNull
-        @Override
-        @Deprecated
-        public A just() throws NullPointerException {
-            return this.fromJust();
-        }
-
-        @NotNull
-        @Override
-        public <B> B maybe(@NotNull B def, @NotNull F<A, B> f) {
-            return def;
-        }
-
-        @Override
-        public boolean isJust() {
-            return false;
-        }
-
-        @NotNull
-        @Override
-        public ImmutableList<A> toList() {
-            return ImmutableList.empty();
-        }
-
-        @NotNull
-        @Override
-        public A orJust(@NotNull A a) {
-            return a;
-        }
-
-        @NotNull
-        @Override
-        public A orJustLazy(@NotNull Thunk<A> a) {
-            return a.get();
-        }
-
-        @SuppressWarnings("unchecked")
-        @NotNull
-        @Override
-        public <B> Maybe<B> map(@NotNull F<A, B> f) {
-            return (Maybe<B>) NOTHING;
-        }
-
-        @SuppressWarnings("unchecked")
-        @NotNull
-        @Override
-        public <B> Maybe<B> flatMap(@NotNull F<A, Maybe<B>> f) {
-            return (Maybe<B>) NOTHING;
-        }
-
-        @NotNull
-        @Override
-        public Maybe<A> filter(@NotNull F<A, Boolean> f) {
-            return this;
-        }
+    @NotNull
+    public Maybe<A> filter(@NotNull Predicate<A> f) {
+        return this.value == null ? this : (f.test(this.value) ? this : empty());
     }
 }
