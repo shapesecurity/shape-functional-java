@@ -21,17 +21,17 @@ import com.shapesecurity.functional.Unit;
 import org.jetbrains.annotations.NotNull;
 
 public interface Semigroup<T> {
-    public static final UnitIdentity UNIT_IDENTITY = new UnitIdentity();
-    public static final IntegerAdditive INTEGER_ADDITIVE = new IntegerAdditive();
-    public static final IntegerMultiplicative INTEGER_MULTIPLICATIVE = new IntegerMultiplicative();
-    public static final StringConcat STRING_CONCAT = new StringConcat();
-    public static final BooleanOr BOOLEAN_OR = new BooleanOr();
-    public static final BooleanAnd BOOLEAN_AND = new BooleanAnd();
+    UnitIdentity UNIT_IDENTITY = new UnitIdentity();
+    IntegerAdditive INTEGER_ADDITIVE = new IntegerAdditive();
+    IntegerMultiplicative INTEGER_MULTIPLICATIVE = new IntegerMultiplicative();
+    StringConcat STRING_CONCAT = new StringConcat();
+    BooleanOr BOOLEAN_OR = new BooleanOr();
+    BooleanAnd BOOLEAN_AND = new BooleanAnd();
 
     @NotNull
     T append(T a, T b);
 
-    public static class UnitIdentity implements Semigroup<Unit> {
+    class UnitIdentity implements Semigroup<Unit> {
         protected UnitIdentity() {
         }
 
@@ -42,7 +42,7 @@ public interface Semigroup<T> {
         }
     }
 
-    public static class IntegerAdditive implements Semigroup<Integer> {
+    class IntegerAdditive implements Semigroup<Integer> {
         protected IntegerAdditive() {
         }
 
@@ -53,7 +53,7 @@ public interface Semigroup<T> {
         }
     }
 
-    public static class IntegerMultiplicative implements Semigroup<Integer> {
+    class IntegerMultiplicative implements Semigroup<Integer> {
         protected IntegerMultiplicative() {
         }
 
@@ -64,7 +64,7 @@ public interface Semigroup<T> {
         }
     }
 
-    public static class StringConcat implements Semigroup<String> {
+    class StringConcat implements Semigroup<String> {
         protected StringConcat() {
         }
 
@@ -75,7 +75,7 @@ public interface Semigroup<T> {
         }
     }
 
-    public static class BooleanOr implements Semigroup<Boolean> {
+    class BooleanOr implements Semigroup<Boolean> {
         protected BooleanOr() {
         }
 
@@ -86,7 +86,7 @@ public interface Semigroup<T> {
         }
     }
 
-    public static class BooleanAnd implements Semigroup<Boolean> {
+    class BooleanAnd implements Semigroup<Boolean> {
         protected BooleanAnd() {
         }
 

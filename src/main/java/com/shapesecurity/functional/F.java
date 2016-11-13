@@ -21,36 +21,36 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface F<A, R> {
     @NotNull
-    public static <A extends B, B> F<A, B> id() {
+    static <A extends B, B> F<A, B> id() {
         return o -> o;
     }
 
     @NotNull
-    public static <A, B> F<A, B> constant(@NotNull final B b) {
+    static <A, B> F<A, B> constant(@NotNull final B b) {
         return a -> b;
     }
 
     @NotNull
-    public static <A, B, C> F2<A, B, C> uncurry(@NotNull final F<A, F<B, C>> f) {
+    static <A, B, C> F2<A, B, C> uncurry(@NotNull final F<A, F<B, C>> f) {
         return (a, b) -> f.apply(a).apply(b);
     }
 
     @NotNull
-    public static <A, B, C> F<B, F<A, C>> flip(@NotNull final F<A, F<B, C>> f) {
+    static <A, B, C> F<B, F<A, C>> flip(@NotNull final F<A, F<B, C>> f) {
         return b -> a -> f.apply(a).apply(b);
     }
 
     @NotNull
-    public abstract R apply(@NotNull A a);
+    R apply(@NotNull A a);
 
     @NotNull
-    public default <C> F<C, R> compose(@NotNull final F<C, A> f) {
+    default <C> F<C, R> compose(@NotNull final F<C, A> f) {
         return c -> this.apply(f.apply(c));
     }
 
 
     @NotNull
-    public default <B> F<A, B> then(@NotNull final F<R, B> f) {
+    default <B> F<A, B> then(@NotNull final F<R, B> f) {
         return c -> f.apply(this.apply(c));
     }
 }

@@ -43,6 +43,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <A> The super type of all the elements.
  */
 public abstract class ImmutableList<A> implements Iterable<A> {
+    @SuppressWarnings("StaticInitializerReferencesSubClass")
     private static final ImmutableList<Object> EMPTY = new Nil<>();
     @Nullable
     private volatile Integer hashCode = null;
@@ -89,7 +90,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     @NotNull
     @Deprecated
     public static <A> ImmutableList<A> list(@NotNull List<A> arrayList) {
-    	return ImmutableList.from(arrayList);
+        return ImmutableList.from(arrayList);
     }
 
     /**
@@ -167,11 +168,11 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     /**
      * A helper constructor to create a potentially empty {@link ImmutableList} from part of an array.
      *
-     * @param el  Elements of the list
+     * @param el    Elements of the list
      * @param start The index to start conversion
-     * @param end The index before which the conversion stops. <code>end</code> will not be used as
-     *            an index to access <code>el</code>
-     * @param <A> The type of elements
+     * @param end   The index before which the conversion stops. <code>end</code> will not be used as
+     *              an index to access <code>el</code>
+     * @param <A>   The type of elements
      * @return a <code>ImmutableList</code> of type <code>A</code>.
      */
     @NotNull
@@ -205,6 +206,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     /**
      * This function is provided by Iterable that can be used to avoid a creation
      * of an Iterator instance.
+     *
      * @param action The action to be performed for each element
      */
     @Override
@@ -451,13 +453,14 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public final A[] toArray(@NotNull F<Integer, A[]> constructor) {
         int length = this.length;
         A[] target = constructor.apply(length);
-        return toArray(target);
+        return this.toArray(target);
     }
 
     /**
      * Runs an effect function across all the elements.
-     * @deprecated Use {@link #forEach(Consumer)} instead.
+     *
      * @param f The Effect function.
+     * @deprecated Use {@link #forEach(Consumer)} instead.
      */
     @Deprecated
     public final void foreach(@NotNull Effect<A> f) {
@@ -489,9 +492,9 @@ public abstract class ImmutableList<A> implements Iterable<A> {
 
     /**
      * Tests using object identity whether this list contains the element <code>a</code>.
-     *
+     * <p>
      * WARNING: object identity is tests using the <code>==</code> operator.
-     *          To test if object exists by equality, use {@link #exists(F)}
+     * To test if object exists by equality, use {@link #exists(F)}
      *
      * @param a An element.
      * @return Whether this list contains the element <code>a</code>.
@@ -539,7 +542,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract <B> ImmutableList<B> flatMap(@NotNull F<A, ImmutableList<B>> f);
 
     public final boolean isNotEmpty() {
-        return !isEmpty();
+        return !this.isEmpty();
     }
 
     /**

@@ -49,19 +49,17 @@ public final class Thunk<A> {
     @NotNull
     public final A get() {
         // Double locked.
-        if (this.value == null) {
+        A value = this.value;
+        if (value == null) {
             synchronized (this) {
-                if (this.value == null) {
-                    A v = supplier.get();
-                    this.value = v;
-                    return v;
-                } else {
-                    return this.value;
+                value = this.value;
+                if (value == null) {
+                    value = this.supplier.get();
+                    this.value = value;
                 }
             }
-        } else {
-            return this.value;
         }
+        return value;
     }
 }
 
