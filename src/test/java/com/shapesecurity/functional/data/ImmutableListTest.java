@@ -56,7 +56,7 @@ public class ImmutableListTest extends TestBase {
         testWithSpecialLists(this::testCons);
     }
 
-    public void testCons(@NotNull ImmutableList<Integer> list) {
+    private void testCons(@NotNull ImmutableList<Integer> list) {
         int a = rand();
         NonEmptyImmutableList<Integer> listP = ImmutableList.cons(a, list);
         assertEquals(list.length + 1, listP.length);
@@ -114,10 +114,10 @@ public class ImmutableListTest extends TestBase {
     @Test
     public void testFindMap() {
         ImmutableList<Integer> list = ImmutableList.of(0, 1, 2, 3, 4);
-        assertTrue(list.findMap(x -> x == 2 ? Maybe.of(x - 1) : Maybe.<Integer>empty()).fromJust() == 1);
-        assertEquals(Maybe.<Integer>empty(), list.findMap(x -> x == 5 ? Maybe.of(x - 1) : Maybe.<Integer>empty()));
+        assertTrue(list.findMap(x -> x == 2 ? Maybe.of(x - 1) : Maybe.empty()).fromJust() == 1);
+        assertEquals(Maybe.<Integer>empty(), list.findMap(x -> x == 5 ? Maybe.of(x - 1) : Maybe.empty()));
         assertEquals(Maybe.<Integer>empty(), ImmutableList.<Integer>empty().findMap(x -> x == 5 ? Maybe.of(x - 1) :
-                Maybe.<Integer>empty()));
+                                                                                         Maybe.empty()));
     }
 
     @Test
@@ -240,7 +240,7 @@ public class ImmutableListTest extends TestBase {
 
     @Test
     public void testSpan() {
-        testSpan(ImmutableList.<Integer>empty(), 0, 0);
+        testSpan(ImmutableList.empty(), 0, 0);
         testSpan(ImmutableList.of(1, 2, 3), 3, 0);
         testSpan(ImmutableList.of(10, 20, 30), 0, 3);
         testSpan(ImmutableList.of(5, 10, 15), 1, 2);

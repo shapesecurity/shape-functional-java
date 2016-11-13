@@ -94,6 +94,6 @@ public class MultiHashTable<K, V> { // TODO should be elsewhere... and better
 
     @NotNull
     public final <B> MultiHashTable<K, B> mapValues(@NotNull F<V, B> f) {
-        return new MultiHashTable<>(this.data.map(l -> l.map(f::apply)));
+        return new MultiHashTable<>(this.data.map(l -> l.map(f)));
     }
 }

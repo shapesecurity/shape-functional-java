@@ -20,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
 public interface Effect<A> extends F<A, Unit> {
-    public abstract void e(@NotNull A a);
+    void e(@NotNull A a);
 
     @NotNull
-    public default Unit apply(@NotNull A a) {
-        e(a);
+    default Unit apply(@NotNull A a) {
+        this.e(a);
         return Unit.unit;
     }
 }

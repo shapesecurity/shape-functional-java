@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class ConcatList<T> implements Iterable<T> {
+    @SuppressWarnings("StaticInitializerReferencesSubClass")
     private static final Empty<Object> EMPTY = new Empty<>();
     private static BinaryTreeMonoid<Object> MONOID = new BinaryTreeMonoid<>();
     public final int length;
@@ -270,7 +271,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
         return Maybe.fromNullable(this.updateInternal(index, element));
     }
 
-    public final static class Empty<T> extends ConcatList<T> {
+    private final static class Empty<T> extends ConcatList<T> {
         private Empty() {
             super(0, true);
         }
@@ -325,7 +326,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
         }
     }
 
-    public final static class Leaf<T> extends ConcatList<T> {
+    private final static class Leaf<T> extends ConcatList<T> {
         @NotNull
         public final T data;
 
@@ -381,7 +382,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
         }
     }
 
-    public final static class Fork<T> extends ConcatList<T> {
+    private final static class Fork<T> extends ConcatList<T> {
         @NotNull
         public final ConcatList<T> left, right;
 

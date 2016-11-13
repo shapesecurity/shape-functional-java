@@ -16,6 +16,8 @@
 
 package com.shapesecurity.functional.data;
 
+import java.util.function.Consumer;
+
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
@@ -155,7 +157,11 @@ public abstract class HashTable<K, V> {
         return this.foldRight((kvPair, pairs) -> pairs.cons(kvPair), ImmutableList.empty());
     }
 
-    public abstract void foreach(@NotNull Effect<Pair<K, V>> e);
+    public final void foreach(@NotNull Effect<Pair<K, V>> e) {
+        this.forEach(e::e);
+    }
+
+    public abstract void forEach(@NotNull Consumer<? super Pair<K, V>> e);
 
     @NotNull
     public abstract Maybe<Pair<K, V>> find(@NotNull F<Pair<K, V>, Boolean> f);
@@ -223,7 +229,7 @@ public abstract class HashTable<K, V> {
         }
 
         @Override
-        public void foreach(@NotNull Effect<Pair<K, V>> e) {
+        public void forEach(@NotNull Consumer<? super Pair<K, V>> e) {
 
         }
 
@@ -286,7 +292,7 @@ public abstract class HashTable<K, V> {
                 }
                 return new Leaf<>(this.hasher, this.dataList.cons(new Pair<>(key, value)), hash, this.length + 1);
             }
-            return toFork().put(key, value, hash);
+            return this.toFork().put(key, value, hash);
         }
 
         @NotNull
@@ -355,7 +361,7 @@ public abstract class HashTable<K, V> {
                     return new Leaf<>(this.hasher, newList, this.baseHash, newList.length);
                 }
             }
-            return toFork().merge(tree, merger);
+            return this.toFork().merge(tree, merger);
         }
 
         @NotNull
@@ -370,8 +376,8 @@ public abstract class HashTable<K, V> {
         }
 
         @Override
-        public void foreach(@NotNull Effect<Pair<K, V>> e) {
-            this.dataList.foreach(e);
+        public void forEach(@NotNull Consumer<? super Pair<K, V>> e) {
+            this.dataList.forEach(e);
         }
 
         @NotNull
@@ -388,7 +394,7 @@ public abstract class HashTable<K, V> {
 
         @Override
         public <B> Leaf<K, B> map(@NotNull F<V, B> f) {
-            return new Leaf<>(this.hasher, this.dataList.map(pair -> pair.mapRight(f)), baseHash, length);
+            return new Leaf<>(this.hasher, this.dataList.map(pair -> pair.mapRight(f)), this.baseHash, this.length);
         }
 
         @Override
@@ -415,9 +421,9 @@ public abstract class HashTable<K, V> {
             if (cloned[subHash] == null) {
                 cloned[subHash] = new Leaf<>(Fork.this.hasher, ImmutableList.empty(), hash >>> 5, 0);
             }
-            int length1 = cloned[subHash].length;
+            int oldLength = cloned[subHash].length;
             cloned[subHash] = cloned[subHash].put(key, value, hash >>> 5);
-            return new Fork<>(this.hasher, cloned, this.length - length1 + cloned[subHash].length);
+            return new Fork<>(this.hasher, cloned, this.length - oldLength + cloned[subHash].length);
         }
 
         @NotNull
@@ -499,10 +505,10 @@ public abstract class HashTable<K, V> {
         }
 
         @Override
-        public void foreach(@NotNull Effect<Pair<K, V>> e) {
+        public void forEach(@NotNull Consumer<? super Pair<K, V>> e) {
             for (@Nullable HashTable<K, V> child : this.children) {
                 if (child != null) {
-                    child.foreach(e);
+                    child.forEach(e);
                 }
             }
         }
@@ -511,8 +517,7 @@ public abstract class HashTable<K, V> {
         @Override
         public Maybe<Pair<K, V>> find(@NotNull F<Pair<K, V>, Boolean> f) {
             HashTable<K, V>[] children = this.children;
-            for (int i = 0, ln = children.length; i < ln; i++) {
-                HashTable<K, V> child = children[i];
+            for (HashTable<K, V> child : children) {
                 if (child != null) {
                     Maybe<Pair<K, V>> p = child.find(f);
                     if (p.isJust()) {
@@ -527,8 +532,7 @@ public abstract class HashTable<K, V> {
         @Override
         public <R> Maybe<R> findMap(@NotNull F<Pair<K, V>, Maybe<R>> f) {
             HashTable<K, V>[] children = this.children;
-            for (int i = 0, ln = children.length; i < ln; i++) {
-                HashTable<K, V> child = children[i];
+            for (HashTable<K, V> child : children) {
                 if (child != null) {
                     Maybe<R> p = child.findMap(f);
                     if (p.isJust()) {
@@ -548,16 +552,13 @@ public abstract class HashTable<K, V> {
                     clone[i] = this.children[i].map(f);
                 }
             }
-            return new Fork<>(hasher, clone, length);
+            return new Fork<>(this.hasher, clone, this.length);
         }
 
         @Override
         public boolean containsKey(@NotNull K key, int hash) {
             int subHash = hash & 31;
-            if (this.children[subHash] == null) {
-                return false;
-            }
-            return this.children[subHash].containsKey(key, hash >>> 5);
+            return this.children[subHash] != null && this.children[subHash].containsKey(key, hash >>> 5);
         }
     }
 }
