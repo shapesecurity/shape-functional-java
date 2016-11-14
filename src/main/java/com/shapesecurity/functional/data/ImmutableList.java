@@ -17,10 +17,12 @@
 package com.shapesecurity.functional.data;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
@@ -675,5 +677,25 @@ public abstract class ImmutableList<A> implements Iterable<A> {
 
     @Override
     public abstract boolean equals(Object o);
+
+    @NotNull
+    public Pair<ImmutableList<A>, ImmutableList<A>> partition(@NotNull Predicate<A> predicate) {
+        @SuppressWarnings("unchecked")
+        A[] result = (A[]) new Object[this.length];
+        int[] l = new int[]{0};
+        int[] r = new int[]{this.length};
+        this.forEach(a -> {
+            if (predicate.test(a)) {
+                result[l[0]++] = a;
+            } else {
+                result[--r[0]] = a;
+            }
+        });
+        ImmutableList<A> right = empty();
+        for (int i = l[0]; i < this.length; i++) {
+            right = right.cons(result[i]);
+        }
+        return Pair.of(fromBounded(result, 0, l[0]), right);
+    }
 }
 

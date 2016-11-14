@@ -334,4 +334,27 @@ public class ImmutableListTest extends TestBase {
         assertTrue(l.contains(c));
         assertFalse(l.contains(d));
     }
+
+    @Test
+    public void testPartition() {
+        Pair<ImmutableList<Integer>, ImmutableList<Integer>> parts = LONG_INT_LIST.partition(x -> x % 100 == 0);
+        ImmutableList<Integer> left = parts.left();
+        ImmutableList<Integer> right = parts.right();
+        ImmutableList<Integer> list = LONG_INT_LIST;
+        while (list instanceof NonEmptyImmutableList) {
+            if (((NonEmptyImmutableList<Integer>) list).head % 100 == 0) {
+                assertTrue(left instanceof NonEmptyImmutableList);
+                assertEquals(((NonEmptyImmutableList<Integer>) list).head, ((NonEmptyImmutableList<Integer>) left).head);
+                left = ((NonEmptyImmutableList<Integer>) left).tail;
+            } else {
+                assertTrue(right instanceof NonEmptyImmutableList);
+                assertEquals(((NonEmptyImmutableList<Integer>) list).head, ((NonEmptyImmutableList<Integer>) right).head);
+                right = ((NonEmptyImmutableList<Integer>) right).tail;
+            }
+            list = ((NonEmptyImmutableList<Integer>) list).tail;
+        }
+
+        assertTrue(left instanceof Nil);
+        assertTrue(right instanceof Nil);
+    }
 }

@@ -30,6 +30,8 @@ public class BenchmarkImmutableList extends TestBase {
         benchmarkReverse();
         System.out.print("benchmarkToArray: ");
         benchmarkToArray();
+        System.out.print("benchmarkPartition: ");
+        benchmarkPartition();
     }
 
     private static void benchmarkEquals() {
@@ -106,6 +108,21 @@ public class BenchmarkImmutableList extends TestBase {
         long start = System.nanoTime();
         for (int i = 0; i < measure; i++) {
             LONG_INT_LIST.toArray(Integer[]::new);
+        }
+        long elapse = System.nanoTime() - start;
+        System.out.printf("%.3fµs\n", elapse * 1e-3 / measure);
+    }
+
+    private static void benchmarkPartition() {
+        int warmup = 10000;
+        for (int i = 0; i < warmup; i++) {
+            LONG_LIST.partition(a -> a % 37 == a % 11);
+        }
+
+        int measure = 10000;
+        long start = System.nanoTime();
+        for (int i = 0; i < measure; i++) {
+            LONG_LIST.partition(a -> a % 37 == a % 11);
         }
         long elapse = System.nanoTime() - start;
         System.out.printf("%.3fµs\n", elapse * 1e-3 / measure);
