@@ -22,6 +22,7 @@ import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
+import com.shapesecurity.functional.Unit;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -154,7 +155,11 @@ public abstract class HashTable<K, V> {
 
     @NotNull
     public ImmutableList<Pair<K, V>> entries() {
-        return this.foldRight((kvPair, pairs) -> pairs.cons(kvPair), ImmutableList.empty());
+        //noinspection unchecked
+        Pair<K, V>[] pairs = ((Pair<K, V>[]) new Pair[this.length]);
+        int[] i = new int[1];
+        this.forEach(x -> pairs[i[0]++] = x);
+        return ImmutableList.from(pairs);
     }
 
     public final void foreach(@NotNull Effect<Pair<K, V>> e) {
@@ -179,6 +184,11 @@ public abstract class HashTable<K, V> {
 
     public boolean containsValue(@NotNull V value) {
         return this.find(p -> p.right == value).isJust();
+    }
+
+    @NotNull
+    public ImmutableSet<K> keys() {
+        return new ImmutableSet<>(this.map(F.constant(Unit.unit)));
     }
 
     /**
@@ -421,6 +431,7 @@ public abstract class HashTable<K, V> {
             if (cloned[subHash] == null) {
                 cloned[subHash] = new Leaf<>(Fork.this.hasher, ImmutableList.empty(), hash >>> 5, 0);
             }
+            //noinspection UnnecessaryLocalVariable
             int oldLength = cloned[subHash].length;
             cloned[subHash] = cloned[subHash].put(key, value, hash >>> 5);
             return new Fork<>(this.hasher, cloned, this.length - oldLength + cloned[subHash].length);
