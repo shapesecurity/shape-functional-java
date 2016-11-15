@@ -189,11 +189,11 @@ public final class Maybe<A> {
 
     @NotNull
     public Maybe<A> filter(@NotNull F<A, Boolean> f) {
-        return this.filter((Predicate<A>) f::apply);
+        return this.filterByPredicate(f::apply);
     }
 
     @NotNull
-    public Maybe<A> filter(@NotNull Predicate<A> f) {
+    public Maybe<A> filterByPredicate(@NotNull Predicate<A> f) {
         return this.value == null ? this : (f.test(this.value) ? this : empty());
     }
 }
