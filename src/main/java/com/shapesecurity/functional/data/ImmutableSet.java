@@ -9,7 +9,7 @@ public class ImmutableSet<T> {
     @NotNull
     private final HashTable<T, Unit> data;
 
-    private ImmutableSet(@NotNull HashTable<T, Unit> data) {
+    ImmutableSet(@NotNull HashTable<T, Unit> data) {
         this.data = data;
     }
 
