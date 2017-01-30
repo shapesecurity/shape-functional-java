@@ -9,6 +9,10 @@ public class ImmutableSet<T> {
     @NotNull
     private final HashTable<T, Unit> data;
 
+    public int length() {
+        return this.data.length;
+    }
+
     ImmutableSet(@NotNull HashTable<T, Unit> data) {
         this.data = data;
     }
