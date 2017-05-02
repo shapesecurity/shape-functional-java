@@ -18,6 +18,9 @@ package com.shapesecurity.functional;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.CheckReturnValue;
+
+@CheckReturnValue
 @FunctionalInterface
 public interface F4<A, B, C, D, R> {
     @NotNull

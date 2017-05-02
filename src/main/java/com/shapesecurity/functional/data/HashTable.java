@@ -27,12 +27,15 @@ import com.shapesecurity.functional.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.CheckReturnValue;
+
 /**
  * An immutable hash trie tree implementation.
  *
  * @param <K> Key type
  * @param <V> Value type
  */
+@CheckReturnValue
 public abstract class HashTable<K, V> {
     private final static Hasher<Object> EQUALITY_HASHER = new Hasher<Object>() {
         @Override

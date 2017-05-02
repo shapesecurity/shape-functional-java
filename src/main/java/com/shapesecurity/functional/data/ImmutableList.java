@@ -32,6 +32,8 @@ import com.shapesecurity.functional.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.CheckReturnValue;
+
 /**
  * An immutable singly linked list implementation. None of the operations in {@link ImmutableList}
  * changes the list itself. Therefore you can freely share the list in your system. <p> This is a
@@ -44,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <A> The super type of all the elements.
  */
+@CheckReturnValue
 public abstract class ImmutableList<A> implements Iterable<A> {
     @SuppressWarnings("StaticInitializerReferencesSubClass")
     private static final ImmutableList<Object> EMPTY = new Nil<>();

@@ -35,6 +35,9 @@ import com.shapesecurity.functional.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.CheckReturnValue;
+
+@CheckReturnValue
 public abstract class ConcatList<T> implements Iterable<T> {
     @SuppressWarnings("StaticInitializerReferencesSubClass")
     private static final Empty<Object> EMPTY = new Empty<>();

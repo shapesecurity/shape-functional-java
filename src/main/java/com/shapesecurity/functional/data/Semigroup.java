@@ -20,6 +20,9 @@ import com.shapesecurity.functional.Unit;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.CheckReturnValue;
+
+@CheckReturnValue
 public interface Semigroup<T> {
     UnitIdentity UNIT_IDENTITY = new UnitIdentity();
     IntegerAdditive INTEGER_ADDITIVE = new IntegerAdditive();
