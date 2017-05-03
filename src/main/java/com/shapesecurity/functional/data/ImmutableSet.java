@@ -3,9 +3,8 @@ package com.shapesecurity.functional.data;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Unit;
 
-import javax.annotation.Nonnull;
-
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 
 @CheckReturnValue
 public class ImmutableSet<T> {

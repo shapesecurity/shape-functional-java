@@ -16,23 +16,20 @@
 
 package com.shapesecurity.functional.data;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import javax.annotation.CheckReturnValue;
+import java.lang.reflect.Array;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * An immutable singly linked list implementation. None of the operations in {@link ImmutableList}

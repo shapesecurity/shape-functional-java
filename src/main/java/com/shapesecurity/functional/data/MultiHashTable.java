@@ -5,9 +5,8 @@ import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 
-import javax.annotation.Nonnull;
-
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 
 // Map from keys to multiple values.
 // This class does not distinguish between "key is present, but associated with empty list" and "key is not present". If you need that, don't use this class.

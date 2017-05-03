@@ -19,9 +19,8 @@ package com.shapesecurity.functional.data;
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 
-import javax.annotation.Nonnull;
-
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 
 @CheckReturnValue
 public final class Either<A, B> {

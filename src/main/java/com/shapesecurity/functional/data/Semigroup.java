@@ -18,9 +18,8 @@ package com.shapesecurity.functional.data;
 
 import com.shapesecurity.functional.Unit;
 
-import javax.annotation.Nonnull;
-
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 
 @CheckReturnValue
 public interface Semigroup<T> {

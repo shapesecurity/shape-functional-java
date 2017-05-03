@@ -16,9 +16,8 @@
 
 package com.shapesecurity.functional.data;
 
-import javax.annotation.Nonnull;
-
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 
 /**
  * HasCodeBuilder is a simple FNV hash builder for hash code generation of

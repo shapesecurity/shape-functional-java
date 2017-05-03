@@ -16,6 +16,14 @@
 
 package com.shapesecurity.functional.data;
 
+import com.shapesecurity.functional.Effect;
+import com.shapesecurity.functional.F;
+import com.shapesecurity.functional.F2;
+import com.shapesecurity.functional.Pair;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,16 +34,6 @@ import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Stack;
 import java.util.function.Consumer;
-
-import com.shapesecurity.functional.Effect;
-import com.shapesecurity.functional.F;
-import com.shapesecurity.functional.F2;
-import com.shapesecurity.functional.Pair;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import javax.annotation.CheckReturnValue;
 
 @CheckReturnValue
 public abstract class ConcatList<T> implements Iterable<T> {
