@@ -5,6 +5,9 @@ import com.shapesecurity.functional.Unit;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.CheckReturnValue;
+
+@CheckReturnValue
 public class ImmutableSet<T> {
     @NotNull
     private final HashTable<T, Unit> data;

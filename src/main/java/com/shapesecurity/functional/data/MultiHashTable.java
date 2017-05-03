@@ -7,8 +7,11 @@ import com.shapesecurity.functional.Pair;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.CheckReturnValue;
+
 // Map from keys to multiple values.
 // This class does not distinguish between "key is present, but associated with empty list" and "key is not present". If you need that, don't use this class.
+@CheckReturnValue
 public class MultiHashTable<K, V> { // TODO should be elsewhere... and better
     @NotNull
     private final HashTable<K, ImmutableList<V>> data;

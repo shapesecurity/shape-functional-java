@@ -18,6 +18,9 @@ package com.shapesecurity.functional.data;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.CheckReturnValue;
+
+@CheckReturnValue
 public interface Hasher<A> {
     int hash(@NotNull A data);
 

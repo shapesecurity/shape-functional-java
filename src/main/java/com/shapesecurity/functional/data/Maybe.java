@@ -28,6 +28,9 @@ import com.shapesecurity.functional.Thunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.CheckReturnValue;
+
+@CheckReturnValue
 public final class Maybe<A> {
     private final static int NOTHING_HASH_CODE = HashCodeBuilder.put(HashCodeBuilder.init(), "Nothing");
 

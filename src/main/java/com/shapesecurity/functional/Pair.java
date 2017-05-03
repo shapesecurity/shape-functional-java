@@ -20,6 +20,9 @@ import com.shapesecurity.functional.data.HashCodeBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.CheckReturnValue;
+
+@CheckReturnValue
 public final class Pair<A, B> {
     public final A left;
     public final B right;

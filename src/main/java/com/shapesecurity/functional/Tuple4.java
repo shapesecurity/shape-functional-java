@@ -20,6 +20,9 @@ import com.shapesecurity.functional.data.HashCodeBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.CheckReturnValue;
+
+@CheckReturnValue
 public final class Tuple4<A, B, C, D> {
     @NotNull
     public final A a;

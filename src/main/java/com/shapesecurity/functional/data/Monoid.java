@@ -20,6 +20,9 @@ import com.shapesecurity.functional.Unit;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.CheckReturnValue;
+
+@CheckReturnValue
 public interface Monoid<T> extends Semigroup<T> {
     public static final UnitIdentity UNIT = new UnitIdentity();
     public static final IntegerAdditive INTEGER_ADDITIVE = new IntegerAdditive();

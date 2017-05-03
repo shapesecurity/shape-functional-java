@@ -18,9 +18,12 @@ package com.shapesecurity.functional.data;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.CheckReturnValue;
+
 /**
  * HasCodeBuilder is a simple FNV hash builder for hash code generation of
  */
+@CheckReturnValue
 public final class HashCodeBuilder {
     //int is a 32 bit integer
     private static final int INITIAL_VALUE = -2128831035;

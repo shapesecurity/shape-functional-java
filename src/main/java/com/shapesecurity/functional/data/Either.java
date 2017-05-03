@@ -21,6 +21,9 @@ import com.shapesecurity.functional.F;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.CheckReturnValue;
+
+@CheckReturnValue
 public final class Either<A, B> {
     private final Object data;
 
