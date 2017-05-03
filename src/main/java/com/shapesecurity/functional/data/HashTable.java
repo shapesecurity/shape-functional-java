@@ -24,8 +24,8 @@ import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.Unit;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
@@ -39,124 +39,124 @@ import javax.annotation.CheckReturnValue;
 public abstract class HashTable<K, V> {
     private final static Hasher<Object> EQUALITY_HASHER = new Hasher<Object>() {
         @Override
-        public int hash(@NotNull Object data) {
+        public int hash(@Nonnull Object data) {
             return data.hashCode();
         }
 
         @Override
-        public boolean eq(@NotNull Object o, @NotNull Object b) {
+        public boolean eq(@Nonnull Object o, @Nonnull Object b) {
             return o.equals(b);
         }
     };
 
     public final static Hasher<Object> IDENTITY_HASHER = new Hasher<Object>() {
         @Override
-        public int hash(@NotNull Object data) {
+        public int hash(@Nonnull Object data) {
             return System.identityHashCode(data);
         }
 
         @Override
-        public boolean eq(@NotNull Object o, @NotNull Object b) {
+        public boolean eq(@Nonnull Object o, @Nonnull Object b) {
             return o == b;
         }
     };
 
-    @NotNull
+    @Nonnull
     public final Hasher<K> hasher;
     public final int length;
 
-    protected HashTable(@NotNull Hasher<K> hasher, int length) {
+    protected HashTable(@Nonnull Hasher<K> hasher, int length) {
         super();
         this.hasher = hasher;
         this.length = length;
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
+    @Nonnull
     public static <K> Hasher<K> equalityHasher() {
         return (Hasher<K>) EQUALITY_HASHER;
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
+    @Nonnull
     @Deprecated
     public static <K> Hasher<K> defaultHasher() {
         return HashTable.equalityHasher();
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
+    @Nonnull
     public static <K> Hasher<K> identityHasher() {
         return (Hasher<K>) IDENTITY_HASHER;
     }
 
-    @NotNull
-    public static <K, V> HashTable<K, V> empty(@NotNull Hasher<K> hasher) {
+    @Nonnull
+    public static <K, V> HashTable<K, V> empty(@Nonnull Hasher<K> hasher) {
         return new Empty<>(hasher);
     }
 
-    @NotNull
+    @Nonnull
     public static <K, V> HashTable<K, V> emptyUsingEquality() {
         return empty(HashTable.equalityHasher());
     }
 
-    @NotNull
+    @Nonnull
     public static <K, V> HashTable<K, V> emptyUsingIdentity() {
         return empty(HashTable.identityHasher());
     }
 
-    @NotNull
+    @Nonnull
     @Deprecated
     public static <K, V> HashTable<K, V> empty() {
         return HashTable.emptyUsingEquality();
     }
 
-    @NotNull
+    @Nonnull
     @Deprecated
     public static <K, V> HashTable<K, V> emptyP() {
         return HashTable.emptyUsingIdentity();
     }
 
-    @NotNull
-    public final HashTable<K, V> put(@NotNull K key, @NotNull V value) {
+    @Nonnull
+    public final HashTable<K, V> put(@Nonnull K key, @Nonnull V value) {
         return this.put(key, value, this.hasher.hash(key));
     }
 
-    @NotNull
-    public final HashTable<K, V> remove(@NotNull K key) {
+    @Nonnull
+    public final HashTable<K, V> remove(@Nonnull K key) {
         return this.remove(key, this.hasher.hash(key)).orJust(this);
     }
 
-    @NotNull
-    protected abstract HashTable<K, V> put(@NotNull K key, @NotNull V value, int hash);
+    @Nonnull
+    protected abstract HashTable<K, V> put(@Nonnull K key, @Nonnull V value, int hash);
 
-    @NotNull
-    protected abstract Maybe<HashTable<K, V>> remove(@NotNull K key, int hash);
+    @Nonnull
+    protected abstract Maybe<HashTable<K, V>> remove(@Nonnull K key, int hash);
 
-    @NotNull
-    public final Maybe<V> get(@NotNull K key) {
+    @Nonnull
+    public final Maybe<V> get(@Nonnull K key) {
         return this.get(key, this.hasher.hash(key));
     }
 
-    @NotNull
-    protected abstract Maybe<V> get(@NotNull K key, int hash);
+    @Nonnull
+    protected abstract Maybe<V> get(@Nonnull K key, int hash);
 
     @SuppressWarnings("unchecked")
-    @NotNull
-    public final HashTable<K, V> merge(@NotNull HashTable<K, V> tree) {
+    @Nonnull
+    public final HashTable<K, V> merge(@Nonnull HashTable<K, V> tree) {
         return this.merge(tree, (a, b) -> b);
     }
 
-    @NotNull
-    public abstract HashTable<K, V> merge(@NotNull HashTable<K, V> tree, @NotNull F2<V, V, V> merger);
+    @Nonnull
+    public abstract HashTable<K, V> merge(@Nonnull HashTable<K, V> tree, @Nonnull F2<V, V, V> merger);
 
-    @NotNull
-    public abstract <A> A foldLeft(@NotNull F2<A, Pair<K, V>, A> f, @NotNull A init);
+    @Nonnull
+    public abstract <A> A foldLeft(@Nonnull F2<A, Pair<K, V>, A> f, @Nonnull A init);
 
-    @NotNull
-    public abstract <A> A foldRight(@NotNull F2<Pair<K, V>, A, A> f, @NotNull A init);
+    @Nonnull
+    public abstract <A> A foldRight(@Nonnull F2<Pair<K, V>, A, A> f, @Nonnull A init);
 
-    @NotNull
+    @Nonnull
     public ImmutableList<Pair<K, V>> entries() {
         //noinspection unchecked
         Pair<K, V>[] pairs = ((Pair<K, V>[]) new Pair[this.length]);
@@ -165,31 +165,31 @@ public abstract class HashTable<K, V> {
         return ImmutableList.from(pairs);
     }
 
-    public final void foreach(@NotNull Effect<Pair<K, V>> e) {
+    public final void foreach(@Nonnull Effect<Pair<K, V>> e) {
         this.forEach(e::e);
     }
 
-    public abstract void forEach(@NotNull Consumer<? super Pair<K, V>> e);
+    public abstract void forEach(@Nonnull Consumer<? super Pair<K, V>> e);
 
-    @NotNull
-    public abstract Maybe<Pair<K, V>> find(@NotNull F<Pair<K, V>, Boolean> f);
+    @Nonnull
+    public abstract Maybe<Pair<K, V>> find(@Nonnull F<Pair<K, V>, Boolean> f);
 
-    @NotNull
-    public abstract <R> Maybe<R> findMap(@NotNull F<Pair<K, V>, Maybe<R>> f);
+    @Nonnull
+    public abstract <R> Maybe<R> findMap(@Nonnull F<Pair<K, V>, Maybe<R>> f);
 
-    public abstract <B> HashTable<K, B> map(@NotNull F<V, B> f);
+    public abstract <B> HashTable<K, B> map(@Nonnull F<V, B> f);
 
-    public boolean containsKey(@NotNull K key) {
+    public boolean containsKey(@Nonnull K key) {
         return this.containsKey(key, this.hasher.hash(key));
     }
 
-    public abstract boolean containsKey(@NotNull K key, int hash);
+    public abstract boolean containsKey(@Nonnull K key, int hash);
 
-    public boolean containsValue(@NotNull V value) {
+    public boolean containsValue(@Nonnull V value) {
         return this.find(p -> p.right == value).isJust();
     }
 
-    @NotNull
+    @Nonnull
     public ImmutableSet<K> keys() {
         return new ImmutableSet<>(this.map(F.constant(Unit.unit)));
     }
@@ -201,70 +201,70 @@ public abstract class HashTable<K, V> {
      * @param <V> Value type
      */
     private final static class Empty<K, V> extends HashTable<K, V> {
-        protected Empty(@NotNull Hasher<K> hasher) {
+        protected Empty(@Nonnull Hasher<K> hasher) {
             super(hasher, 0);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected HashTable<K, V> put(@NotNull K key, @NotNull V value, int hash) {
+        protected HashTable<K, V> put(@Nonnull K key, @Nonnull V value, int hash) {
             return new Leaf<>(this.hasher, ImmutableList.of(new Pair<>(key, value)), hash, 1);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected Maybe<HashTable<K, V>> remove(@NotNull K key, int hash) {
+        protected Maybe<HashTable<K, V>> remove(@Nonnull K key, int hash) {
             return Maybe.empty();
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected Maybe<V> get(@NotNull K key, int hash) {
+        protected Maybe<V> get(@Nonnull K key, int hash) {
             return Maybe.empty();
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public HashTable<K, V> merge(@NotNull HashTable<K, V> tree, @NotNull F2<V, V, V> merger) {
+        public HashTable<K, V> merge(@Nonnull HashTable<K, V> tree, @Nonnull F2<V, V, V> merger) {
             return tree;
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public <A> A foldLeft(@NotNull F2<A, Pair<K, V>, A> f, @NotNull A init) {
+        public <A> A foldLeft(@Nonnull F2<A, Pair<K, V>, A> f, @Nonnull A init) {
             return init;
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public <A> A foldRight(@NotNull F2<Pair<K, V>, A, A> f, @NotNull A init) {
+        public <A> A foldRight(@Nonnull F2<Pair<K, V>, A, A> f, @Nonnull A init) {
             return init;
         }
 
         @Override
-        public void forEach(@NotNull Consumer<? super Pair<K, V>> e) {
+        public void forEach(@Nonnull Consumer<? super Pair<K, V>> e) {
 
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public Maybe<Pair<K, V>> find(@NotNull F<Pair<K, V>, Boolean> f) {
+        public Maybe<Pair<K, V>> find(@Nonnull F<Pair<K, V>, Boolean> f) {
             return Maybe.empty();
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public <R> Maybe<R> findMap(@NotNull F<Pair<K, V>, Maybe<R>> f) {
+        public <R> Maybe<R> findMap(@Nonnull F<Pair<K, V>, Maybe<R>> f) {
             return Maybe.empty();
         }
 
         @Override
-        public <B> HashTable<K, B> map(@NotNull F<V, B> f) {
+        public <B> HashTable<K, B> map(@Nonnull F<V, B> f) {
             return emptyUsingEquality();
         }
 
         @Override
-        public boolean containsKey(@NotNull K key, int hash) {
+        public boolean containsKey(@Nonnull K key, int hash) {
             return false;
         }
     }
@@ -277,19 +277,19 @@ public abstract class HashTable<K, V> {
      * @param <V> Value type
      */
     private final static class Leaf<K, V> extends HashTable<K, V> {
-        @NotNull
+        @Nonnull
         private final ImmutableList<Pair<K, V>> dataList;
         public int baseHash;
 
-        protected Leaf(@NotNull Hasher<K> hasher, @NotNull ImmutableList<Pair<K, V>> dataList, int baseHash, int length) {
+        protected Leaf(@Nonnull Hasher<K> hasher, @Nonnull ImmutableList<Pair<K, V>> dataList, int baseHash, int length) {
             super(hasher, length);
             this.dataList = dataList;
             this.baseHash = baseHash;
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected HashTable<K, V> put(@NotNull final K key, @NotNull final V value, final int hash) {
+        protected HashTable<K, V> put(@Nonnull final K key, @Nonnull final V value, final int hash) {
             if (hash == this.baseHash) {
                 Pair<Boolean, ImmutableList<Pair<K, V>>> result = this.dataList.mapAccumL((found, kvPair) -> {
                     if (found) {
@@ -308,9 +308,9 @@ public abstract class HashTable<K, V> {
             return this.toFork().put(key, value, hash);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected Maybe<HashTable<K, V>> remove(@NotNull final K key, int hash) {
+        protected Maybe<HashTable<K, V>> remove(@Nonnull final K key, int hash) {
             if (this.baseHash != hash) {
                 return Maybe.empty();
             }
@@ -340,9 +340,9 @@ public abstract class HashTable<K, V> {
             return new Fork<>(this.hasher, children, this.length);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected Maybe<V> get(@NotNull final K key, final int hash) {
+        protected Maybe<V> get(@Nonnull final K key, final int hash) {
             if (this.baseHash != hash) {
                 return Maybe.empty();
             }
@@ -351,9 +351,9 @@ public abstract class HashTable<K, V> {
         }
 
         @SuppressWarnings("unchecked")
-        @NotNull
+        @Nonnull
         @Override
-        public HashTable<K, V> merge(@NotNull HashTable<K, V> tree, @NotNull final F2<V, V, V> merger) {
+        public HashTable<K, V> merge(@Nonnull HashTable<K, V> tree, @Nonnull final F2<V, V, V> merger) {
             if (tree instanceof Empty) {
                 return this;
             } else if (tree instanceof Leaf) {
@@ -361,7 +361,7 @@ public abstract class HashTable<K, V> {
                 if (leaf.baseHash == this.baseHash) {
                     final Pair<K, V>[] pairs = this.dataList.toArray(new Pair[this.dataList.length]);
                     ImmutableList<Pair<K, V>> right = leaf.dataList.foldLeft(
-                            (@NotNull ImmutableList<Pair<K, V>> result, @NotNull Pair<K, V> kvPair) -> {
+                            (@Nonnull ImmutableList<Pair<K, V>> result, @Nonnull Pair<K, V> kvPair) -> {
                                 for (int i = 0; i < pairs.length; i++) {
                                     if (Leaf.this.hasher.eq(pairs[i].left, kvPair.left)) {
                                         pairs[i] = new Pair<>(pairs[i].left, merger.apply(pairs[i].right, kvPair.right));
@@ -377,58 +377,58 @@ public abstract class HashTable<K, V> {
             return this.toFork().merge(tree, merger);
         }
 
-        @NotNull
-        public <A> A foldLeft(@NotNull F2<A, Pair<K, V>, A> f, @NotNull A init) {
+        @Nonnull
+        public <A> A foldLeft(@Nonnull F2<A, Pair<K, V>, A> f, @Nonnull A init) {
             return this.dataList.foldLeft(f, init);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public <A> A foldRight(@NotNull F2<Pair<K, V>, A, A> f, @NotNull A init) {
+        public <A> A foldRight(@Nonnull F2<Pair<K, V>, A, A> f, @Nonnull A init) {
             return this.dataList.foldRight(f, init);
         }
 
         @Override
-        public void forEach(@NotNull Consumer<? super Pair<K, V>> e) {
+        public void forEach(@Nonnull Consumer<? super Pair<K, V>> e) {
             this.dataList.forEach(e);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public Maybe<Pair<K, V>> find(@NotNull F<Pair<K, V>, Boolean> f) {
+        public Maybe<Pair<K, V>> find(@Nonnull F<Pair<K, V>, Boolean> f) {
             return this.dataList.find(f);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public <R> Maybe<R> findMap(@NotNull F<Pair<K, V>, Maybe<R>> f) {
+        public <R> Maybe<R> findMap(@Nonnull F<Pair<K, V>, Maybe<R>> f) {
             return this.dataList.findMap(f);
         }
 
         @Override
-        public <B> Leaf<K, B> map(@NotNull F<V, B> f) {
+        public <B> Leaf<K, B> map(@Nonnull F<V, B> f) {
             return new Leaf<>(this.hasher, this.dataList.map(pair -> pair.mapRight(f)), this.baseHash, this.length);
         }
 
         @Override
-        public boolean containsKey(@NotNull K key, int hash) {
+        public boolean containsKey(@Nonnull K key, int hash) {
             return hash == this.baseHash
                     && this.dataList.exists(kvPair -> Leaf.this.hasher.eq(kvPair.left, key));
         }
     }
 
     private final static class Fork<K, V> extends HashTable<K, V> {
-        @NotNull
+        @Nonnull
         private final HashTable<K, V>[] children;
 
-        private Fork(@NotNull Hasher<K> hasher, @NotNull HashTable<K, V>[] children, int length) {
+        private Fork(@Nonnull Hasher<K> hasher, @Nonnull HashTable<K, V>[] children, int length) {
             super(hasher, length);
             this.children = children;
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected HashTable<K, V> put(@NotNull K key, @NotNull V value, int hash) {
+        protected HashTable<K, V> put(@Nonnull K key, @Nonnull V value, int hash) {
             int subHash = hash & 31;
             HashTable<K, V>[] cloned = Fork.this.children.clone();
             if (cloned[subHash] == null) {
@@ -440,9 +440,9 @@ public abstract class HashTable<K, V> {
             return new Fork<>(this.hasher, cloned, this.length - oldLength + cloned[subHash].length);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected Maybe<HashTable<K, V>> remove(@NotNull K key, int hash) {
+        protected Maybe<HashTable<K, V>> remove(@Nonnull K key, int hash) {
             final int subHash = hash & 31;
             if (this.children[subHash] == null) {
                 return Maybe.empty();
@@ -455,9 +455,9 @@ public abstract class HashTable<K, V> {
             });
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected Maybe<V> get(@NotNull K key, int hash) {
+        protected Maybe<V> get(@Nonnull K key, int hash) {
             int subHash = hash & 31;
             if (this.children[subHash] == null) {
                 return Maybe.empty();
@@ -465,9 +465,9 @@ public abstract class HashTable<K, V> {
             return this.children[subHash].get(key, hash >>> 5);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public Fork<K, V> merge(@NotNull HashTable<K, V> tree, @NotNull F2<V, V, V> merger) {
+        public Fork<K, V> merge(@Nonnull HashTable<K, V> tree, @Nonnull F2<V, V, V> merger) {
             if (tree instanceof Empty) {
                 return this;
             } else if (tree instanceof Leaf) {
@@ -477,8 +477,8 @@ public abstract class HashTable<K, V> {
             return this.mergeFork(((Fork<K, V>) tree), merger);
         }
 
-        @NotNull
-        private Fork<K, V> mergeFork(@NotNull Fork<K, V> tree, @NotNull F2<V, V, V> merger) {
+        @Nonnull
+        private Fork<K, V> mergeFork(@Nonnull Fork<K, V> tree, @Nonnull F2<V, V, V> merger) {
             // Mutable array.
             HashTable<K, V>[] cloned = Fork.this.children.clone();
             int count = 0;
@@ -495,9 +495,9 @@ public abstract class HashTable<K, V> {
             return new Fork<>(this.hasher, cloned, count);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public <A> A foldLeft(@NotNull F2<A, Pair<K, V>, A> f, @NotNull A init) {
+        public <A> A foldLeft(@Nonnull F2<A, Pair<K, V>, A> f, @Nonnull A init) {
             for (@Nullable HashTable<K, V> child : this.children) {
                 if (child != null) {
                     init = child.foldLeft(f, init);
@@ -506,9 +506,9 @@ public abstract class HashTable<K, V> {
             return init;
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public <A> A foldRight(@NotNull F2<Pair<K, V>, A, A> f, @NotNull A init) {
+        public <A> A foldRight(@Nonnull F2<Pair<K, V>, A, A> f, @Nonnull A init) {
             for (int i = this.children.length - 1; i >= 0; i--) {
                 if (this.children[i] == null) {
                     continue;
@@ -519,7 +519,7 @@ public abstract class HashTable<K, V> {
         }
 
         @Override
-        public void forEach(@NotNull Consumer<? super Pair<K, V>> e) {
+        public void forEach(@Nonnull Consumer<? super Pair<K, V>> e) {
             for (@Nullable HashTable<K, V> child : this.children) {
                 if (child != null) {
                     child.forEach(e);
@@ -527,9 +527,9 @@ public abstract class HashTable<K, V> {
             }
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public Maybe<Pair<K, V>> find(@NotNull F<Pair<K, V>, Boolean> f) {
+        public Maybe<Pair<K, V>> find(@Nonnull F<Pair<K, V>, Boolean> f) {
             HashTable<K, V>[] children = this.children;
             for (HashTable<K, V> child : children) {
                 if (child != null) {
@@ -542,9 +542,9 @@ public abstract class HashTable<K, V> {
             return Maybe.empty();
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public <R> Maybe<R> findMap(@NotNull F<Pair<K, V>, Maybe<R>> f) {
+        public <R> Maybe<R> findMap(@Nonnull F<Pair<K, V>, Maybe<R>> f) {
             HashTable<K, V>[] children = this.children;
             for (HashTable<K, V> child : children) {
                 if (child != null) {
@@ -559,7 +559,7 @@ public abstract class HashTable<K, V> {
 
         @SuppressWarnings("unchecked")
         @Override
-        public <B> Fork<K, B> map(@NotNull F<V, B> f) {
+        public <B> Fork<K, B> map(@Nonnull F<V, B> f) {
             HashTable<K, B>[] clone = new HashTable[this.children.length];
             for (int i = 0; i < clone.length; i++) {
                 if (this.children[i] != null) {
@@ -570,7 +570,7 @@ public abstract class HashTable<K, V> {
         }
 
         @Override
-        public boolean containsKey(@NotNull K key, int hash) {
+        public boolean containsKey(@Nonnull K key, int hash) {
             int subHash = hash & 31;
             return this.children[subHash] != null && this.children[subHash].containsKey(key, hash >>> 5);
         }

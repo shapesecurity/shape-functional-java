@@ -18,22 +18,22 @@ package com.shapesecurity.functional;
 
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.CheckReturnValue;
 
 @CheckReturnValue
 public final class Tuple4<A, B, C, D> {
-    @NotNull
+    @Nonnull
     public final A a;
-    @NotNull
+    @Nonnull
     public final B b;
-    @NotNull
+    @Nonnull
     public final C c;
-    @NotNull
+    @Nonnull
     public final D d;
 
-    public Tuple4(@NotNull A a, @NotNull B b, @NotNull C c, @NotNull D d) {
+    public Tuple4(@Nonnull A a, @Nonnull B b, @Nonnull C c, @Nonnull D d) {
         super();
         this.a = a;
         this.b = b;
@@ -41,23 +41,23 @@ public final class Tuple4<A, B, C, D> {
         this.d = d;
     }
 
-    @NotNull
-    public <A1> Tuple4<A1, B, C, D> mapA(@NotNull F<A, A1> f) {
+    @Nonnull
+    public <A1> Tuple4<A1, B, C, D> mapA(@Nonnull F<A, A1> f) {
         return new Tuple4<>(f.apply(this.a), this.b, this.c, this.d);
     }
 
-    @NotNull
-    public <B1> Tuple4<A, B1, C, D> mapB(@NotNull F<B, B1> f) {
+    @Nonnull
+    public <B1> Tuple4<A, B1, C, D> mapB(@Nonnull F<B, B1> f) {
         return new Tuple4<>(this.a, f.apply(this.b), this.c, this.d);
     }
 
-    @NotNull
-    public <C1> Tuple4<A, B, C1, D> mapC(@NotNull F<C, C1> f) {
+    @Nonnull
+    public <C1> Tuple4<A, B, C1, D> mapC(@Nonnull F<C, C1> f) {
         return new Tuple4<>(this.a, this.b, f.apply(this.c), this.d);
     }
 
-    @NotNull
-    public <D1> Tuple4<A, B, C, D1> mapD(@NotNull F<D, D1> f) {
+    @Nonnull
+    public <D1> Tuple4<A, B, C, D1> mapD(@Nonnull F<D, D1> f) {
         return new Tuple4<>(this.a, this.b, this.c, f.apply(this.d));
     }
 

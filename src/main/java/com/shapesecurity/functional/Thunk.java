@@ -18,35 +18,35 @@ package com.shapesecurity.functional;
 
 import java.util.function.Supplier;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 // Used for lazy evaluation.
 // @FunctionalInterface
 public final class Thunk<A> {
-    @NotNull
+    @Nonnull
     private final Supplier<A> supplier;
     // Exception on style: private nullable.
     @Nullable
     private volatile A value = null;
 
-    private Thunk(@NotNull Supplier<A> supplier) {
+    private Thunk(@Nonnull Supplier<A> supplier) {
         this.supplier = supplier;
     }
 
-    @NotNull
-    public static <A> Thunk<A> constant(@NotNull final A value) {
+    @Nonnull
+    public static <A> Thunk<A> constant(@Nonnull final A value) {
         Thunk<A> t = new Thunk<>(() -> value);
         t.value = value;
         return t;
     }
 
-    @NotNull
-    public static <A> Thunk<A> from(@NotNull Supplier<A> supplier) {
+    @Nonnull
+    public static <A> Thunk<A> from(@Nonnull Supplier<A> supplier) {
         return new Thunk<>(supplier);
     }
 
-    @NotNull
+    @Nonnull
     public final A get() {
         // Double locked.
         A value = this.value;

@@ -26,17 +26,17 @@ import com.shapesecurity.functional.Unit;
 
 import org.junit.Test;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class HashTableTest extends TestBase {
     private static final Hasher<String> BAD_HASHER = new Hasher<String>() {
         @Override
-        public int hash(@NotNull String data) {
+        public int hash(@Nonnull String data) {
             return 0;
         }
 
         @Override
-        public boolean eq(@NotNull String s, @NotNull String b) {
+        public boolean eq(@Nonnull String s, @Nonnull String b) {
             return s.equals(b);
         }
     };

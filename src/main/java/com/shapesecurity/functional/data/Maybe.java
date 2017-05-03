@@ -25,8 +25,8 @@ import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.Thunk;
 
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
@@ -46,30 +46,30 @@ public final class Maybe<A> {
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
+    @Nonnull
     public static <A> Maybe<A> empty() {
         return (Maybe<A>) NOTHING;
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
+    @Nonnull
     @Deprecated
     public static <A> Maybe<A> nothing() {
         return Maybe.empty();
     }
 
-    @NotNull
-    public static <A> Maybe<A> of(@NotNull A a) {
+    @Nonnull
+    public static <A> Maybe<A> of(@Nonnull A a) {
         return new Maybe<>(a);
     }
 
-    @NotNull
+    @Nonnull
     @Deprecated
-    public static <A> Maybe<A> just(@NotNull A a) {
+    public static <A> Maybe<A> just(@Nonnull A a) {
         return Maybe.of(a);
     }
 
-    @NotNull
+    @Nonnull
     public static <A> Maybe<A> fromNullable(@Nullable A a) {
         if (a == null) {
             return empty();
@@ -82,30 +82,30 @@ public final class Maybe<A> {
         return this.value;
     }
 
-    public static <A> Maybe<A> join(@NotNull Maybe<Maybe<A>> m) {
+    public static <A> Maybe<A> join(@Nonnull Maybe<Maybe<A>> m) {
         return m.flatMap((a) -> a);
     }
 
-    @NotNull
-    public static <A> ImmutableList<A> catMaybes(@NotNull ImmutableList<Maybe<A>> l) {
+    @Nonnull
+    public static <A> ImmutableList<A> catMaybes(@Nonnull ImmutableList<Maybe<A>> l) {
         return l.foldRight((a, b) -> a.maybe(b, c -> ImmutableList.cons(c, b)), ImmutableList.empty());
     }
 
-    @NotNull
-    public static <A, B> ImmutableList<B> mapMaybe(@NotNull final F<A, B> f, @NotNull ImmutableList<Maybe<A>> l) {
+    @Nonnull
+    public static <A, B> ImmutableList<B> mapMaybe(@Nonnull final F<A, B> f, @Nonnull ImmutableList<Maybe<A>> l) {
         return l.foldRight((a, b) -> a.maybe(b, v -> ImmutableList.cons(f.apply(v), b)), ImmutableList.empty());
     }
 
     @SuppressWarnings("BooleanParameter")
-    @NotNull
-    public static <A> Maybe<A> iff(boolean test, @NotNull A a) {
+    @Nonnull
+    public static <A> Maybe<A> iff(boolean test, @Nonnull A a) {
         if (test) {
             return of(a);
         }
         return empty();
     }
 
-    public boolean eq(@NotNull Maybe<A> maybe) {
+    public boolean eq(@Nonnull Maybe<A> maybe) {
         return Objects.equals(maybe.value, this.value);
     }
 
@@ -121,23 +121,23 @@ public final class Maybe<A> {
                HashCodeBuilder.put(this.value.hashCode(), "Just");
     }
 
-    @NotNull
+    @Nonnull
     public A fromJust() throws NullPointerException {
         return Objects.requireNonNull(this.value);
     }
 
-    @NotNull
+    @Nonnull
     @Deprecated
     public A just() throws NullPointerException {
         return this.fromJust();
     }
 
-    @NotNull
-    public <B> B maybe(@NotNull B def, @NotNull F<A, B> f) {
+    @Nonnull
+    public <B> B maybe(@Nonnull B def, @Nonnull F<A, B> f) {
         return this.value == null ? def : f.apply(this.value);
     }
 
-    public final void foreach(@NotNull Effect<A> f) {
+    public final void foreach(@Nonnull Effect<A> f) {
         this.map(f);
     }
 
@@ -149,54 +149,54 @@ public final class Maybe<A> {
         return !this.isJust();
     }
 
-    @NotNull
+    @Nonnull
     public ImmutableList<A> toList() {
         return this.value == null ? ImmutableList.empty() : ImmutableList.from(this.value);
     }
 
-    @NotNull
-    public A orJust(@NotNull A a) {
+    @Nonnull
+    public A orJust(@Nonnull A a) {
         return this.value == null ? a : this.value;
     }
 
     /**
      * @deprecated Use {@link #orJustLazy(Supplier)} instead.
      */
-    @NotNull
+    @Nonnull
     @Deprecated
-    public A orJustLazy(@NotNull Thunk<A> a) {
+    public A orJustLazy(@Nonnull Thunk<A> a) {
         return this.value == null ? a.get() : this.value;
     }
 
-    @NotNull
-    public A orJustLazy(@NotNull Supplier<A> a) {
+    @Nonnull
+    public A orJustLazy(@Nonnull Supplier<A> a) {
         return this.value == null ? a.get() : this.value;
     }
 
-    @NotNull
-    public <B> Maybe<B> map(@NotNull F<A, B> f) {
+    @Nonnull
+    public <B> Maybe<B> map(@Nonnull F<A, B> f) {
         //noinspection unchecked
         return this.value == null ? ((Maybe<B>) this) : of(f.apply(this.value));
     }
 
-    @NotNull
-    public final <B> Maybe<B> bind(@NotNull F<A, Maybe<B>> f) {
+    @Nonnull
+    public final <B> Maybe<B> bind(@Nonnull F<A, Maybe<B>> f) {
         return this.flatMap(f);
     }
 
-    @NotNull
-    public <B> Maybe<B> flatMap(@NotNull F<A, Maybe<B>> f) {
+    @Nonnull
+    public <B> Maybe<B> flatMap(@Nonnull F<A, Maybe<B>> f) {
         //noinspection unchecked
         return this.value == null ? ((Maybe<B>) this) : f.apply(this.value);
     }
 
-    @NotNull
-    public Maybe<A> filter(@NotNull F<A, Boolean> f) {
+    @Nonnull
+    public Maybe<A> filter(@Nonnull F<A, Boolean> f) {
         return this.filterByPredicate(f::apply);
     }
 
-    @NotNull
-    public Maybe<A> filterByPredicate(@NotNull Predicate<A> f) {
+    @Nonnull
+    public Maybe<A> filterByPredicate(@Nonnull Predicate<A> f) {
         return this.value == null ? this : (f.test(this.value) ? this : empty());
     }
 }

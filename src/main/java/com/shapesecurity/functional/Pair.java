@@ -18,7 +18,7 @@ package com.shapesecurity.functional;
 
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.CheckReturnValue;
 
@@ -40,12 +40,12 @@ public final class Pair<A, B> {
      * @param <B> type of the second component
      * @return the pair
      */
-    @NotNull
+    @Nonnull
     public static <A, B> Pair<A, B> of(A left, B right) {
         return new Pair<>(left, right);
     }
 
-    @NotNull
+    @Nonnull
     @Deprecated
     public static <A, B> Pair<A, B> make(A left, B right) {
         return Pair.of(left, right);
@@ -66,30 +66,30 @@ public final class Pair<A, B> {
         return this.right;
     }
 
-    @NotNull
+    @Nonnull
     public Pair<B, A> swap() {
         return new Pair<>(this.right, this.left);
     }
 
-    @NotNull
-    public <A1> Pair<A1, B> mapLeft(@NotNull F<A, A1> f) {
+    @Nonnull
+    public <A1> Pair<A1, B> mapLeft(@Nonnull F<A, A1> f) {
         return new Pair<>(f.apply(this.left), this.right);
     }
 
-    @NotNull
+    @Nonnull
     @Deprecated
-    public <A1> Pair<A1, B> mapA(@NotNull F<A, A1> f) {
+    public <A1> Pair<A1, B> mapA(@Nonnull F<A, A1> f) {
         return this.mapLeft(f);
     }
 
-    @NotNull
-    public <B1> Pair<A, B1> mapRight(@NotNull F<B, B1> f) {
+    @Nonnull
+    public <B1> Pair<A, B1> mapRight(@Nonnull F<B, B1> f) {
         return new Pair<>(this.left, f.apply(this.right));
     }
 
-    @NotNull
+    @Nonnull
     @Deprecated
-    public <B1> Pair<A, B1> mapB(@NotNull F<B, B1> f) {
+    public <B1> Pair<A, B1> mapB(@Nonnull F<B, B1> f) {
         return this.mapRight(f);
     }
 

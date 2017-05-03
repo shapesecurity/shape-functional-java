@@ -29,8 +29,8 @@ import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
@@ -73,8 +73,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @return a new {@link ImmutableList} that is comprised of all the elements in the {@link
      * java.util.ArrayList}.
      */
-    @NotNull
-    public static <A> ImmutableList<A> from(@NotNull List<A> arrayList) {
+    @Nonnull
+    public static <A> ImmutableList<A> from(@Nonnull List<A> arrayList) {
         // Manual expansion of tail recursion.
         ImmutableList<A> l = empty();
         int size = arrayList.size();
@@ -92,9 +92,9 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      */
     }
 
-    @NotNull
+    @Nonnull
     @Deprecated
-    public static <A> ImmutableList<A> list(@NotNull List<A> arrayList) {
+    public static <A> ImmutableList<A> list(@Nonnull List<A> arrayList) {
         return ImmutableList.from(arrayList);
     }
 
@@ -106,7 +106,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param <T>  The super type of both the element and the {@link ImmutableList}
      * @return A {@link ImmutableList} that is comprised of the head then the tail.
      */
-    public static <T> NonEmptyImmutableList<T> cons(@NotNull T head, @NotNull ImmutableList<T> tail) {
+    public static <T> NonEmptyImmutableList<T> cons(@Nonnull T head, @Nonnull ImmutableList<T> tail) {
         return new NonEmptyImmutableList<>(head, tail);
     }
 
@@ -137,9 +137,9 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param <T>  The type of the element
      * @return a <code>NonEmptyImmutableList</code> of type <code>T</code>.
      */
-    @NotNull
+    @Nonnull
     @SafeVarargs
-    public static <T> NonEmptyImmutableList<T> of(@NotNull T head, @NotNull T... el) {
+    public static <T> NonEmptyImmutableList<T> of(@Nonnull T head, @Nonnull T... el) {
         if (el.length == 0) {
             return cons(head, ImmutableList.empty());
         }
@@ -157,16 +157,16 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param <A> The type of elements
      * @return a <code>ImmutableList</code> of type <code>A</code>.
      */
-    @NotNull
+    @Nonnull
     @SafeVarargs
-    public static <A> ImmutableList<A> from(@NotNull A... el) {
+    public static <A> ImmutableList<A> from(@Nonnull A... el) {
         return fromBounded(el, 0, el.length);
     }
 
-    @NotNull
+    @Nonnull
     @SafeVarargs
     @Deprecated
-    public static <T> NonEmptyImmutableList<T> list(@NotNull T head, @NotNull T... el) {
+    public static <T> NonEmptyImmutableList<T> list(@Nonnull T head, @Nonnull T... el) {
         return ImmutableList.of(head, el);
     }
 
@@ -180,8 +180,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param <A>   The type of elements
      * @return a <code>ImmutableList</code> of type <code>A</code>.
      */
-    @NotNull
-    public static <A> ImmutableList<A> fromBounded(@NotNull A[] el, int start, int end) {
+    @Nonnull
+    public static <A> ImmutableList<A> fromBounded(@Nonnull A[] el, int start, int end) {
         if (end == start) {
             return empty();
         }
@@ -215,7 +215,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param action The action to be performed for each element
      */
     @Override
-    public void forEach(@NotNull Consumer<? super A> action) {
+    public void forEach(@Nonnull Consumer<? super A> action) {
         // Manually expanded recursion.
         ImmutableList<A> list = this;
         while (list instanceof NonEmptyImmutableList) {
@@ -260,8 +260,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param left The element to prepend.
      * @return A list with <code>left</code> as the first element followed by <code>this</code>.
      */
-    @NotNull
-    public final NonEmptyImmutableList<A> cons(@NotNull A left) {
+    @Nonnull
+    public final NonEmptyImmutableList<A> cons(@Nonnull A left) {
         return cons(left, this);
     }
 
@@ -275,8 +275,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @see <a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)#Folds_as_structural_transformations">http://en.wikipedia.org/wiki/Fold_
      * (higher-order_function)</a>
      */
-    @NotNull
-    public abstract <B> B foldLeft(@NotNull F2<B, ? super A, B> f, @NotNull B init);
+    @Nonnull
+    public abstract <B> B foldLeft(@Nonnull F2<B, ? super A, B> f, @Nonnull B init);
 
     /**
      * Classic "foldr" operation on the {@link ImmutableList}.
@@ -288,15 +288,15 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @see <a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)#Folds_as_structural_transformations">http://en.wikipedia.org/wiki/Fold_
      * (higher-order_function)</a>
      */
-    @NotNull
-    public abstract <B> B foldRight(@NotNull F2<? super A, B, B> f, @NotNull B init);
+    @Nonnull
+    public abstract <B> B foldRight(@Nonnull F2<? super A, B, B> f, @Nonnull B init);
 
     /**
      * Returns the head of the {@link ImmutableList}.
      *
      * @return Maybe.of(head of the list), or Maybe.empty() if the list is empty.
      */
-    @NotNull
+    @Nonnull
     public abstract Maybe<A> maybeHead();
 
     /**
@@ -304,7 +304,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      *
      * @return Maybe.of(last of the list), or Maybe.empty() if the list is empty.
      */
-    @NotNull
+    @Nonnull
     public abstract Maybe<A> maybeLast();
 
     /**
@@ -312,7 +312,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      *
      * @return Maybe.of(tail of the list), or Maybe.empty() if the list is empty.
      */
-    @NotNull
+    @Nonnull
     public abstract Maybe<ImmutableList<A>> maybeTail();
 
     /**
@@ -321,7 +321,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      *
      * @return Maybe.of(init of the list), or Maybe.empty() if the list is empty.
      */
-    @NotNull
+    @Nonnull
     public abstract Maybe<ImmutableList<A>> maybeInit();
 
     /**
@@ -330,8 +330,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param f The "predicate" function.
      * @return A new list of elements that satisfies the predicate.
      */
-    @NotNull
-    public abstract ImmutableList<A> filter(@NotNull F<A, Boolean> f);
+    @Nonnull
+    public abstract ImmutableList<A> filter(@Nonnull F<A, Boolean> f);
 
     /**
      * Applies the <code>f</code> function to each of the elements of the list and collect the
@@ -341,8 +341,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param <B> The type of the new {@link ImmutableList}.
      * @return The new {@link ImmutableList} containing the result.
      */
-    @NotNull
-    public abstract <B> ImmutableList<B> map(@NotNull F<A, B> f);
+    @Nonnull
+    public abstract <B> ImmutableList<B> map(@Nonnull F<A, B> f);
 
     /**
      * Applies the <code>f</code> function to each of the elements of the list and collect the
@@ -353,8 +353,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param <B> The type of the new {@link ImmutableList}.
      * @return The new {@link ImmutableList} containing the result.
      */
-    @NotNull
-    public abstract <B> ImmutableList<B> mapWithIndex(@NotNull F2<Integer, A, B> f);
+    @Nonnull
+    public abstract <B> ImmutableList<B> mapWithIndex(@Nonnull F2<Integer, A, B> f);
 
     /**
      * The the first <code>n</code> elements of the list and create a new List of them. If the
@@ -365,7 +365,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @return A new list containing at most <code>n</code> elements that are the first elements of
      * the original list.
      */
-    @NotNull
+    @Nonnull
     public abstract ImmutableList<A> take(int n);
 
     /**
@@ -377,7 +377,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @return A shared list containing at most <code>n</code> elements removed from the original
      * list.
      */
-    @NotNull
+    @Nonnull
     public abstract ImmutableList<A> drop(int n);
 
     /**
@@ -386,7 +386,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @return Returns is <code>Maybe.of(this)</code> if this is indeed non-empty. Otherwise
      * returns <code>Maybe.empty()</code>.
      */
-    @NotNull
+    @Nonnull
     public abstract Maybe<NonEmptyImmutableList<A>> toNonEmptyList();
 
     /**
@@ -398,8 +398,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @return If the list is an non-empty list, returns <code>Maybe.of(f(head, tail))</code>;
      * otherwise returns <code>Maybe.empty()</code>.
      */
-    @NotNull
-    public abstract <B> Maybe<B> decons(@NotNull F2<A, ImmutableList<A>, B> f);
+    @Nonnull
+    public abstract <B> Maybe<B> decons(@Nonnull F2<A, ImmutableList<A>, B> f);
 
     /**
      * Takes another list and feeds the elements of both lists to a function at the same pace, then
@@ -414,8 +414,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param <C>  The type of the result of the merging function.
      * @return The return type of the merging function.
      */
-    @NotNull
-    public abstract <B, C> ImmutableList<C> zipWith(@NotNull F2<A, B, C> f, @NotNull ImmutableList<B> list);
+    @Nonnull
+    public abstract <B, C> ImmutableList<C> zipWith(@Nonnull F2<A, B, C> f, @Nonnull ImmutableList<B> list);
 
     /**
      * Converts this list into an array. <p> Due to type erasure, the type of the resulting array
@@ -428,8 +428,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * <code>target</code>.
      */
     @SuppressWarnings("unchecked")
-    @NotNull
-    public final A[] toArray(@NotNull A[] target) {
+    @Nonnull
+    public final A[] toArray(@Nonnull A[] target) {
         int length = this.length;
         if (target.length < length) {
             // noinspection unchecked
@@ -454,8 +454,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * <code>target</code>.
      */
     @SuppressWarnings("unchecked")
-    @NotNull
-    public final A[] toArray(@NotNull F<Integer, A[]> constructor) {
+    @Nonnull
+    public final A[] toArray(@Nonnull F<Integer, A[]> constructor) {
         int length = this.length;
         A[] target = constructor.apply(length);
         return this.toArray(target);
@@ -468,7 +468,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @deprecated Use {@link #forEach(Consumer)} instead.
      */
     @Deprecated
-    public final void foreach(@NotNull Effect<A> f) {
+    public final void foreach(@Nonnull Effect<A> f) {
         this.forEach(f::e);
     }
 
@@ -483,8 +483,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param <B>           The type of the resulting list.
      * @return The concatenation of the two lists.
      */
-    @NotNull
-    public abstract <B extends A> ImmutableList<A> append(@NotNull ImmutableList<B> defaultClause);
+    @Nonnull
+    public abstract <B extends A> ImmutableList<A> append(@Nonnull ImmutableList<B> defaultClause);
 
     /**
      * Tests all the elements in the {@link ImmutableList} with predicate <code>f</code> until it
@@ -493,7 +493,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param f The predicate.
      * @return Whether an elements satisfies the predicate <code>f</code>.
      */
-    public abstract boolean exists(@NotNull F<A, Boolean> f);
+    public abstract boolean exists(@Nonnull F<A, Boolean> f);
 
     /**
      * Tests using object identity whether this list contains the element <code>a</code>.
@@ -504,7 +504,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param a An element.
      * @return Whether this list contains the element <code>a</code>.
      */
-    public abstract boolean contains(@NotNull A a);
+    public abstract boolean contains(@Nonnull A a);
 
     /**
      * Separates the list into a pair of lists such that 1. the concatenation of the lists is equal
@@ -514,8 +514,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param f The predicate.
      * @return The pair.
      */
-    @NotNull
-    public abstract Pair<ImmutableList<A>, ImmutableList<A>> span(@NotNull F<A, Boolean> f);
+    @Nonnull
+    public abstract Pair<ImmutableList<A>, ImmutableList<A>> span(@Nonnull F<A, Boolean> f);
 
     /**
      * A synonym of {@link #flatMap}.
@@ -524,8 +524,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param <B> The type of result function.
      * @return The result of bind.
      */
-    @NotNull
-    public final <B> ImmutableList<B> bind(@NotNull F<A, ImmutableList<B>> f) {
+    @Nonnull
+    public final <B> ImmutableList<B> bind(@Nonnull F<A, ImmutableList<B>> f) {
         return this.flatMap(f);
     }
 
@@ -543,8 +543,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param <B> The type of the result list.
      * @return The result list.
      */
-    @NotNull
-    public abstract <B> ImmutableList<B> flatMap(@NotNull F<A, ImmutableList<B>> f);
+    @Nonnull
+    public abstract <B> ImmutableList<B> flatMap(@Nonnull F<A, ImmutableList<B>> f);
 
     public final boolean isNotEmpty() {
         return !this.isEmpty();
@@ -558,8 +558,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @return <code>Maybe.of(the found element)</code> if an element is found or
      * <code>Maybe.empty()</code> if none is found.
      */
-    @NotNull
-    public final Maybe<A> find(@NotNull F<A, Boolean> f) {
+    @Nonnull
+    public final Maybe<A> find(@Nonnull F<A, Boolean> f) {
         ImmutableList<A> self = this;
         while (self instanceof NonEmptyImmutableList) {
             NonEmptyImmutableList<A> selfNel = (NonEmptyImmutableList<A>) self;
@@ -581,8 +581,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @return <code>Maybe.of(the found element)</code> if an element is found or
      * <code>Maybe.empty()</code> if none is found.
      */
-    @NotNull
-    public final <B> Maybe<B> findMap(@NotNull F<A, Maybe<B>> f) {
+    @Nonnull
+    public final <B> Maybe<B> findMap(@Nonnull F<A, Maybe<B>> f) {
         ImmutableList<A> self = this;
         while (self instanceof NonEmptyImmutableList) {
             NonEmptyImmutableList<A> selfNel = (NonEmptyImmutableList<A>) self;
@@ -601,15 +601,15 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param f The predicate.
      * @return A new list of filtered elements.
      */
-    @NotNull
-    public abstract ImmutableList<A> removeAll(@NotNull F<A, Boolean> f);
+    @Nonnull
+    public abstract ImmutableList<A> removeAll(@Nonnull F<A, Boolean> f);
 
     /**
      * Reverses the list in linear time.
      *
      * @return Reversed list.
      */
-    @NotNull
+    @Nonnull
     public abstract ImmutableList<A> reverse();
 
     /**
@@ -625,8 +625,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param <B>          The type of the replacements. It must be A or a subtype of A.
      * @return The patched list.
      */
-    @NotNull
-    public <B extends A> ImmutableList<A> patch(int index, int patchLength, @NotNull ImmutableList<B> replacements) {
+    @Nonnull
+    public <B extends A> ImmutableList<A> patch(int index, int patchLength, @Nonnull ImmutableList<B> replacements) {
         return this.take(index).append(replacements).append(this.drop(index + patchLength));
     }
 
@@ -641,8 +641,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @param <C> The type of the result of map.
      * @return A pair of the accumulation value and a mapped list.
      */
-    @NotNull
-    public abstract <B, C> Pair<B, ImmutableList<C>> mapAccumL(@NotNull F2<B, A, Pair<B, C>> f, @NotNull B acc);
+    @Nonnull
+    public abstract <B, C> Pair<B, ImmutableList<C>> mapAccumL(@Nonnull F2<B, A, Pair<B, C>> f, @Nonnull B acc);
 
     /**
      * Get the <code>index</code>th element of the list. It is comparable to the <code>[]</code>
@@ -653,7 +653,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @return <code>Maybe.of(found element)</code>if the element can be retrieved; or
      * <code>Maybe.empty()</code> if index out of range().
      */
-    @NotNull
+    @Nonnull
     public final Maybe<A> index(int index) {
         ImmutableList<A> l = this;
         if (index < 0) {
@@ -669,20 +669,20 @@ public abstract class ImmutableList<A> implements Iterable<A> {
         return l.maybeHead();
     }
 
-    @NotNull
+    @Nonnull
     public abstract ImmutableSet<A> uniqByEquality();
 
-    @NotNull
+    @Nonnull
     public abstract ImmutableSet<A> uniqByIdentity();
 
-    @NotNull
-    public abstract <B> ImmutableSet<A> uniqByEqualityOn(@NotNull F<A, B> f);
+    @Nonnull
+    public abstract <B> ImmutableSet<A> uniqByEqualityOn(@Nonnull F<A, B> f);
 
     @Override
     public abstract boolean equals(Object o);
 
-    @NotNull
-    public Pair<ImmutableList<A>, ImmutableList<A>> partition(@NotNull Predicate<A> predicate) {
+    @Nonnull
+    public Pair<ImmutableList<A>, ImmutableList<A>> partition(@Nonnull Predicate<A> predicate) {
         @SuppressWarnings("unchecked")
         A[] result = (A[]) new Object[this.length];
         int[] l = new int[]{0};

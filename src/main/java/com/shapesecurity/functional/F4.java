@@ -16,27 +16,27 @@
 
 package com.shapesecurity.functional;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.CheckReturnValue;
 
 @CheckReturnValue
 @FunctionalInterface
 public interface F4<A, B, C, D, R> {
-    @NotNull
-    R apply(@NotNull A a, @NotNull B b, @NotNull C c, @NotNull D d);
+    @Nonnull
+    R apply(@Nonnull A a, @Nonnull B b, @Nonnull C c, @Nonnull D d);
 
-    @NotNull
-    default R applyTuple(@NotNull Tuple4<A, B, C, D> args) {
+    @Nonnull
+    default R applyTuple(@Nonnull Tuple4<A, B, C, D> args) {
         return this.apply(args.a, args.b, args.c, args.d);
     }
 
-    @NotNull
-    default F3<B, C, D, R> curry(@NotNull final A a) {
+    @Nonnull
+    default F3<B, C, D, R> curry(@Nonnull final A a) {
         return (b, c, d) -> this.apply(a, b, c, d);
     }
 
-    @NotNull
+    @Nonnull
     default F<A, F<B, F<C, F<D, R>>>> curry() {
         return a -> b -> c -> d -> this.apply(a, b, c, d);
     }

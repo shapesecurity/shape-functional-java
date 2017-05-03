@@ -27,11 +27,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.junit.Test;
 
 public class ImmutableListTest extends TestBase {
-    protected void testWithSpecialLists(@NotNull Effect<ImmutableList<Integer>> f) {
+    protected void testWithSpecialLists(@Nonnull Effect<ImmutableList<Integer>> f) {
         f.apply(Nil.empty());
         f.apply(ImmutableList.empty());
         f.apply(ImmutableList.of(0));
@@ -56,7 +56,7 @@ public class ImmutableListTest extends TestBase {
         testWithSpecialLists(this::testCons);
     }
 
-    private void testCons(@NotNull ImmutableList<Integer> list) {
+    private void testCons(@Nonnull ImmutableList<Integer> list) {
         int a = rand();
         NonEmptyImmutableList<Integer> listP = ImmutableList.cons(a, list);
         assertEquals(list.length + 1, listP.length);
@@ -301,7 +301,7 @@ public class ImmutableListTest extends TestBase {
         testWithSpecialLists(this::testFoldLeft);
     }
 
-    private void testFoldLeft(@NotNull ImmutableList<Integer> integers) {
+    private void testFoldLeft(@Nonnull ImmutableList<Integer> integers) {
         int total = 0;
         for (int i : integers) {
             total += i;
@@ -314,7 +314,7 @@ public class ImmutableListTest extends TestBase {
         testWithSpecialLists(this::testFoldRight);
     }
 
-    private void testFoldRight(@NotNull ImmutableList<Integer> integers) {
+    private void testFoldRight(@Nonnull ImmutableList<Integer> integers) {
         int total = 0;
         for (int i : integers) {
             total += i;

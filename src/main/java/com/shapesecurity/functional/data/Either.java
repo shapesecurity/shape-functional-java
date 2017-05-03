@@ -19,7 +19,7 @@ package com.shapesecurity.functional.data;
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.CheckReturnValue;
 
@@ -40,17 +40,17 @@ public final class Either<A, B> {
         this.tag = tag;
     }
 
-    @NotNull
-    public static <A, B> Either<A, B> left(@NotNull A a) {
+    @Nonnull
+    public static <A, B> Either<A, B> left(@Nonnull A a) {
         return new Either<>(a, Tag.LEFT);
     }
 
-    @NotNull
-    public static <A, B> Either<A, B> right(@NotNull B b) {
+    @Nonnull
+    public static <A, B> Either<A, B> right(@Nonnull B b) {
         return new Either<>(b, Tag.RIGHT);
     }
 
-    @NotNull
+    @Nonnull
     public static <A, B extends A, C extends A> A extract(Either<B, C> e) {
         return e.either(x -> x, x -> x);
     }
@@ -73,7 +73,7 @@ public final class Either<A, B> {
     }
 
     @SuppressWarnings("unchecked")
-    public void foreach(@NotNull Effect<A> f1, @NotNull Effect<B> f2) {
+    public void foreach(@Nonnull Effect<A> f1, @Nonnull Effect<B> f2) {
         if (this.tag == Tag.LEFT) {
             f1.apply((A) this.data);
         } else {
@@ -81,34 +81,34 @@ public final class Either<A, B> {
         }
     }
 
-    @NotNull
+    @Nonnull
     public <X, Y> Either<X, Y> map(F<A, X> f1, F<B, Y> f2) {
         return this.either(a -> Either.<X, Y>left(f1.apply(a)), b -> Either.<X, Y>right(f2.apply(b)));
     }
 
-    @NotNull
-    public <X> Either<X, B> mapLeft(@NotNull F<A, X> f) {
+    @Nonnull
+    public <X> Either<X, B> mapLeft(@Nonnull F<A, X> f) {
         return this.map(f, b -> b);
     }
 
-    @NotNull
-    public <Y> Either<A, Y> mapRight(@NotNull F<B, Y> f) {
+    @Nonnull
+    public <Y> Either<A, Y> mapRight(@Nonnull F<B, Y> f) {
         return this.map(a -> a, f);
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
+    @Nonnull
     public Maybe<A> left() {
         return this.tag == Tag.LEFT ? Maybe.of((A) this.data) : Maybe.empty();
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
+    @Nonnull
     public Maybe<B> right() {
         return this.tag == Tag.RIGHT ? Maybe.of((B) this.data) : Maybe.empty();
     }
 
-    private boolean eq(@NotNull Either<A, B> either) {
+    private boolean eq(@Nonnull Either<A, B> either) {
         return either.tag == this.tag && either.data.equals(this.data);
     }
 

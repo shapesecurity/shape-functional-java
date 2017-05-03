@@ -3,20 +3,20 @@ package com.shapesecurity.functional.data;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Unit;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.CheckReturnValue;
 
 @CheckReturnValue
 public class ImmutableSet<T> {
-    @NotNull
+    @Nonnull
     private final HashTable<T, Unit> data;
 
     public int length() {
         return this.data.length;
     }
 
-    ImmutableSet(@NotNull HashTable<T, Unit> data) {
+    ImmutableSet(@Nonnull HashTable<T, Unit> data) {
         this.data = data;
     }
 
@@ -38,28 +38,28 @@ public class ImmutableSet<T> {
         return ImmutableSet.emptyUsingIdentity();
     }
 
-    public <B extends T> ImmutableSet<T> put(@NotNull B datum) {
+    public <B extends T> ImmutableSet<T> put(@Nonnull B datum) {
         return new ImmutableSet<>(this.data.put(datum, Unit.unit));
     }
 
-    @NotNull
-    public <B extends T> ImmutableSet<T> putAll(@NotNull ImmutableList<B> list) {
+    @Nonnull
+    public <B extends T> ImmutableSet<T> putAll(@Nonnull ImmutableList<B> list) {
         return list.foldLeft(ImmutableSet::put, this);
     }
 
-    public boolean contains(@NotNull T datum) {
+    public boolean contains(@Nonnull T datum) {
         return this.data.containsKey(datum);
     }
 
-    public ImmutableSet<T> remove(@NotNull T datum) {
+    public ImmutableSet<T> remove(@Nonnull T datum) {
         return new ImmutableSet<>(this.data.remove(datum));
     }
 
-    public <A> A foldAbelian(@NotNull F2<T, A, A> f, @NotNull A init) {
+    public <A> A foldAbelian(@Nonnull F2<T, A, A> f, @Nonnull A init) {
         return this.data.foldRight((p, acc) -> f.apply(p.left, acc), init);
     }
 
-    public ImmutableSet<T> union(@NotNull ImmutableSet<T> other) {
+    public ImmutableSet<T> union(@Nonnull ImmutableSet<T> other) {
         return new ImmutableSet<>(this.data.merge(other.data));
     }
 

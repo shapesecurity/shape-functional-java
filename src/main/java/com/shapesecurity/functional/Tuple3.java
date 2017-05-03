@@ -18,38 +18,38 @@ package com.shapesecurity.functional;
 
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.CheckReturnValue;
 
 @CheckReturnValue
 public final class Tuple3<A, B, C> {
-    @NotNull
+    @Nonnull
     public final A a;
-    @NotNull
+    @Nonnull
     public final B b;
-    @NotNull
+    @Nonnull
     public final C c;
 
-    public Tuple3(@NotNull A a, @NotNull B b, @NotNull C c) {
+    public Tuple3(@Nonnull A a, @Nonnull B b, @Nonnull C c) {
         super();
         this.a = a;
         this.b = b;
         this.c = c;
     }
 
-    @NotNull
-    public <A1> Tuple3<A1, B, C> mapA(@NotNull F<A, A1> f) {
+    @Nonnull
+    public <A1> Tuple3<A1, B, C> mapA(@Nonnull F<A, A1> f) {
         return new Tuple3<>(f.apply(this.a), this.b, this.c);
     }
 
-    @NotNull
-    public <B1> Tuple3<A, B1, C> mapB(@NotNull F<B, B1> f) {
+    @Nonnull
+    public <B1> Tuple3<A, B1, C> mapB(@Nonnull F<B, B1> f) {
         return new Tuple3<>(this.a, f.apply(this.b), this.c);
     }
 
-    @NotNull
-    public <C1> Tuple3<A, B, C1> mapC(@NotNull F<C, C1> f) {
+    @Nonnull
+    public <C1> Tuple3<A, B, C1> mapC(@Nonnull F<C, C1> f) {
         return new Tuple3<>(this.a, this.b, f.apply(this.c));
     }
 

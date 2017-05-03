@@ -25,7 +25,7 @@ import static org.junit.Assert.fail;
 import com.shapesecurity.functional.TestBase;
 import com.shapesecurity.functional.Thunk;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import org.junit.Test;
 
 public class MaybeTest extends TestBase {

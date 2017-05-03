@@ -19,7 +19,7 @@ package com.shapesecurity.functional;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.NonEmptyImmutableList;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.junit.Before;
 
 import java.io.IOException;
@@ -58,8 +58,8 @@ public abstract class TestBase {
         }
     }
 
-    @NotNull
-    protected static String readFile(@NotNull String path) throws IOException {
+    @Nonnull
+    protected static String readFile(@Nonnull String path) throws IOException {
         byte[] encoded = Files.readAllBytes(getPath(path));
         return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(encoded)).toString();
     }
@@ -84,17 +84,17 @@ public abstract class TestBase {
         rand = new Random(12345L);
     }
 
-    @NotNull
+    @Nonnull
     public ImmutableList<Integer> range(final int upper) {
         return range(0, upper);
     }
 
-    @NotNull
+    @Nonnull
     public ImmutableList<Integer> range(final int lower, final int upper) {
         return range(lower, upper, 1);
     }
 
-    @NotNull
+    @Nonnull
     public ImmutableList<Integer> range(final int lower, final int upper, final int step) {
         ImmutableList<Integer> result = ImmutableList.empty();
         for (int i = upper - ((upper - lower + step - 1) % step + 1); i >= lower; i -= step) {
