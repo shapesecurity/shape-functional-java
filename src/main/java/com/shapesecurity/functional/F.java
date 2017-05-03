@@ -16,44 +16,44 @@
 
 package com.shapesecurity.functional;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.CheckReturnValue;
 
 @CheckReturnValue
 @FunctionalInterface
 public interface F<A, R> {
-    @NotNull
+    @Nonnull
     static <A extends B, B> F<A, B> id() {
         return o -> o;
     }
 
-    @NotNull
-    static <A, B> F<A, B> constant(@NotNull final B b) {
+    @Nonnull
+    static <A, B> F<A, B> constant(@Nonnull final B b) {
         return a -> b;
     }
 
-    @NotNull
-    static <A, B, C> F2<A, B, C> uncurry(@NotNull final F<A, F<B, C>> f) {
+    @Nonnull
+    static <A, B, C> F2<A, B, C> uncurry(@Nonnull final F<A, F<B, C>> f) {
         return (a, b) -> f.apply(a).apply(b);
     }
 
-    @NotNull
-    static <A, B, C> F<B, F<A, C>> flip(@NotNull final F<A, F<B, C>> f) {
+    @Nonnull
+    static <A, B, C> F<B, F<A, C>> flip(@Nonnull final F<A, F<B, C>> f) {
         return b -> a -> f.apply(a).apply(b);
     }
 
-    @NotNull
-    R apply(@NotNull A a);
+    @Nonnull
+    R apply(@Nonnull A a);
 
-    @NotNull
-    default <C> F<C, R> compose(@NotNull final F<C, A> f) {
+    @Nonnull
+    default <C> F<C, R> compose(@Nonnull final F<C, A> f) {
         return c -> this.apply(f.apply(c));
     }
 
 
-    @NotNull
-    default <B> F<A, B> then(@NotNull final F<R, B> f) {
+    @Nonnull
+    default <B> F<A, B> then(@Nonnull final F<R, B> f) {
         return c -> f.apply(this.apply(c));
     }
 }

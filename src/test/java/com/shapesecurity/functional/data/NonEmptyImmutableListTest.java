@@ -27,12 +27,12 @@ import com.shapesecurity.functional.TestBase;
 
 import org.junit.Test;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class NonEmptyImmutableListTest extends TestBase {
     // Helpers
 
-    private void testWithSpecialLists(@NotNull Effect<NonEmptyImmutableList<Integer>> f) {
+    private void testWithSpecialLists(@Nonnull Effect<NonEmptyImmutableList<Integer>> f) {
         f.apply(ImmutableList.of(0));
         f.apply(ImmutableList.of(0, 1, 2));
         f.apply(ImmutableList.of(3, 2, 1));

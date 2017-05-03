@@ -16,14 +16,14 @@
 
 package com.shapesecurity.functional;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 @FunctionalInterface
 public interface Effect<A> extends F<A, Unit> {
-    void e(@NotNull A a);
+    void e(@Nonnull A a);
 
-    @NotNull
-    default Unit apply(@NotNull A a) {
+    @Nonnull
+    default Unit apply(@Nonnull A a) {
         this.e(a);
         return Unit.unit;
     }

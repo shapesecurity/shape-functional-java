@@ -20,7 +20,7 @@ import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public final class Nil<T> extends ImmutableList<T> {
     private final static int DEFAULT_HASH_CODE;
@@ -39,88 +39,88 @@ public final class Nil<T> extends ImmutableList<T> {
         return DEFAULT_HASH_CODE;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public <A> A foldLeft(@NotNull F2<A, ? super T, A> f, @NotNull A init) {
+    public <A> A foldLeft(@Nonnull F2<A, ? super T, A> f, @Nonnull A init) {
         return init;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public <A> A foldRight(@NotNull F2<? super T, A, A> f, @NotNull A init) {
+    public <A> A foldRight(@Nonnull F2<? super T, A, A> f, @Nonnull A init) {
         return init;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Maybe<T> maybeHead() {
         return Maybe.empty();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Maybe<T> maybeLast() {
         return Maybe.empty();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Maybe<ImmutableList<T>> maybeTail() {
         return Maybe.empty();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Maybe<ImmutableList<T>> maybeInit() {
         return Maybe.empty();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<T> filter(@NotNull F<T, Boolean> f) {
+    public ImmutableList<T> filter(@Nonnull F<T, Boolean> f) {
         return this;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public <B> ImmutableList<B> map(@NotNull F<T, B> f) {
+    public <B> ImmutableList<B> map(@Nonnull F<T, B> f) {
         return empty();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public <B> ImmutableList<B> mapWithIndex(@NotNull F2<Integer, T, B> f) {
+    public <B> ImmutableList<B> mapWithIndex(@Nonnull F2<Integer, T, B> f) {
         return empty();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public ImmutableList<T> take(int n) {
         return this;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public ImmutableList<T> drop(int n) {
         return this;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Maybe<NonEmptyImmutableList<T>> toNonEmptyList() {
         return Maybe.empty();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public <B> Maybe<B> decons(@NotNull F2<T, ImmutableList<T>, B> f) {
+    public <B> Maybe<B> decons(@Nonnull F2<T, ImmutableList<T>, B> f) {
         return Maybe.empty();
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
+    @Nonnull
     @Override
-    public <B, C> ImmutableList<C> zipWith(@NotNull F2<T, B, C> f, @NotNull ImmutableList<B> list) {
+    public <B, C> ImmutableList<C> zipWith(@Nonnull F2<T, B, C> f, @Nonnull ImmutableList<B> list) {
         return (ImmutableList<C>) this;
     }
 
@@ -129,77 +129,77 @@ public final class Nil<T> extends ImmutableList<T> {
         return true;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
-    public <B extends T> ImmutableList<T> append(@NotNull ImmutableList<B> defaultClause) {
+    public <B extends T> ImmutableList<T> append(@Nonnull ImmutableList<B> defaultClause) {
         // This is safe due to erasure.
         return (ImmutableList<T>) defaultClause;
     }
 
     @Override
-    public boolean exists(@NotNull F<T, Boolean> f) {
+    public boolean exists(@Nonnull F<T, Boolean> f) {
         return false;
     }
 
     @Override
-    public boolean contains(@NotNull T a) {
+    public boolean contains(@Nonnull T a) {
         return false;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public Pair<ImmutableList<T>, ImmutableList<T>> span(@NotNull F<T, Boolean> f) {
+    public Pair<ImmutableList<T>, ImmutableList<T>> span(@Nonnull F<T, Boolean> f) {
         return new Pair<>(empty(), empty());
     }
 
-    @NotNull
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
-    public <B> ImmutableList<B> flatMap(@NotNull F<T, ImmutableList<B>> f) {
+    public <B> ImmutableList<B> flatMap(@Nonnull F<T, ImmutableList<B>> f) {
         return (ImmutableList<B>) this;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public ImmutableList<T> removeAll(@NotNull F<T, Boolean> f) {
+    public ImmutableList<T> removeAll(@Nonnull F<T, Boolean> f) {
         return this;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public ImmutableList<T> reverse() {
         return this;
     }
 
-    @NotNull
+    @Nonnull
     @SuppressWarnings("unchecked")
     @Override
-    public <B extends T> ImmutableList<T> patch(int index, int patchLength, @NotNull ImmutableList<B> replacements) {
+    public <B extends T> ImmutableList<T> patch(int index, int patchLength, @Nonnull ImmutableList<B> replacements) {
         return (ImmutableList<T>) replacements;
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public <B, C> Pair<B, ImmutableList<C>> mapAccumL(@NotNull F2<B, T, Pair<B, C>> f, @NotNull B acc) {
+    public <B, C> Pair<B, ImmutableList<C>> mapAccumL(@Nonnull F2<B, T, Pair<B, C>> f, @Nonnull B acc) {
         return new Pair<>(acc, ImmutableList.empty());
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public ImmutableSet<T> uniqByEquality() {
         return ImmutableSet.emptyUsingEquality();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public ImmutableSet<T> uniqByIdentity() {
         return ImmutableSet.emptyUsingIdentity();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public <B> ImmutableSet<T> uniqByEqualityOn(@NotNull F<T, B> f) {
+    public <B> ImmutableSet<T> uniqByEqualityOn(@Nonnull F<T, B> f) {
         return ImmutableSet.emptyUsingEquality();
     }
 

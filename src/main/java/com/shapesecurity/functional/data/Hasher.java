@@ -16,13 +16,13 @@
 
 package com.shapesecurity.functional.data;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.CheckReturnValue;
 
 @CheckReturnValue
 public interface Hasher<A> {
-    int hash(@NotNull A data);
+    int hash(@Nonnull A data);
 
-    boolean eq(@NotNull A a, @NotNull A b);
+    boolean eq(@Nonnull A a, @Nonnull A b);
 }

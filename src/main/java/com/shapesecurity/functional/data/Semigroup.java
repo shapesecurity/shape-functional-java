@@ -18,7 +18,7 @@ package com.shapesecurity.functional.data;
 
 import com.shapesecurity.functional.Unit;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.CheckReturnValue;
 
@@ -31,14 +31,14 @@ public interface Semigroup<T> {
     BooleanOr BOOLEAN_OR = new BooleanOr();
     BooleanAnd BOOLEAN_AND = new BooleanAnd();
 
-    @NotNull
+    @Nonnull
     T append(T a, T b);
 
     class UnitIdentity implements Semigroup<Unit> {
         protected UnitIdentity() {
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public final Unit append(Unit a, Unit b) {
             return Unit.unit;
@@ -49,7 +49,7 @@ public interface Semigroup<T> {
         protected IntegerAdditive() {
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public final Integer append(Integer a, Integer b) {
             return a + b;
@@ -60,7 +60,7 @@ public interface Semigroup<T> {
         protected IntegerMultiplicative() {
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public final Integer append(Integer a, Integer b) {
             return a * b;
@@ -71,7 +71,7 @@ public interface Semigroup<T> {
         protected StringConcat() {
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public final String append(String a, String b) {
             return a + b;
@@ -82,7 +82,7 @@ public interface Semigroup<T> {
         protected BooleanOr() {
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public final Boolean append(Boolean a, Boolean b) {
             return a || b;
@@ -93,7 +93,7 @@ public interface Semigroup<T> {
         protected BooleanAnd() {
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public final Boolean append(Boolean a, Boolean b) {
             return a && b;

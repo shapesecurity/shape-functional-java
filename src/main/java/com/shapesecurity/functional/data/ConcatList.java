@@ -32,8 +32,8 @@ import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
@@ -51,13 +51,13 @@ public abstract class ConcatList<T> implements Iterable<T> {
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
+    @Nonnull
     public static <T> ConcatList<T> empty() {
         return (ConcatList<T>) EMPTY;
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
+    @Nonnull
     @Deprecated
     public static <T> ConcatList<T> nil() {
         return ConcatList.empty();
@@ -73,13 +73,13 @@ public abstract class ConcatList<T> implements Iterable<T> {
 
     public abstract boolean isEmpty();
 
-    @NotNull
-    public static <T> ConcatList<T> fromList(@NotNull List<T> list) {
+    @Nonnull
+    public static <T> ConcatList<T> fromList(@Nonnull List<T> list) {
         return fromListInternal(list.iterator(), 0, list.size());
     }
 
-    @NotNull
-    private static <T> ConcatList<T> ofInternal(@NotNull T[] elements, int start, int end) {
+    @Nonnull
+    private static <T> ConcatList<T> ofInternal(@Nonnull T[] elements, int start, int end) {
         if (start == end) {
             return empty();
         } else if (start + 1 == end) {
@@ -90,8 +90,8 @@ public abstract class ConcatList<T> implements Iterable<T> {
         }
     }
 
-    @NotNull
-    private static <T> ConcatList<T> fromListInternal(@NotNull Iterator<T> elements, int start, int end) {
+    @Nonnull
+    private static <T> ConcatList<T> fromListInternal(@Nonnull Iterator<T> elements, int start, int end) {
         if (start == end) {
             return empty();
         } else if (start + 1 == end) {
@@ -104,7 +104,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
 
     public abstract ConcatList<T> balanced();
 
-    @NotNull
+    @Nonnull
     public final Maybe<Pair<ConcatList<T>, ConcatList<T>>> split(int index) {
         if (index < 0 || index > this.length) {
             return Maybe.empty();
@@ -120,8 +120,8 @@ public abstract class ConcatList<T> implements Iterable<T> {
 
     abstract Pair<ConcatList<T>, ConcatList<T>> splitInternal(int index);
 
-    @NotNull
-    public static <T> ConcatList<T> single(@NotNull T scope) {
+    @Nonnull
+    public static <T> ConcatList<T> single(@Nonnull T scope) {
         return new Leaf<>(scope);
     }
 
@@ -130,15 +130,15 @@ public abstract class ConcatList<T> implements Iterable<T> {
         return (BinaryTreeMonoid<T>) MONOID;
     }
 
-    @NotNull
+    @Nonnull
     public final ImmutableList<T> toList() {
         return this.toList(ImmutableList.empty());
     }
 
-    protected abstract ImmutableList<T> toList(@NotNull ImmutableList<T> acc);
+    protected abstract ImmutableList<T> toList(@Nonnull ImmutableList<T> acc);
 
-    @NotNull
-    public final <B> B foldLeft(@NotNull F2<B, ? super T, B> f, @NotNull B init) {
+    @Nonnull
+    public final <B> B foldLeft(@Nonnull F2<B, ? super T, B> f, @Nonnull B init) {
         if (this.isEmpty()) {
             return init;
         }
@@ -148,8 +148,8 @@ public abstract class ConcatList<T> implements Iterable<T> {
         return result[0];
     }
 
-    @NotNull
-    public final <B> B foldRight(@NotNull F2<? super T, B, B> f, @NotNull B init) {
+    @Nonnull
+    public final <B> B foldRight(@Nonnull F2<? super T, B, B> f, @Nonnull B init) {
         // Manually expanded recursion
         Deque<ConcatList<T>> stack = new ArrayDeque<>(this.length);
         stack.add(this);
@@ -170,12 +170,12 @@ public abstract class ConcatList<T> implements Iterable<T> {
      * @deprecated Use {@link #forEach(Consumer)} instead
      */
     @Deprecated
-    public final void foreach(@NotNull Effect<T> f) {
+    public final void foreach(@Nonnull Effect<T> f) {
         this.forEach(f::e);
     }
 
     @Override
-    public final void forEach(@NotNull Consumer<? super T> action) {
+    public final void forEach(@Nonnull Consumer<? super T> action) {
         // Manually expanded recursion
         @SuppressWarnings("unchecked")
         ConcatList<T>[] stack = new ConcatList[this.length];
@@ -193,20 +193,20 @@ public abstract class ConcatList<T> implements Iterable<T> {
         }
     }
 
-    @NotNull
-    public abstract ConcatList<T> append(@NotNull ConcatList<? extends T> rhs);
+    @Nonnull
+    public abstract ConcatList<T> append(@Nonnull ConcatList<? extends T> rhs);
 
-    @NotNull
-    public final ConcatList<T> append1(@NotNull T element) {
+    @Nonnull
+    public final ConcatList<T> append1(@Nonnull T element) {
         return this.append(ConcatList.single(element));
     }
 
-    public final boolean exists(@NotNull F<T, Boolean> f) {
+    public final boolean exists(@Nonnull F<T, Boolean> f) {
         return this.find(f).isJust();
     }
 
-    @NotNull
-    public final Maybe<T> find(@NotNull F<T, Boolean> f) {
+    @Nonnull
+    public final Maybe<T> find(@Nonnull F<T, Boolean> f) {
         // Manually expanded recursion
         Deque<ConcatList<T>> stack = new ArrayDeque<>(this.length);
         stack.add(this);
@@ -225,7 +225,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
         return Maybe.empty();
     }
 
-    @NotNull
+    @Nonnull
     public final ConcatList<T> reverse() {
         if (this instanceof Empty) {
             return this;
@@ -247,7 +247,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
         return ConcatList.fromList(list);
     }
 
-    @NotNull
+    @Nonnull
     public final Maybe<T> index(int index) {
         ConcatList<T> list = this;
         if (index >= this.length) {
@@ -267,10 +267,10 @@ public abstract class ConcatList<T> implements Iterable<T> {
     }
 
     @Nullable
-    abstract ConcatList<T> updateInternal(int index, @NotNull T element);
+    abstract ConcatList<T> updateInternal(int index, @Nonnull T element);
 
-    @NotNull
-    public final Maybe<ConcatList<T>> update(int index, @NotNull T element) {
+    @Nonnull
+    public final Maybe<ConcatList<T>> update(int index, @Nonnull T element) {
         return Maybe.fromNullable(this.updateInternal(index, element));
     }
 
@@ -279,9 +279,9 @@ public abstract class ConcatList<T> implements Iterable<T> {
             super(0, true);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected ImmutableList<T> toList(@NotNull ImmutableList<T> acc) {
+        protected ImmutableList<T> toList(@Nonnull ImmutableList<T> acc) {
             return acc;
         }
 
@@ -301,15 +301,15 @@ public abstract class ConcatList<T> implements Iterable<T> {
         }
 
         @SuppressWarnings("unchecked")
-        @NotNull
+        @Nonnull
         @Override
-        public ConcatList<T> append(@NotNull ConcatList<? extends T> rhs) {
+        public ConcatList<T> append(@Nonnull ConcatList<? extends T> rhs) {
             return (ConcatList<T>) rhs;
         }
 
         @Nullable
         @Override
-        public ConcatList<T> updateInternal(int index, @NotNull T element) {
+        public ConcatList<T> updateInternal(int index, @Nonnull T element) {
             return null;
         }
 
@@ -330,17 +330,17 @@ public abstract class ConcatList<T> implements Iterable<T> {
     }
 
     private final static class Leaf<T> extends ConcatList<T> {
-        @NotNull
+        @Nonnull
         public final T data;
 
-        private Leaf(@NotNull T data) {
+        private Leaf(@Nonnull T data) {
             super(1, true);
             this.data = data;
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected ImmutableList<T> toList(@NotNull ImmutableList<T> acc) {
+        protected ImmutableList<T> toList(@Nonnull ImmutableList<T> acc) {
             return acc.cons(this.data);
         }
 
@@ -364,9 +364,9 @@ public abstract class ConcatList<T> implements Iterable<T> {
         }
 
         @SuppressWarnings("unchecked")
-        @NotNull
+        @Nonnull
         @Override
-        public ConcatList<T> append(@NotNull ConcatList<? extends T> rhs) {
+        public ConcatList<T> append(@Nonnull ConcatList<? extends T> rhs) {
             if (rhs instanceof Empty) {
                 return this;
             }
@@ -375,7 +375,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
 
         @Nullable
         @Override
-        ConcatList<T> updateInternal(int index, @NotNull T element) {
+        ConcatList<T> updateInternal(int index, @Nonnull T element) {
             return index == 0 ? single(element) : null;
         }
 
@@ -386,18 +386,18 @@ public abstract class ConcatList<T> implements Iterable<T> {
     }
 
     private final static class Fork<T> extends ConcatList<T> {
-        @NotNull
+        @Nonnull
         public final ConcatList<T> left, right;
 
-        private Fork(@NotNull ConcatList<T> left, @NotNull ConcatList<T> right) {
+        private Fork(@Nonnull ConcatList<T> left, @Nonnull ConcatList<T> right) {
             super(left.length + right.length, left.isBalanced && right.isBalanced && (left.length + right.length < 16 || left.length > right.length / 2 && left.length < right.length * 2));
             this.left = left;
             this.right = right;
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected ImmutableList<T> toList(@NotNull ImmutableList<T> acc) {
+        protected ImmutableList<T> toList(@Nonnull ImmutableList<T> acc) {
             return this.left.toList(this.right.toList(acc));
         }
 
@@ -415,7 +415,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
         }
 
         @Override
-        @NotNull
+        @Nonnull
         Pair<ConcatList<T>, ConcatList<T>> splitInternal(int index) {
             // Manually expanded zipper access
             Stack<ConcatList<T>> zippers1 = new Stack<>();
@@ -451,9 +451,9 @@ public abstract class ConcatList<T> implements Iterable<T> {
         }
 
         @SuppressWarnings("unchecked")
-        @NotNull
+        @Nonnull
         @Override
-        public ConcatList<T> append(@NotNull ConcatList<? extends T> rhs) {
+        public ConcatList<T> append(@Nonnull ConcatList<? extends T> rhs) {
             if (rhs instanceof Empty) {
                 return this;
             }
@@ -462,7 +462,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
 
         @Nullable
         @Override
-        ConcatList<T> updateInternal(int index, @NotNull T element) {
+        ConcatList<T> updateInternal(int index, @Nonnull T element) {
             // Manually expanded zipper access
             if (index >= this.length) {
                 return null;
@@ -525,17 +525,17 @@ public abstract class ConcatList<T> implements Iterable<T> {
     }
 
     private final static class ConcatListSplitIterator<T> implements Spliterator<T> {
-        @NotNull
+        @Nonnull
         private final Deque<ConcatList<T>> stack;
         private int size;
 
-        private ConcatListSplitIterator(@NotNull Deque<ConcatList<T>> stack, int size) {
+        private ConcatListSplitIterator(@Nonnull Deque<ConcatList<T>> stack, int size) {
             this.stack = stack;
             this.size = size;
         }
 
 
-        private ConcatListSplitIterator(@NotNull ConcatList<T> list) {
+        private ConcatListSplitIterator(@Nonnull ConcatList<T> list) {
             // Manually expanded recursion
             this.stack = new ArrayDeque<>(list.length);
             this.stack.add(list);
@@ -598,13 +598,13 @@ public abstract class ConcatList<T> implements Iterable<T> {
     }
 
     private static class BinaryTreeMonoid<T> implements Monoid<ConcatList<T>> {
-        @NotNull
+        @Nonnull
         @Override
         public ConcatList<T> identity() {
             return new Empty<>();
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public ConcatList<T> append(ConcatList<T> a, ConcatList<T> b) {
             return a.append(b);

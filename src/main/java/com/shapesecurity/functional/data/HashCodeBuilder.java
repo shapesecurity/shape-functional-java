@@ -16,7 +16,7 @@
 
 package com.shapesecurity.functional.data;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.CheckReturnValue;
 
@@ -33,7 +33,7 @@ public final class HashCodeBuilder {
         return INITIAL_VALUE;
     }
 
-    public static int put(int hash, @NotNull Object os) {
+    public static int put(int hash, @Nonnull Object os) {
         int p = os.hashCode();
         hash = hash * MULT ^ (p & 255);
         p >>>= 8;

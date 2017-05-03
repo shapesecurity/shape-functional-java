@@ -18,7 +18,7 @@ package com.shapesecurity.functional.data;
 
 import com.shapesecurity.functional.Unit;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.CheckReturnValue;
 
@@ -31,7 +31,7 @@ public interface Monoid<T> extends Semigroup<T> {
     public static final BooleanOr BOOLEAN_OR = new BooleanOr();
     public static final BooleanAnd BOOLEAN_AND = new BooleanAnd();
 
-    @NotNull
+    @Nonnull
     T identity();
 
     public static class UnitIdentity extends Semigroup.UnitIdentity implements Monoid<Unit> {
@@ -39,7 +39,7 @@ public interface Monoid<T> extends Semigroup<T> {
             super();
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public final Unit identity() {
             return Unit.unit;
@@ -51,7 +51,7 @@ public interface Monoid<T> extends Semigroup<T> {
             super();
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public final Integer identity() {
             return 0;
@@ -63,7 +63,7 @@ public interface Monoid<T> extends Semigroup<T> {
             super();
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public final Integer identity() {
             return 1;
@@ -75,7 +75,7 @@ public interface Monoid<T> extends Semigroup<T> {
             super();
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public final String identity() {
             return "";
@@ -87,7 +87,7 @@ public interface Monoid<T> extends Semigroup<T> {
             super();
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public final Boolean identity() {
             return false;
@@ -99,7 +99,7 @@ public interface Monoid<T> extends Semigroup<T> {
             super();
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public final Boolean identity() {
             return true;
@@ -107,13 +107,13 @@ public interface Monoid<T> extends Semigroup<T> {
     }
 
     public class ImmutableListAppend<T> implements Monoid<ImmutableList<T>> {
-        @NotNull
+        @Nonnull
         @Override
         public ImmutableList<T> append(ImmutableList<T> ts, ImmutableList<T> t1) {
             return ts.append(t1);
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public ImmutableList<T> identity() {
             return ImmutableList.empty();
@@ -121,13 +121,13 @@ public interface Monoid<T> extends Semigroup<T> {
     }
 
     public class ImmutableSetEqualityUnion<T> implements Monoid<ImmutableSet<T>> {
-        @NotNull
+        @Nonnull
         @Override
         public ImmutableSet<T> append(ImmutableSet<T> ts, ImmutableSet<T> t1) {
             return ts.union(t1);
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public ImmutableSet<T> identity() {
             return ImmutableSet.emptyUsingEquality();
@@ -135,13 +135,13 @@ public interface Monoid<T> extends Semigroup<T> {
     }
 
     public class ImmutableSetIdentityUnion<T> implements Monoid<ImmutableSet<T>> {
-        @NotNull
+        @Nonnull
         @Override
         public ImmutableSet<T> append(ImmutableSet<T> ts, ImmutableSet<T> t1) {
             return ts.union(t1);
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public ImmutableSet<T> identity() {
             return ImmutableSet.emptyUsingIdentity();
@@ -149,13 +149,13 @@ public interface Monoid<T> extends Semigroup<T> {
     }
 
     public class ConcatListAppend<T> implements Monoid<ConcatList<T>> {
-        @NotNull
+        @Nonnull
         @Override
         public ConcatList<T> append(ConcatList<T> ts, ConcatList<T> t1) {
             return ts.append(t1);
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public ConcatList<T> identity() {
             return ConcatList.empty();
