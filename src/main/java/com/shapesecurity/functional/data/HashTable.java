@@ -16,18 +16,16 @@
 
 package com.shapesecurity.functional.data;
 
-import java.util.function.Consumer;
-
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.Unit;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import javax.annotation.CheckReturnValue;
+import java.util.function.Consumer;
 
 /**
  * An immutable hash trie tree implementation.

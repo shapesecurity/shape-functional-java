@@ -16,13 +16,12 @@
 
 package com.shapesecurity.functional.data;
 
-import java.util.ArrayList;
-
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 
 public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     public static final int HASH_START = HashCodeBuilder.put(HashCodeBuilder.init(), "List");

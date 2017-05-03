@@ -16,19 +16,16 @@
 
 package com.shapesecurity.functional.data;
 
-import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.Thunk;
 
-
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import javax.annotation.CheckReturnValue;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 @CheckReturnValue
 public final class Maybe<A> {

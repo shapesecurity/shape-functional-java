@@ -18,9 +18,8 @@ package com.shapesecurity.functional;
 
 import com.shapesecurity.functional.data.HashCodeBuilder;
 
-import javax.annotation.Nonnull;
-
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 
 @CheckReturnValue
 public final class Tuple3<A, B, C> {
