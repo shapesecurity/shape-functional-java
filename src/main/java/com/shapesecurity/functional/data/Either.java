@@ -18,6 +18,7 @@ package com.shapesecurity.functional.data;
 
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
+import com.shapesecurity.functional.ThrowingSupplier;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -52,6 +53,15 @@ public final class Either<A, B> {
     @Nonnull
     public static <A, B extends A, C extends A> A extract(Either<B, C> e) {
         return e.either(x -> x, x -> x);
+    }
+
+    @Nonnull
+    public static <A> Either<Exception, A> _try(@Nonnull ThrowingSupplier<A> s) {
+        try {
+            return Either.right(s.get());
+        } catch (Exception e) {
+            return Either.left(e);
+        }
     }
 
     public final boolean isLeft() {

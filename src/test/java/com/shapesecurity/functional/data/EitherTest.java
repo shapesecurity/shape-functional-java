@@ -80,4 +80,20 @@ public class EitherTest {
         assertEquals("a", Either.extract(Either.<Integer, String>right("a")));
         assertEquals(3, Either.extract(Either.<Integer, String>left(3)));
     }
+
+    @Test
+    public void tryTest() {
+        Exception exception = new Exception("exception");
+        try {
+            Either<Exception, Integer> e = Either._try(() -> 0);
+            assertEquals(Either.right(0), e);
+
+            e = Either._try(() -> {
+                throw exception;
+            });
+            assertEquals(Either.left(exception), e);
+        } catch (Exception e) {
+            fail("Either._try should never allow exceptions to propagate");
+        }
+    }
 }

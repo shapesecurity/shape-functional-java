@@ -167,4 +167,19 @@ public class MaybeTest extends TestBase {
             // do nothing
         }
     }
+
+    @Test
+    public void testTry() {
+        try {
+            Maybe<Integer> m = Maybe._try(() -> 0);
+            assertEquals(Maybe.of(0), m);
+
+            m = Maybe._try(() -> {
+                throw new Exception("exception");
+            });
+            assertEquals(Maybe.empty(), m);
+        } catch (Exception e) {
+            fail("Maybe._try should never allow exceptions to propagate");
+        }
+    }
 }
