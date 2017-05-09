@@ -18,6 +18,7 @@ package com.shapesecurity.functional.data;
 
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
+import com.shapesecurity.functional.ThrowingSupplier;
 import com.shapesecurity.functional.Thunk;
 
 import javax.annotation.CheckReturnValue;
@@ -100,6 +101,15 @@ public final class Maybe<A> {
             return of(a);
         }
         return empty();
+    }
+    @Nonnull
+    public static <A> Maybe<A> _try(@Nonnull ThrowingSupplier<A> s) {
+        // Note that this method does not distinguish between throwing and returning null.
+        try {
+            return Maybe.fromNullable(s.get());
+        } catch (Exception e) {
+            return Maybe.empty();
+        }
     }
 
     public boolean eq(@Nonnull Maybe<A> maybe) {
