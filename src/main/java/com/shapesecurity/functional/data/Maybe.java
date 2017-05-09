@@ -138,6 +138,14 @@ public final class Maybe<A> {
         this.map(f);
     }
 
+    public final void foreach(@Nonnull Runnable r, @Nonnull Effect<A> f) {
+        if (this.value == null) {
+            r.run();
+        } else {
+            f.apply(this.value);
+        }
+    }
+
     public boolean isJust() {
         return this.value != null;
     }
