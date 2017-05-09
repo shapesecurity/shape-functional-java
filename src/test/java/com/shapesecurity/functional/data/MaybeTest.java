@@ -89,6 +89,25 @@ public class MaybeTest extends TestBase {
     }
 
     @Test
+    public void testForEachOverload() {
+        final int[] effect = {0};
+        Maybe.empty().foreach(() -> {
+            effect[0] += 1;
+        }, x -> {
+            fail("Maybe.forEach(r, f) should not execute f on Nothing");
+        });
+        assertEquals(1, effect[0]);
+
+        effect[0] = 0;
+        Maybe.of(notNull).foreach(() -> {
+            fail("Maybe.forEach(r, f) should not execute r on Just");
+        }, x -> {
+            effect[0] += 1;
+        });
+        assertEquals(1, effect[0]);
+    }
+
+    @Test
     public void testToList() {
         assertEquals(ImmutableList.<Integer>empty(), Maybe.<Integer>empty().toList());
         assertEquals(ImmutableList.of(notNull), Maybe.of(notNull).toList());
