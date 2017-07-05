@@ -129,11 +129,7 @@ public abstract class ConcatList<T> implements Iterable<T> {
     }
 
     @Nonnull
-    public final ImmutableList<T> toList() {
-        return this.toList(ImmutableList.empty());
-    }
-
-    protected abstract ImmutableList<T> toList(@Nonnull ImmutableList<T> acc);
+    public abstract ImmutableList<T> toList();
 
     @Nonnull
     public final <B> B foldLeft(@Nonnull F2<B, ? super T, B> f, @Nonnull B init) {
@@ -279,8 +275,8 @@ public abstract class ConcatList<T> implements Iterable<T> {
 
         @Nonnull
         @Override
-        protected ImmutableList<T> toList(@Nonnull ImmutableList<T> acc) {
-            return acc;
+        public ImmutableList<T> toList() {
+            return ImmutableList.empty();
         }
 
         @Override
@@ -338,8 +334,8 @@ public abstract class ConcatList<T> implements Iterable<T> {
 
         @Nonnull
         @Override
-        protected ImmutableList<T> toList(@Nonnull ImmutableList<T> acc) {
-            return acc.cons(this.data);
+        public ImmutableList<T> toList() {
+            return ImmutableList.of(this.data);
         }
 
         @Override
@@ -395,8 +391,25 @@ public abstract class ConcatList<T> implements Iterable<T> {
 
         @Nonnull
         @Override
-        protected ImmutableList<T> toList(@Nonnull ImmutableList<T> acc) {
-            return this.left.toList(this.right.toList(acc));
+        public ImmutableList<T> toList() {
+            ImmutableList<T> out = ImmutableList.empty();
+            final Stack<ConcatList<T>> stack = new Stack<>();
+            stack.push(this.left);
+            ConcatList<T> next = this.right;
+            while (true) {
+                if (next instanceof Fork) {
+                    stack.push(((Fork<T>) next).left);
+                    next = ((Fork<T>) next).right;
+                } else if (next instanceof Leaf) {
+                    out = out.cons(((Leaf<T>) next).data);
+                    if (stack.empty()) break;
+                    next = stack.pop();
+                } else { // Empty
+                    if (stack.empty()) break;
+                    next = stack.pop();
+                }
+            }
+            return out;
         }
 
         @Override
