@@ -19,58 +19,32 @@ package com.shapesecurity.functional.data;
 public class BenchmarkConcatList {
 
     public static final int SIZE = 10000;
+    public static final int WARMUP = 50000;
+    public static final int MEASURE = 1000;
 
     public static void main(String[] args) {
         {
             System.out.println("Balanced tree");
             ConcatList<Integer> l = gen(SIZE);
-            System.out.print("benchmarkForeachIndexUpdate: ");
-            benchmarkForeachIndexUpdate(l);
-            System.out.print("benchmarkForeach: ");
-            benchmarkForeach(l);
-            System.out.print("benchmarkForLoop: ");
-            benchmarkForLoop(l);
-            System.out.print("benchmarkFind: ");
-            benchmarkFind(l);
+            benchmarkAll(l);
         }
+        System.out.println("===============");
         {
-            System.out.println("===============");
             System.out.println("Left-leaning tree");
             ConcatList<Integer> l = genLL(SIZE);
-            System.out.print("benchmarkForeachIndexUpdate: ");
-            benchmarkForeachIndexUpdate(l);
-            System.out.print("benchmarkForeach: ");
-            benchmarkForeach(l);
-            System.out.print("benchmarkForLoop: ");
-            benchmarkForLoop(l);
-            System.out.print("benchmarkFind: ");
-            benchmarkFind(l);
+            benchmarkAll(l);
         }
+        System.out.println("===============");
         {
-            System.out.println("===============");
             System.out.println("Right-leaning tree");
             ConcatList<Integer> l = genRL(SIZE);
-            System.out.print("benchmarkForeachIndexUpdate: ");
-            benchmarkForeachIndexUpdate(l);
-            System.out.print("benchmarkForeach: ");
-            benchmarkForeach(l);
-            System.out.print("benchmarkForLoop: ");
-            benchmarkForLoop(l);
-            System.out.print("benchmarkFind: ");
-            benchmarkFind(l);
+            benchmarkAll(l);
         }
+        System.out.println("===============");
         {
-            System.out.println("===============");
             System.out.println("Random-leaning tree");
             ConcatList<Integer> l = genRandom(SIZE);
-            System.out.print("benchmarkForeachIndexUpdate: ");
-            benchmarkForeachIndexUpdate(l);
-            System.out.print("benchmarkForeach: ");
-            benchmarkForeach(l);
-            System.out.print("benchmarkForLoop: ");
-            benchmarkForLoop(l);
-            System.out.print("benchmarkFind: ");
-            benchmarkFind(l);
+            benchmarkAll(l);
         }
     }
 
@@ -120,71 +94,89 @@ public class BenchmarkConcatList {
         }
     }
 
+    private static void benchmarkAll(ConcatList<Integer> l) {
+        System.out.print("benchmarkForeachIndexUpdate: ");
+        benchmarkForeachIndexUpdate(l);
+        System.out.print("benchmarkForeach: ");
+        benchmarkForeach(l);
+        System.out.print("benchmarkForLoop: ");
+        benchmarkForLoop(l);
+        System.out.print("benchmarkFind: ");
+        benchmarkFind(l);
+        System.out.print("benchmarkToList: ");
+        benchmarkToList(l);
+    }
 
     private static void benchmarkForeachIndexUpdate(ConcatList<Integer> l) {
-        int warmup = 50000;
-        for (int i = 0; i < warmup; i++) {
+        for (int i = 0; i < WARMUP; i++) {
             l.update(i % SIZE, i);
         }
 
-        int measure = 1000;
         long start = System.nanoTime();
-        for (int i = 0; i < measure; i++) {
+        for (int i = 0; i < MEASURE; i++) {
             l.update(i, i);
         }
         long elapse = System.nanoTime() - start;
-        System.out.printf("%.3fµs\n", elapse * 1e-3 / measure);
+        System.out.printf("%.3fµs\n", elapse * 1e-3 / MEASURE);
     }
 
     private static void benchmarkForeach(ConcatList<Integer> l) {
         int[] acc = new int[1];
-        int warmup = 50000;
-        for (int i = 0; i < warmup; i++) {
+        for (int i = 0; i < WARMUP; i++) {
             l.forEach(n -> acc[0] += (n % 137 << 7) ^ 12);
         }
 
-        int measure = 1000;
         long start = System.nanoTime();
-        for (int i = 0; i < measure; i++) {
+        for (int i = 0; i < MEASURE; i++) {
             l.forEach(n -> acc[0] += (n % 137 << 7) ^ 12);
         }
         long elapse = System.nanoTime() - start;
-        System.out.printf("%.3fµs\n", elapse * 1e-3 / measure);
+        System.out.printf("%.3fµs\n", elapse * 1e-3 / MEASURE);
     }
 
     private static void benchmarkForLoop(ConcatList<Integer> l) {
         int[] acc = new int[1];
-        int warmup = 50000;
-        for (int i = 0; i < warmup; i++) {
+        for (int i = 0; i < WARMUP; i++) {
             for (int n : l) {
                 acc[0] += (n % 137 << 7) ^ 12;
             }
         }
 
-        int measure = 1000;
         long start = System.nanoTime();
-        for (int i = 0; i < measure; i++) {
+        for (int i = 0; i < MEASURE; i++) {
             for (int n : l) {
                 acc[0] += (n % 137 << 7) ^ 12;
             }
         }
         long elapse = System.nanoTime() - start;
-        System.out.printf("%.3fµs\n", elapse * 1e-3 / measure);
+        System.out.printf("%.3fµs\n", elapse * 1e-3 / MEASURE);
     }
 
 
     private static void benchmarkFind(ConcatList<Integer> l) {
-        int warmup = 50000;
-        for (int i = 0; i < warmup; i++) {
+        for (int i = 0; i < WARMUP; i++) {
             l.find(n -> n == -1);
         }
 
-        int measure = 1000;
         long start = System.nanoTime();
-        for (int i = 0; i < measure; i++) {
+        for (int i = 0; i < MEASURE; i++) {
             l.find(n -> n == -1);
         }
         long elapse = System.nanoTime() - start;
-        System.out.printf("%.3fµs\n", elapse * 1e-3 / measure);
+        System.out.printf("%.3fµs\n", elapse * 1e-3 / MEASURE);
     }
+
+    private static void benchmarkToList(ConcatList<Integer> l) {
+        for (int i = 0; i < WARMUP; i++) {
+            l.toList();
+        }
+
+        long start = System.nanoTime();
+        for (int i = 0; i < MEASURE; i++) {
+            l.toList();
+        }
+        long elapse = System.nanoTime() - start;
+        System.out.printf("%.3fµs\n", elapse * 1e-3 / MEASURE);
+    }
+
 }
