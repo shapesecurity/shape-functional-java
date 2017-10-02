@@ -22,18 +22,6 @@ import org.junit.Test;
 
 public class FunctionTest {
     @Test
-    public void testEffect() {
-        final StringBuilder result = new StringBuilder();
-        Effect<Integer> effect = integer -> result.append(integer).append(";");
-
-        assertEquals(Unit.unit, effect.apply(1));
-        assertEquals(Unit.unit, effect.apply(2));
-        assertEquals(Unit.unit, effect.apply(3));
-
-        assertEquals("1;2;3;", result.toString());
-    }
-
-    @Test
     public void testF() {
         F<Integer, Integer> doubleMe = integer -> integer * 2;
         assertEquals(2, (int) doubleMe.apply(1));

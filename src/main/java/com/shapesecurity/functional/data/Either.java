@@ -16,12 +16,12 @@
 
 package com.shapesecurity.functional.data;
 
-import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.ThrowingSupplier;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 @CheckReturnValue
 public final class Either<A, B> {
@@ -82,11 +82,11 @@ public final class Either<A, B> {
     }
 
     @SuppressWarnings("unchecked")
-    public void foreach(@Nonnull Effect<A> f1, @Nonnull Effect<B> f2) {
+    public void foreach(@Nonnull Consumer<A> f1, @Nonnull Consumer<B> f2) {
         if (this.tag == Tag.LEFT) {
-            f1.apply((A) this.data);
+            f1.accept((A) this.data);
         } else {
-            f2.apply((B) this.data);
+            f2.accept((B) this.data);
         }
     }
 

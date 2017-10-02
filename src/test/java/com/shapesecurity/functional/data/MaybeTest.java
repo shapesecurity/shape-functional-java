@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.shapesecurity.functional.TestBase;
-import com.shapesecurity.functional.Thunk;
 
 import javax.annotation.Nullable;
 import org.junit.Test;
@@ -126,8 +125,8 @@ public class MaybeTest extends TestBase {
     public void testOrJusts() {
         assertEquals(notNull, Maybe.fromNullable(notNull).orJust(notNull));
         assertEquals(notNull, Maybe.fromNullable(nulled).orJust(notNull));
-        assertEquals(notNull, Maybe.fromNullable(notNull).orJustLazy(Thunk.from(() -> notNull)));
-        assertEquals(notNull, Maybe.fromNullable(nulled).orJustLazy(Thunk.from(() -> notNull)));
+        assertEquals(notNull, Maybe.fromNullable(notNull).orJustLazy(() -> notNull));
+        assertEquals(notNull, Maybe.fromNullable(nulled).orJustLazy(() -> notNull));
     }
 
     @Test
