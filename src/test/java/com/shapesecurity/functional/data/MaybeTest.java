@@ -77,11 +77,11 @@ public class MaybeTest extends TestBase {
 
     @Test
     public void testForEach() {
-        Maybe.fromNullable(nulled).foreach(x -> {
+        Maybe.fromNullable(nulled).forEach(x -> {
             fail("Maybe.forEach should not execute f on a empty"); //should never call f
         });
         final int[] effect = {0};
-        Maybe.fromNullable(notNull).foreach(x -> {
+        Maybe.fromNullable(notNull).forEach(x -> {
             effect[0] += 1;
         });
         assertEquals(1, effect[0]);//of should be side effected into incrementing once and only once
@@ -90,7 +90,7 @@ public class MaybeTest extends TestBase {
     @Test
     public void testForEachOverload() {
         final int[] effect = {0};
-        Maybe.empty().foreach(() -> {
+        Maybe.empty().forEach(() -> {
             effect[0] += 1;
         }, x -> {
             fail("Maybe.forEach(r, f) should not execute f on Nothing");
@@ -98,7 +98,7 @@ public class MaybeTest extends TestBase {
         assertEquals(1, effect[0]);
 
         effect[0] = 0;
-        Maybe.of(notNull).foreach(() -> {
+        Maybe.of(notNull).forEach(() -> {
             fail("Maybe.forEach(r, f) should not execute r on Just");
         }, x -> {
             effect[0] += 1;

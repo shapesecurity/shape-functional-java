@@ -161,7 +161,7 @@ public class HashTableTest extends TestBase {
 
         final int[] count = new int[1];
         assertEquals(N, e.length);
-        e.entries().foreach(p -> {
+        e.entries().forEach(p -> {
             assertEquals(p.left, Integer.toString(p.right));
             assertFalse(visited[p.right]);
             visited[p.right] = true;
@@ -257,7 +257,7 @@ public class HashTableTest extends TestBase {
             return ht.put(Integer.toString(i), i);
         }, empty);
 
-        range(0, N).foreach(i -> {
+        range(0, N).forEach(i -> {
             assertEquals(Integer.toString(i), t.findMap(x -> Maybe.iff(x.right.equals(i), x.left)).fromJust());
         });
     }
@@ -286,14 +286,14 @@ public class HashTableTest extends TestBase {
 
     @Test
     public void forEachTest() {
-        HashTable.<String, Integer>emptyUsingEquality().foreach((p) -> {
+        HashTable.<String, Integer>emptyUsingEquality().forEach((p) -> {
             throw new RuntimeException("not reached");
         });
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
                 HashTable.<String, Integer>emptyUsingEquality());
         int a[] = new int[1];
-        t.foreach(entry -> a[0] += entry.right);
+        t.forEach(entry -> a[0] += entry.right);
         assertEquals(N * (N - 1) / 2, a[0]);
     }
 
@@ -304,7 +304,7 @@ public class HashTableTest extends TestBase {
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
                 HashTable.<String, Integer>emptyUsingEquality());
         t = t.map(x -> x + 1);
-        t.foreach(pair -> {
+        t.forEach(pair -> {
             assertEquals(Integer.parseInt(pair.left), pair.right - 1);
         });
     }
