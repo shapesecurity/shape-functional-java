@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 // Used for lazy evaluation.
-// @FunctionalInterface
 public final class Thunk<A> {
     @Nonnull
     private final Supplier<A> supplier;
@@ -61,4 +60,3 @@ public final class Thunk<A> {
         return value;
     }
 }
-

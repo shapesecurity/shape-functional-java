@@ -16,7 +16,6 @@
 
 package com.shapesecurity.functional.data;
 
-import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.ThrowingSupplier;
 import com.shapesecurity.functional.Thunk;
@@ -25,6 +24,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -144,15 +144,17 @@ public final class Maybe<A> {
         return this.value == null ? def : f.apply(this.value);
     }
 
-    public final void foreach(@Nonnull Effect<A> f) {
-        this.map(f);
+    public final void foreach(@Nonnull Consumer<A> f) {
+        if (this.value != null) {
+            f.accept(this.value);
+        }
     }
 
-    public final void foreach(@Nonnull Runnable r, @Nonnull Effect<A> f) {
+    public final void foreach(@Nonnull Runnable r, @Nonnull Consumer<A> f) {
         if (this.value == null) {
             r.run();
         } else {
-            f.apply(this.value);
+            f.accept(this.value);
         }
     }
 

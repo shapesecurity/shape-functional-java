@@ -16,7 +16,6 @@
 
 package com.shapesecurity.functional.data;
 
-import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
@@ -161,10 +160,6 @@ public abstract class HashTable<K, V> {
         int[] i = new int[1];
         this.forEach(x -> pairs[i[0]++] = x);
         return ImmutableList.from(pairs);
-    }
-
-    public final void foreach(@Nonnull Effect<Pair<K, V>> e) {
-        this.forEach(e::e);
     }
 
     public abstract void forEach(@Nonnull Consumer<? super Pair<K, V>> e);

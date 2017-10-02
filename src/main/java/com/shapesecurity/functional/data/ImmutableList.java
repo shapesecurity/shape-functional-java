@@ -16,7 +16,6 @@
 
 package com.shapesecurity.functional.data;
 
-import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
@@ -456,17 +455,6 @@ public abstract class ImmutableList<A> implements Iterable<A> {
         int length = this.length;
         A[] target = constructor.apply(length);
         return this.toArray(target);
-    }
-
-    /**
-     * Runs an effect function across all the elements.
-     *
-     * @param f The Effect function.
-     * @deprecated Use {@link #forEach(Consumer)} instead.
-     */
-    @Deprecated
-    public final void foreach(@Nonnull Effect<A> f) {
-        this.forEach(f::e);
     }
 
     public abstract boolean isEmpty();

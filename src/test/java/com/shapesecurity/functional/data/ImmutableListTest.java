@@ -17,8 +17,8 @@
 package com.shapesecurity.functional.data;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
-import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.TestBase;
 
@@ -31,14 +31,14 @@ import javax.annotation.Nonnull;
 import org.junit.Test;
 
 public class ImmutableListTest extends TestBase {
-    protected void testWithSpecialLists(@Nonnull Effect<ImmutableList<Integer>> f) {
-        f.apply(Nil.empty());
-        f.apply(ImmutableList.empty());
-        f.apply(ImmutableList.of(0));
-        f.apply(ImmutableList.of(0, 1, 2));
-        f.apply(ImmutableList.of(3, 2, 1));
-        f.apply(LONG_LIST);
-        f.apply(LONG_INT_LIST);
+    protected void testWithSpecialLists(@Nonnull Consumer<ImmutableList<Integer>> f) {
+        f.accept(Nil.empty());
+        f.accept(ImmutableList.empty());
+        f.accept(ImmutableList.of(0));
+        f.accept(ImmutableList.of(0, 1, 2));
+        f.accept(ImmutableList.of(3, 2, 1));
+        f.accept(LONG_LIST);
+        f.accept(LONG_INT_LIST);
     }
 
     @Test
