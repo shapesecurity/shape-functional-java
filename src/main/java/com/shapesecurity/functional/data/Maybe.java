@@ -18,7 +18,6 @@ package com.shapesecurity.functional.data;
 
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.ThrowingSupplier;
-import com.shapesecurity.functional.Thunk;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -144,13 +143,27 @@ public final class Maybe<A> {
         return this.value == null ? def : f.apply(this.value);
     }
 
+    /**
+     * @deprecated use {@link #forEach(Consumer)}
+     */
     public final void foreach(@Nonnull Consumer<A> f) {
+        this.forEach(f);
+    }
+
+    /**
+     * @deprecated use {@link #forEach(Consumer)}
+     */
+    public final void foreach(@Nonnull Runnable r, @Nonnull Consumer<A> f) {
+        this.forEach(r, f);
+    }
+
+    public final void forEach(@Nonnull Consumer<A> f) {
         if (this.value != null) {
             f.accept(this.value);
         }
     }
 
-    public final void foreach(@Nonnull Runnable r, @Nonnull Consumer<A> f) {
+    public final void forEach(@Nonnull Runnable r, @Nonnull Consumer<A> f) {
         if (this.value == null) {
             r.run();
         } else {
@@ -174,15 +187,6 @@ public final class Maybe<A> {
     @Nonnull
     public A orJust(@Nonnull A a) {
         return this.value == null ? a : this.value;
-    }
-
-    /**
-     * @deprecated Use {@link #orJustLazy(Supplier)} instead.
-     */
-    @Nonnull
-    @Deprecated
-    public A orJustLazy(@Nonnull Thunk<A> a) {
-        return this.value == null ? a.get() : this.value;
     }
 
     @Nonnull
