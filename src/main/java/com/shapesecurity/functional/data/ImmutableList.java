@@ -565,6 +565,29 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     }
 
     /**
+     * Tests the elements of the list with a predicate <code>f</code> and returns the index of the first one that
+     * satisfies the predicate without testing the rest of the list.
+     *
+     * @param f The predicate.
+     * @return <code>Maybe.of(the found element index)</code> if an element is found or
+     * <code>Maybe.empty()</code> if none is found.
+     */
+    @Nonnull
+	public final Maybe<Integer> findIndex(@Nonnull F<A, Boolean> f) {
+        ImmutableList<A> self = this;
+        int i = 0;
+        while (self instanceof NonEmptyImmutableList) {
+            NonEmptyImmutableList<A> selfNel = (NonEmptyImmutableList<A>) self;
+            if (f.apply(selfNel.head)) {
+                return Maybe.of(i);
+            }
+            self = selfNel.tail();
+            ++i;
+        }
+        return Maybe.empty();
+	}
+
+    /**
      * Run <code>f</code> on each element of the list and return the result immediately if it is a
      * <code>Maybe.of</code>. Other wise return <code>Maybe.empty()</code>
      *

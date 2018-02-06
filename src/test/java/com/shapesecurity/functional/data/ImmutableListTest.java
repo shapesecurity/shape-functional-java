@@ -357,4 +357,14 @@ public class ImmutableListTest extends TestBase {
         assertTrue(left instanceof Nil);
         assertTrue(right instanceof Nil);
     }
+
+    @Test
+    public void testFindIndex() {
+        assertTrue(ImmutableList.empty().findIndex(i -> true).isNothing());
+        assertTrue(ImmutableList.of(1).findIndex(i -> i == 0).isNothing());
+        assertTrue(ImmutableList.of(1).findIndex(i -> i == 1).fromJust() == 0);
+        assertTrue(ImmutableList.of(0, 1).findIndex(i -> i == 1).fromJust() == 1);
+        assertTrue(ImmutableList.of(0, 1, 1).findIndex(i -> i == 1).fromJust() == 1);
+        assertTrue(ImmutableList.of(0, 1).findIndex(i -> i == 2).isNothing());
+    }
 }
