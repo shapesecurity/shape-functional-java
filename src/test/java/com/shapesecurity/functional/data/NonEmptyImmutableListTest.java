@@ -21,22 +21,22 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.TestBase;
 
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
-import java.util.function.Consumer;
 
 public class NonEmptyImmutableListTest extends TestBase {
     // Helpers
 
-    private void testWithSpecialLists(@Nonnull Consumer<NonEmptyImmutableList<Integer>> f) {
-        f.accept(ImmutableList.of(0));
-        f.accept(ImmutableList.of(0, 1, 2));
-        f.accept(ImmutableList.of(3, 2, 1));
-        f.accept(LONG_LIST);
+    private void testWithSpecialLists(@Nonnull Effect<NonEmptyImmutableList<Integer>> f) {
+        f.apply(ImmutableList.of(0));
+        f.apply(ImmutableList.of(0, 1, 2));
+        f.apply(ImmutableList.of(3, 2, 1));
+        f.apply(LONG_LIST);
     }
 
     private void testLengthOneGreaterThanTail(NonEmptyImmutableList<Integer> list) {
