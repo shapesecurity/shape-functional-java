@@ -162,14 +162,6 @@ public abstract class HashTable<K, V> {
         return ImmutableList.from(pairs);
     }
 
-    /**
-     * @deprecated use {@link #forEach(Consumer)}
-     */
-
-    public void foreach(@Nonnull Consumer<? super Pair<K, V>> e) {
-        this.forEach(e);
-    }
-
     public abstract void forEach(@Nonnull Consumer<? super Pair<K, V>> e);
 
     @Nonnull
