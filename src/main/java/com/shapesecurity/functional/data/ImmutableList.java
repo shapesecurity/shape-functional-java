@@ -205,13 +205,6 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     }
 
     /**
-     * @deprecated use {@link #forEach(Consumer)}
-     */
-    public void foreach(@Nonnull Consumer<? super A> action) {
-        this.forEach(action);
-    }
-
-    /**
      * This function is provided by Iterable that can be used to avoid a creation
      * of an Iterator instance.
      *

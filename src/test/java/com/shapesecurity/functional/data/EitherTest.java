@@ -68,8 +68,8 @@ public class EitherTest {
         assertNotEquals(Either.left(3), Either.right(3));
         assertNotEquals(Either.right(3), Either.left(3));
 
-        Either.<Integer, Integer>left(1).forEach(x -> { assertEquals(1, x.intValue()); }, x -> { fail(); });
-        Either.<Integer, Integer>right(1).forEach(x -> { fail(); }, x -> { assertEquals(1, x.intValue()); });
+        Either.<Integer, Integer>left(1).foreach(x -> { assertEquals(1, x.intValue()); }, x -> { fail(); });
+        Either.<Integer, Integer>right(1).foreach(x -> { fail(); }, x -> { assertEquals(1, x.intValue()); });
     }
 
     @Test

@@ -81,16 +81,8 @@ public final class Either<A, B> {
         }
     }
 
-    /**
-     * @deprecated use {@link #forEach(Consumer, Consumer)}
-     */
     @SuppressWarnings("unchecked")
     public void foreach(@Nonnull Consumer<A> f1, @Nonnull Consumer<B> f2) {
-        this.forEach(f1, f2);
-    }
-
-    @SuppressWarnings("unchecked")
-    public void forEach(@Nonnull Consumer<A> f1, @Nonnull Consumer<B> f2) {
         if (this.tag == Tag.LEFT) {
             f1.accept((A) this.data);
         } else {
