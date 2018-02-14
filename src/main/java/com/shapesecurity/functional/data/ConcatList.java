@@ -16,6 +16,7 @@
 
 package com.shapesecurity.functional.data;
 
+import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
@@ -157,6 +158,14 @@ public abstract class ConcatList<T> implements Iterable<T> {
             }
         }
         return init;
+    }
+
+    /**
+     * @deprecated Use {@link #forEach(Consumer)} instead
+     */
+    @Deprecated
+    public final void foreach(@Nonnull Effect<T> f) {
+        this.forEach(f::e);
     }
 
     @Override
