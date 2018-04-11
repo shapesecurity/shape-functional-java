@@ -258,7 +258,7 @@ public abstract class HashTable<K, V> {
 
         @Override
         public <B> HashTable<K, B> map(@Nonnull F<V, B> f) {
-            return emptyUsingEquality();
+            return empty(this.hasher);
         }
 
         @Override
@@ -323,7 +323,7 @@ public abstract class HashTable<K, V> {
             }, new Pair<>(false, ImmutableList.empty()));
             if (result.left) {
                 if (this.length == 1) {
-                    return Maybe.of(HashTable.emptyUsingEquality());
+                    return Maybe.of(empty(this.hasher));
                 }
                 return Maybe.of(new Leaf<>(this.hasher, result.right, this.baseHash, this.length - 1));
             }
