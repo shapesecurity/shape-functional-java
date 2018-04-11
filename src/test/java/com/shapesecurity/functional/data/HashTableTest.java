@@ -44,6 +44,18 @@ public class HashTableTest extends TestBase {
     private static final long addend = 0xBL;
     private static final long mask = (1L << 48) - 1;
 
+    static class DummyWithEquals {
+        @Override
+        public int hashCode() {
+            return 42;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof DummyWithEquals;
+        }
+    }
+
     @Test
     public void simpleTests() {
         HashTable<String, Integer> e = HashTable.emptyUsingEquality();
@@ -333,5 +345,32 @@ public class HashTableTest extends TestBase {
         assertFalse(m.containsKey(3));
 
 
+    }
+
+    @Test
+    public void removePreservesHasherTest() {
+        HashTable<DummyWithEquals, Integer> table = HashTable.emptyUsingIdentity();
+
+        DummyWithEquals one = new DummyWithEquals();
+        DummyWithEquals two = new DummyWithEquals();
+        table = table.put(one, 1);
+        table = table.remove(one);
+        table = table.put(one, 1);
+        table = table.put(two, 2);
+		assertEquals(1, (int) table.get(one).fromJust());
+		assertEquals(2, (int) table.get(two).fromJust());
+    }
+
+    @Test
+    public void mapPreservesHasherTest() {
+        HashTable<DummyWithEquals, Integer> table = HashTable.emptyUsingIdentity();
+        table = table.map(x -> x);
+
+        DummyWithEquals one = new DummyWithEquals();
+        DummyWithEquals two = new DummyWithEquals();
+        table = table.put(one, 1);
+        table = table.put(two, 2);
+		assertEquals(1, (int) table.get(one).fromJust());
+		assertEquals(2, (int) table.get(two).fromJust());
     }
 }
