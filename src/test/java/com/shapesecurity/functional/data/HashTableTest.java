@@ -100,7 +100,7 @@ public class HashTableTest extends TestBase {
         assertEquals(Maybe.<Integer>empty(), e4.get("c"));
     }
 
-    long next(long seed) {
+    protected static long next(long seed) {
         return (seed * multiplier + addend) & mask;
     }
 
@@ -149,7 +149,7 @@ public class HashTableTest extends TestBase {
         }
     }
 
-    private int[] shuffle(long seed, int n) {
+    protected static int[] shuffle(long seed, int n) {
         int[] shuffled = new int[n];
         for (int i = 0; i < n; i++) {
             seed = next(seed);
