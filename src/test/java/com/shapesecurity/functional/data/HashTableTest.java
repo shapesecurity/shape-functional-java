@@ -100,7 +100,7 @@ public class HashTableTest extends TestBase {
         assertEquals(Maybe.<Integer>empty(), e4.get("c"));
     }
 
-    long next(long seed) {
+    static long next(long seed) {
         return (seed * multiplier + addend) & mask;
     }
 
@@ -149,7 +149,7 @@ public class HashTableTest extends TestBase {
         }
     }
 
-    private int[] shuffle(long seed, int n) {
+    protected static int[] shuffle(long seed, int n) {
         int[] shuffled = new int[n];
         for (int i = 0; i < n; i++) {
             seed = next(seed);
@@ -372,5 +372,21 @@ public class HashTableTest extends TestBase {
         table = table.put(two, 2);
 		assertEquals(1, (int) table.get(one).fromJust());
 		assertEquals(2, (int) table.get(two).fromJust());
+    }
+
+    @Test
+    public void iterableTest() {
+        for(String string : ImmutableSet.<String>emptyUsingEquality()) {
+            throw new RuntimeException("empty HashTable has iterated");
+        }
+        int N = 10000;
+        HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
+                HashTable.emptyUsingEquality());
+        int sum = 0;
+        for (Pair<String, Integer> i : t) {
+            assertEquals(Integer.toString(i.right), i.left);
+            sum += i.right;
+        }
+        assertEquals(N * (N - 1) / 2, sum);
     }
 }

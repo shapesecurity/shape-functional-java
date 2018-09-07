@@ -63,6 +63,11 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
         // Manually expanded tail recursion
         ImmutableList<T> l = this;
         ImmutableList<T> r = (ImmutableList<T>) o;
+
+        if (l.length != r.length) {
+            return false;
+        }
+        
         while (l instanceof NonEmptyImmutableList && r instanceof NonEmptyImmutableList) {
             if (l == r) {
                 return true;
