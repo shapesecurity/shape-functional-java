@@ -376,7 +376,7 @@ public class HashTableTest extends TestBase {
 
     @Test
     public void iterableTest() {
-        for(String string : ImmutableSet.<String>emptyUsingEquality()) {
+        for (String string : ImmutableSet.<String>emptyUsingEquality()) {
             throw new RuntimeException("empty HashTable has iterated");
         }
         int N = 10000;

@@ -542,7 +542,7 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
             return new Iterator<Pair<K, V>>() {
                 @SuppressWarnings("unchecked")
                 private final HashTable<K, V>[] stack = new HashTable[Fork.this.length];
-                private Maybe<Iterator<Pair<K, V>>> currentIterator = Maybe.empty();
+                private Iterator<Pair<K, V>> currentIterator = null;
                 int i = 0;
 
                 {
@@ -550,24 +550,26 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
                 }
 
                 private void updateState() {
-                    if (currentIterator.isJust() && currentIterator.fromJust().hasNext()) {
+                    if (currentIterator != null && currentIterator.hasNext()) {
                         return;
                     } else {
-                        currentIterator = Maybe.empty();
+                        currentIterator = null;
                     }
-                    while (this.i > 0 && currentIterator.isNothing()) {
+                    while (this.i > 0) {
                         HashTable<K, V> curr = this.stack[--this.i];
                         if (curr instanceof Fork) {
                             Fork<K, V> fork = (Fork<K, V>) curr;
                             for (HashTable<K, V> child : fork.children) {
-                                this.stack[this.i++] = child;
+                                if (child != null) {
+                                    this.stack[this.i++] = child;
+                                }
                             }
                         } else if (curr instanceof Leaf) {
-                            currentIterator = Maybe.of(((Leaf<K, V>) curr).dataList.iterator());
-                            if (currentIterator.fromJust().hasNext()) {
+                            currentIterator = ((Leaf<K, V>) curr).dataList.iterator();
+                            if (currentIterator.hasNext()) {
                                 return;
                             } else {
-                                currentIterator = Maybe.empty();
+                                currentIterator = null;
                             }
                         }
                     }
@@ -576,16 +578,16 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
                 @Override
                 public boolean hasNext() {
                     updateState();
-                    return currentIterator.isJust() && currentIterator.fromJust().hasNext();
+                    return currentIterator != null;
                 }
 
                 @Override
                 public Pair<K, V> next() {
                     updateState();
-                    if (currentIterator.isJust() && currentIterator.fromJust().hasNext()) {
-                        return currentIterator.fromJust().next();
+                    if (currentIterator == null) {
+                        throw new NoSuchElementException();
                     }
-                    throw new NoSuchElementException();
+                    return currentIterator.next();
                 }
             };
         }
