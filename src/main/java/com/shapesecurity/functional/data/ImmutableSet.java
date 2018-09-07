@@ -57,11 +57,9 @@ public class ImmutableSet<T> implements Iterable<T> {
         return this.data.containsKey(datum);
     }
 
+    @SuppressWarnings("unchecked")
     public <A> ImmutableSet<A> map(@Nonnull F<T, A> f) {
-        @SuppressWarnings("unchecked")
-        ImmutableSet<A> newSet = ImmutableSet.empty((Hasher<A>)this.data.hasher);
-        newSet = this.data.foldLeft((ImmutableSet<A> a, Pair<T, Unit> b) -> a.put(f.apply(b.left)), newSet);
-        return newSet;
+        return this.foldAbelian((val, acc) -> acc.put(f.apply(val)), ImmutableSet.empty((Hasher<A>) this.data.hasher));
     }
 
     public ImmutableSet<T> remove(@Nonnull T datum) {
