@@ -60,7 +60,7 @@ public class ImmutableSetTest extends TestBase {
 
     @Test
     public void iterableTest() {
-        for(String string : ImmutableSet.<String>emptyUsingEquality()) {
+        for (String string : ImmutableSet.<String>emptyUsingEquality()) {
             fail("Empty ImmutableSet Iterated");
         }
         int N = 10000;
@@ -71,6 +71,17 @@ public class ImmutableSetTest extends TestBase {
             sum += i;
         }
         assertEquals(N * (N - 1) / 2, sum);
+    }
+
+    public void mapTest() {
+        assertEquals(0, ImmutableSet.<String>emptyUsingEquality().map(x -> x + 1).length());
+        int N = 10000;
+        ImmutableSet<String> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i)),
+                ImmutableSet.emptyUsingEquality());
+        t = t.map(x -> x + "_test");
+        for (String key : t) {
+            assertTrue(key.endsWith("_test"));
+        }
     }
 
     @Test
