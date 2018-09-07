@@ -1,13 +1,16 @@
 package com.shapesecurity.functional.data;
 
+import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
+import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.Unit;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
+import java.util.Iterator;
 
 @CheckReturnValue
-public class ImmutableSet<T> {
+public class ImmutableSet<T> implements Iterable<T> {
     @Nonnull
     private final HashTable<T, Unit> data;
 
@@ -17,6 +20,10 @@ public class ImmutableSet<T> {
 
     ImmutableSet(@Nonnull HashTable<T, Unit> data) {
         this.data = data;
+    }
+
+    public static <T> ImmutableSet<T> empty(@Nonnull Hasher<T> hasher) {
+        return new ImmutableSet<>(HashTable.empty(hasher));
     }
 
     public static <T> ImmutableSet<T> emptyUsingEquality() {
@@ -50,6 +57,28 @@ public class ImmutableSet<T> {
         return this.data.containsKey(datum);
     }
 
+    public <A> ImmutableSet<A> map(@Nonnull F<T, A> f, @Nonnull Hasher<A> hasher) {
+        ImmutableSet<A> newSet = ImmutableSet.empty(hasher);
+        newSet = this.data.foldLeft((ImmutableSet<A> a, Pair<T, Unit> b) -> a.put(f.apply(b.left)), newSet);
+        return newSet;
+    }
+
+    public ImmutableSet<T> map(@Nonnull F<T, T> f) {
+        return this.map(f, this.data.hasher);
+    }
+
+    public <A> ImmutableSet<A> mapUsingEquality(@Nonnull F<T, A> f) {
+        ImmutableSet<A> newSet = ImmutableSet.emptyUsingEquality();
+        newSet = this.data.foldLeft((ImmutableSet<A> a, Pair<T, Unit> b) -> a.put(f.apply(b.left)), newSet);
+        return newSet;
+    }
+
+    public <A> ImmutableSet<A> mapUsingIdentity(@Nonnull F<T, A> f) {
+        ImmutableSet<A> newSet = ImmutableSet.emptyUsingIdentity();
+        newSet = this.data.foldLeft((ImmutableSet<A> a, Pair<T, Unit> b) -> a.put(f.apply(b.left)), newSet);
+        return newSet;
+    }
+
     public ImmutableSet<T> remove(@Nonnull T datum) {
         return new ImmutableSet<>(this.data.remove(datum));
     }
@@ -72,4 +101,11 @@ public class ImmutableSet<T> {
     public boolean equals(Object other) {
         return other instanceof ImmutableSet && this.data.length == ((ImmutableSet) other).data.length && this.data.foldLeft((memo, pair) -> memo && ((ImmutableSet) other).data.containsKey(pair.left), true);
     }
+
+    @Override
+    public Iterator<T> iterator() {
+        return this.toList().iterator();
+    }
+
+
 }
