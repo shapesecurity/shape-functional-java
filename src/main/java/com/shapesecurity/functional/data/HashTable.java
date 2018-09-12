@@ -556,12 +556,14 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
                         currentIterator = null;
                     }
                     while (this.i > 0) {
-                        HashTable<K, V> curr = this.stack[--this.i];
+                        this.i--;
+                        HashTable<K, V> curr = this.stack[this.i];
                         if (curr instanceof Fork) {
                             Fork<K, V> fork = (Fork<K, V>) curr;
                             for (HashTable<K, V> child : fork.children) {
                                 if (child != null) {
-                                    this.stack[this.i++] = child;
+                                    this.stack[this.i] = child;
+                                    this.i++;
                                 }
                             }
                         } else if (curr instanceof Leaf) {

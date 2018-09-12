@@ -61,7 +61,7 @@ public class ImmutableSetTest extends TestBase {
     @Test
     public void iterableTest() {
         for(String string : ImmutableSet.<String>emptyUsingEquality()) {
-            throw new RuntimeException("empty ImmutableSet has iterated");
+            fail("Empty ImmutableSet Iterated");
         }
         int N = 10000;
         ImmutableSet<Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(i),

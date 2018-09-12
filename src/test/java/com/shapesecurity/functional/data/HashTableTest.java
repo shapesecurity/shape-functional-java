@@ -16,10 +16,6 @@
 
 package com.shapesecurity.functional.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.TestBase;
 import com.shapesecurity.functional.Unit;
@@ -27,6 +23,8 @@ import com.shapesecurity.functional.Unit;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
+
+import static org.junit.Assert.*;
 
 public class HashTableTest extends TestBase {
     private static final Hasher<String> BAD_HASHER = new Hasher<String>() {
@@ -376,8 +374,8 @@ public class HashTableTest extends TestBase {
 
     @Test
     public void iterableTest() {
-        for (String string : ImmutableSet.<String>emptyUsingEquality()) {
-            throw new RuntimeException("empty HashTable has iterated");
+        for (Pair<String, String> string : HashTable.<String, String>emptyUsingEquality()) {
+            fail("Empty Hashtable Iterated");
         }
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
