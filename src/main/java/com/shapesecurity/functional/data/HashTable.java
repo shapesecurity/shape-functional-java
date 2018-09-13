@@ -25,6 +25,8 @@ import com.shapesecurity.functional.Unit;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
 /**
@@ -34,7 +36,7 @@ import java.util.function.Consumer;
  * @param <V> Value type
  */
 @CheckReturnValue
-public abstract class HashTable<K, V> {
+public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
     private final static Hasher<Object> EQUALITY_HASHER = new Hasher<Object>() {
         @Override
         public int hash(@Nonnull Object data) {
@@ -240,6 +242,21 @@ public abstract class HashTable<K, V> {
         }
 
         @Override
+        public Iterator<Pair<K, V>> iterator() {
+            return new Iterator<Pair<K, V>>() {
+                @Override
+                public boolean hasNext() {
+                    return false;
+                }
+
+                @Override
+                public Pair<K, V> next() {
+                    throw new NoSuchElementException();
+                }
+            };
+        }
+
+        @Override
         public void forEach(@Nonnull Consumer<? super Pair<K, V>> e) {
 
         }
@@ -387,6 +404,11 @@ public abstract class HashTable<K, V> {
         }
 
         @Override
+        public Iterator<Pair<K, V>> iterator() {
+            return dataList.iterator();
+        }
+
+        @Override
         public void forEach(@Nonnull Consumer<? super Pair<K, V>> e) {
             this.dataList.forEach(e);
         }
@@ -514,6 +536,62 @@ public abstract class HashTable<K, V> {
                 init = this.children[i].foldRight(f, init);
             }
             return init;
+        }
+
+        public Iterator<Pair<K, V>> iterator() {
+            return new Iterator<Pair<K, V>>() {
+                @SuppressWarnings("unchecked")
+                private final HashTable<K, V>[] stack = new HashTable[Fork.this.length];
+                private Iterator<Pair<K, V>> currentIterator = null;
+                int i = 0;
+
+                {
+                    this.stack[this.i++] = Fork.this;
+                }
+
+                private void updateState() {
+                    if (currentIterator != null && currentIterator.hasNext()) {
+                        return;
+                    } else {
+                        currentIterator = null;
+                    }
+                    while (this.i > 0) {
+                        this.i--;
+                        HashTable<K, V> curr = this.stack[this.i];
+                        if (curr instanceof Fork) {
+                            Fork<K, V> fork = (Fork<K, V>) curr;
+                            for (HashTable<K, V> child : fork.children) {
+                                if (child != null) {
+                                    this.stack[this.i] = child;
+                                    this.i++;
+                                }
+                            }
+                        } else if (curr instanceof Leaf) {
+                            currentIterator = ((Leaf<K, V>) curr).dataList.iterator();
+                            if (currentIterator.hasNext()) {
+                                return;
+                            } else {
+                                currentIterator = null;
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public boolean hasNext() {
+                    updateState();
+                    return currentIterator != null;
+                }
+
+                @Override
+                public Pair<K, V> next() {
+                    updateState();
+                    if (currentIterator == null) {
+                        throw new NoSuchElementException();
+                    }
+                    return currentIterator.next();
+                }
+            };
         }
 
         @Override

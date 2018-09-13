@@ -1,13 +1,15 @@
 package com.shapesecurity.functional.data;
 
 import com.shapesecurity.functional.F2;
+import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.Unit;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
+import java.util.Iterator;
 
 @CheckReturnValue
-public class ImmutableSet<T> {
+public class ImmutableSet<T> implements Iterable<T> {
     @Nonnull
     private final HashTable<T, Unit> data;
 
@@ -72,4 +74,22 @@ public class ImmutableSet<T> {
     public boolean equals(Object other) {
         return other instanceof ImmutableSet && this.data.length == ((ImmutableSet) other).data.length && this.data.foldLeft((memo, pair) -> memo && ((ImmutableSet) other).data.containsKey(pair.left), true);
     }
+
+    @Override
+    public Iterator<T> iterator() {
+        final Iterator<Pair<T, Unit>> mapIterator = this.data.iterator();
+        return new Iterator<T>() {
+            @Override
+            public boolean hasNext() {
+                return mapIterator.hasNext();
+            }
+
+            @Override
+            public T next() {
+                return mapIterator.next().left;
+            }
+        };
+    }
+
+
 }
