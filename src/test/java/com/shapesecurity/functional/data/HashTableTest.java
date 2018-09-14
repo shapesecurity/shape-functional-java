@@ -387,4 +387,20 @@ public class HashTableTest extends TestBase {
         }
         assertEquals(N * (N - 1) / 2, sum);
     }
+
+    @Test
+    public void postRemovalIterationTest() {
+        int N = 10;
+        HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
+                HashTable.emptyUsingEquality());
+        for (int i = 0; i < N; i += 2) {
+            t = t.remove(Integer.toString(i));
+        }
+        int sum = 0;
+        for (Pair<String, Integer> i : t) {
+            assertEquals(Integer.toString(i.right), i.left);
+            sum += i.right;
+        }
+        assertEquals(N * N / 4, sum);
+    }
 }
