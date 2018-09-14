@@ -1,5 +1,6 @@
 package com.shapesecurity.functional.data;
 
+import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.Unit;
@@ -19,6 +20,10 @@ public class ImmutableSet<T> implements Iterable<T> {
 
     ImmutableSet(@Nonnull HashTable<T, Unit> data) {
         this.data = data;
+    }
+
+    public static <T> ImmutableSet<T> empty(@Nonnull Hasher<T> hasher) {
+        return new ImmutableSet<>(HashTable.empty(hasher));
     }
 
     public static <T> ImmutableSet<T> emptyUsingEquality() {
@@ -50,6 +55,11 @@ public class ImmutableSet<T> implements Iterable<T> {
 
     public boolean contains(@Nonnull T datum) {
         return this.data.containsKey(datum);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <A> ImmutableSet<A> map(@Nonnull F<T, A> f) {
+        return this.foldAbelian((val, acc) -> acc.put(f.apply(val)), ImmutableSet.empty((Hasher<A>) this.data.hasher));
     }
 
     public ImmutableSet<T> remove(@Nonnull T datum) {
@@ -90,6 +100,5 @@ public class ImmutableSet<T> implements Iterable<T> {
             }
         };
     }
-
 
 }

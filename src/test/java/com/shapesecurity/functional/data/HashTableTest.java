@@ -98,7 +98,7 @@ public class HashTableTest extends TestBase {
         assertEquals(Maybe.<Integer>empty(), e4.get("c"));
     }
 
-    static long next(long seed) {
+    protected static long next(long seed) {
         return (seed * multiplier + addend) & mask;
     }
 

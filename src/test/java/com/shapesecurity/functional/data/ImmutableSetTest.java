@@ -42,7 +42,7 @@ public class ImmutableSetTest extends TestBase {
     }
 
     @Test
-    public void mergeTest() {
+    public void unionTest() {
         ImmutableSet<String> t1 = ImmutableSet.emptyUsingEquality();
         ImmutableSet<String> t2 = ImmutableSet.emptyUsingEquality();
         int N = 10000;
@@ -60,7 +60,7 @@ public class ImmutableSetTest extends TestBase {
 
     @Test
     public void iterableTest() {
-        for(String string : ImmutableSet.<String>emptyUsingEquality()) {
+        for (String string : ImmutableSet.<String>emptyUsingEquality()) {
             fail("Empty ImmutableSet Iterated");
         }
         int N = 10000;
@@ -71,6 +71,17 @@ public class ImmutableSetTest extends TestBase {
             sum += i;
         }
         assertEquals(N * (N - 1) / 2, sum);
+    }
+
+    @Test
+    public void mapTest() {
+        assertEquals(0, ImmutableSet.<String>emptyUsingEquality().map(x -> x + 1).length());
+        int N = 10000;
+        ImmutableSet<Integer> t = range(0, N).foldLeft(ImmutableSet::put, ImmutableSet.emptyUsingEquality());
+        ImmutableSet<String> mapped = t.map(x -> x + "_test");
+
+        ImmutableSet<String> expected = range(0, N).foldLeft((acc, i) -> acc.put(Integer.toString(i) + "_test"), ImmutableSet.emptyUsingEquality());
+        assertEquals(expected, mapped);
     }
 
     @Test
@@ -95,8 +106,5 @@ public class ImmutableSetTest extends TestBase {
         assertFalse(m.contains(1));
         assertTrue(m.contains(2));
         assertFalse(m.contains(3));
-
-
     }
-
 }
