@@ -156,6 +156,19 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
         return fromBounded(this.toObjectArray(), 0, this.length - 1);
     }
 
+    @Override
+    public int count(@Nonnull F<T, Boolean> f) {
+        int count = 0;
+        ImmutableList<T> list = this;
+        for (int i = 0; i < this.length; i++) {
+            if (f.apply(((NonEmptyImmutableList<T>) list).head)) {
+                count++;
+            }
+            list = ((NonEmptyImmutableList<T>) list).tail;
+        }
+        return count;
+    }
+
     @Nonnull
     @Override
     public ImmutableList<T> filter(@Nonnull F<T, Boolean> f) {

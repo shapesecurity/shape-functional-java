@@ -273,6 +273,12 @@ public class ImmutableListTest extends TestBase {
     }
 
     @Test
+    public void testCount() {
+        int count = range(100).count(i -> i > 15);
+        assertEquals(84, count);
+    }
+
+    @Test
     public void testFilter() {
         ImmutableList<Integer> integers = range(100).filter(i -> i > 15);
         assertEquals(84, integers.length);
