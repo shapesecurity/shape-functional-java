@@ -331,6 +331,14 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract ImmutableList<A> filter(@Nonnull F<A, Boolean> f);
 
     /**
+     * Returns a count of elements for which applying <code>f</code> returns true.
+     *
+     * @param f The "predicate" function.
+     * @return A count of elements that satisfies the predicate.
+     */
+    public abstract int count(@Nonnull F<A, Boolean> f);
+
+    /**
      * Applies the <code>f</code> function to each of the elements of the list and collect the
      * result. It will be a new list with the same length of the original one.
      *

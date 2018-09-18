@@ -75,6 +75,11 @@ public final class Nil<T> extends ImmutableList<T> {
         return Maybe.empty();
     }
 
+    @Override
+    public int count(@Nonnull F<T, Boolean> f) {
+        return 0;
+    }
+
     @Nonnull
     @Override
     public ImmutableList<T> filter(@Nonnull F<T, Boolean> f) {
