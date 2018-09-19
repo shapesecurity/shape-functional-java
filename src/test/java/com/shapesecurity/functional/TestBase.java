@@ -16,6 +16,7 @@
 
 package com.shapesecurity.functional;
 
+import com.shapesecurity.functional.data.ImmutableDoubleList;
 import com.shapesecurity.functional.data.ImmutableList;
 import com.shapesecurity.functional.data.NonEmptyImmutableList;
 
@@ -29,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.Random;
 
 public abstract class TestBase {
@@ -69,11 +71,17 @@ public abstract class TestBase {
     // static
 
     static protected NonEmptyImmutableList<Integer> LONG_LIST = ImmutableList.of(rand());
+    static protected ImmutableDoubleList<Integer> LONG_DOUBLE_LIST = ImmutableList.ofDouble(rand());
     static protected NonEmptyImmutableList<Integer> LONG_INT_LIST = ImmutableList.of(0);
     static {
         for (int i = 0; i < 1000; i++) {
             LONG_LIST = LONG_LIST.cons(rand());
         }
+        LinkedList<Integer> list = new LinkedList<>();
+        for (int i = 0; i < 1000; i++) {
+            list.add(rand());
+        }
+        LONG_DOUBLE_LIST = (ImmutableDoubleList<Integer>)LONG_DOUBLE_LIST.append(ImmutableList.fromLinkedList(list));
         for (int i = 0; i < 1 << 14; i++) {
             LONG_INT_LIST = LONG_INT_LIST.cons(i);
         }

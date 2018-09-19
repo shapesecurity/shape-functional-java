@@ -23,7 +23,7 @@ import com.shapesecurity.functional.Pair;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
-public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
+public final class NonEmptyImmutableList<T> extends ImmutableList<T> implements INonEmptyImmutableList<T> {
     public static final int HASH_START = HashCodeBuilder.put(HashCodeBuilder.init(), "List");
     @Nonnull
     public final T head;
@@ -126,7 +126,6 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
         return Maybe.of(this.last());
     }
 
-
     @Nonnull
     @Override
     public Maybe<ImmutableList<T>> maybeTail() {
@@ -137,6 +136,25 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     @Override
     public Maybe<ImmutableList<T>> maybeInit() {
         return Maybe.of(this.init());
+    }
+
+    @Nonnull
+    @Override
+    @SuppressWarnings("unchecked")
+    public INonEmptyImmutableList<T> append(T right) {
+        return (INonEmptyImmutableList<T>) this.append(ImmutableList.of(right));
+    }
+
+    @Nonnull
+    @Override
+    public INonEmptyImmutableList<T> prepend(T left) {
+        return this.cons(left);
+    }
+
+    @Nonnull
+    @Override
+    public T head() {
+        return this.head;
     }
 
     @Nonnull
@@ -252,6 +270,21 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
         return Maybe.of(this);
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public <B, C> INonEmptyImmutableList<C> zipWith(@Nonnull F2<T, B, C> f, @Nonnull INonEmptyImmutableList<B> list) {
+        NonEmptyImmutableList<T> list1 = this;
+        INonEmptyImmutableList<B> list2 = list;
+        int n = Math.min(list1.length, list2.length());
+        C[] result = (C[]) new Object[n];
+        for (int i = 0; i < n; i++) {
+            result[i] = f.apply(list1.head, list2.head());
+            list1 = (NonEmptyImmutableList<T>) list1.tail;
+            list2 = (INonEmptyImmutableList<B>) (list2.tail());
+        }
+        return (INonEmptyImmutableList<C>) from(result);
+    }
+
     @Nonnull
     @Override
     public <B> Maybe<B> decons(@Nonnull F2<T, ImmutableList<T>, B> f) {
@@ -279,19 +312,30 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
         return false;
     }
 
+    @Override
+    public int length() {
+        return this.length;
+    }
+
     @Nonnull
     @Override
     public <B extends T> ImmutableList<T> append(@Nonnull ImmutableList<B> list) {
-        if (list.length == 0) {
+        return this.append((IImmutableList<B>) list);
+    }
+
+    @Nonnull
+    @Override
+    @SuppressWarnings("unchecked")
+    public <B extends T> NonEmptyImmutableList<T> append(@Nonnull IImmutableList<B> list) {
+        if (list.length() == 0) {
             return this;
         }
         T[] copy = this.toObjectArray();
-        @SuppressWarnings("unchecked")
         ImmutableList<T> listT = (ImmutableList<T>) list;
         for (int i = copy.length - 1; i >= 0; i--) {
             listT = cons(copy[i], listT);
         }
-        return listT;
+        return (NonEmptyImmutableList<T>) listT;
     }
 
     @Override
@@ -358,18 +402,25 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
 
     @Nonnull
     @Override
-    public <B> ImmutableList<B> flatMap(@Nonnull F<T, ImmutableList<B>> f) {
+    public final <B> NonEmptyImmutableList<B> chain(@Nonnull F<T, IImmutableList<B>> f) {
         ArrayList<B> result = new ArrayList<>();
         ImmutableList<T> list = this;
-        while (list instanceof NonEmptyImmutableList) {
-            ImmutableList<B> bucket = f.apply(((NonEmptyImmutableList<T>) list).head);
-            while (bucket instanceof NonEmptyImmutableList) {
-                result.add(((NonEmptyImmutableList<B>) bucket).head);
-                bucket = ((NonEmptyImmutableList<B>) bucket).tail;
+        while (!list.isEmpty()) {
+            @SuppressWarnings("unchecked")
+            IImmutableList<B> bucket = f.apply(((INonEmptyImmutableList<T>) list).head());
+            while (!bucket.isEmpty()) {
+                result.add(((INonEmptyImmutableList<B>) bucket).head());
+                bucket = ((INonEmptyImmutableList<B>) bucket).tail();
             }
             list = ((NonEmptyImmutableList<T>) list).tail;
         }
-        return from(result);
+        return (NonEmptyImmutableList<B>) from(result);
+    }
+
+    @Nonnull
+    @Override
+    public <B> ImmutableList<B> flatMap(@Nonnull F<T, ImmutableList<B>> f) {
+        return this.chain(f::apply);
     }
 
     @Nonnull

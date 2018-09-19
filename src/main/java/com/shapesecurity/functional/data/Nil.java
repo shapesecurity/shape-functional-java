@@ -35,6 +35,11 @@ public final class Nil<T> extends ImmutableList<T> {
     }
 
     @Override
+    public int length() {
+        return this.length;
+    }
+
+    @Override
     protected int calcHashCode() {
         return DEFAULT_HASH_CODE;
     }
@@ -142,6 +147,14 @@ public final class Nil<T> extends ImmutableList<T> {
         return (ImmutableList<T>) defaultClause;
     }
 
+    @Nonnull
+    @Override
+    @SuppressWarnings("unchecked")
+    public <B extends T> IImmutableList<T> append(@Nonnull IImmutableList<B> defaultClause) {
+        // This is safe due to erasure.
+        return (IImmutableList<T>) defaultClause;
+    }
+
     @Override
     public boolean exists(@Nonnull F<T, Boolean> f) {
         return false;
@@ -167,6 +180,13 @@ public final class Nil<T> extends ImmutableList<T> {
     @Override
     @SuppressWarnings("unchecked")
     public <B> ImmutableList<B> flatMap(@Nonnull F<T, ImmutableList<B>> f) {
+        return (ImmutableList<B>) this;
+    }
+
+    @Nonnull
+    @Override
+    @SuppressWarnings("unchecked")
+    public <B> IImmutableList<B> chain(@Nonnull F<T, IImmutableList<B>> f) {
         return (ImmutableList<B>) this;
     }
 
