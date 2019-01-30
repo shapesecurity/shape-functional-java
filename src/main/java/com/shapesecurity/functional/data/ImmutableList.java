@@ -205,6 +205,14 @@ public abstract class ImmutableList<A> implements Iterable<A> {
         }
     }
 
+    protected final Integer getCachedHashCode() {
+        return this.hashCode;
+    }
+
+    protected final void setCachedHashCode(Integer hashCode) {
+        this.hashCode = hashCode;
+    }
+
     /**
      * This function is provided by Iterable that can be used to avoid a creation
      * of an Iterator instance.
