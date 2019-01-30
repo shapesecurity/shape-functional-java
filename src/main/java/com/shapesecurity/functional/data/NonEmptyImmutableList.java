@@ -423,9 +423,34 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
 
     @Override
     protected int calcHashCode() {
-        int start = HASH_START;
-        start = HashCodeBuilder.put(start, this.head);
-        return HashCodeBuilder.put(start, this.tail);
+        NonEmptyImmutableList<T> list = this;
+        int[] hashStack = new int[list.length];
+        ImmutableList<T>[] sublistStack = (ImmutableList<T>[]) new ImmutableList[list.length];
+        int stackIndex = 0;
+        int hash = HASH_START;
+        while (true) {
+            Integer cachedHashCode = list.getCachedHashCode();
+            if (cachedHashCode != null) {
+                hash = cachedHashCode;
+                break;
+            }
+            hashStack[stackIndex] = list.head.hashCode();
+            sublistStack[stackIndex] = list;
+            ++stackIndex;
+            if (list.tail instanceof NonEmptyImmutableList) {
+                list = (NonEmptyImmutableList<T>) list.tail;
+            } else {
+                break;
+            }
+        }
+        --stackIndex;
+
+        for (; stackIndex >= 0; --stackIndex) {
+            hash = HashCodeBuilder.put(hash, hashStack[stackIndex]);
+            sublistStack[stackIndex].setCachedHashCode(hash);
+        }
+
+        return hash;
     }
 }
 

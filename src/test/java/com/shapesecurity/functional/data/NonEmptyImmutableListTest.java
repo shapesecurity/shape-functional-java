@@ -181,4 +181,25 @@ public class NonEmptyImmutableListTest extends TestBase {
         assertEquals(set(a0, b0, c0), listOfPairs.uniqByEqualityOn(p -> p.left));
         assertEquals(set(a0, a1, a2), listOfPairs.uniqByEqualityOn(p -> p.right));
     }
+
+    @Test
+    public void testHashCode() {
+        ImmutableList<String> list1 =
+                ImmutableList.of("aardvark", "albatross", "alligator", "beaver", "crocodile");
+        ImmutableList<String> list2 =
+                ImmutableList.of("aardvark", "albatross", "alligator", "beaver", "crocodile");
+        assertEquals(list1.hashCode(), list2.hashCode());
+        ImmutableList<String> list3 = list1.maybeTail().fromJust();
+        ImmutableList<String> list4 = list2.maybeTail().fromJust();
+        assertEquals(list3.hashCode(), list4.hashCode());
+        assertNotEquals(list1.hashCode(), list3.hashCode());
+        assertEquals(list3.cons("test").hashCode(), list4.cons("test").hashCode());
+        assertEquals(list3.cons("aardvark").hashCode(), list1.hashCode());
+
+        ImmutableList<String> list5 =
+                ImmutableList.of("albatross", "alligator", "beaver", "crocodile");
+        int hashCode1 = list5.hashCode();
+        assertEquals(list1.hashCode(), list5.cons("aardvark").hashCode());
+        assertEquals(hashCode1, list5.hashCode());
+    }
 }
