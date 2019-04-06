@@ -379,13 +379,29 @@ public class HashTableTest extends TestBase {
         }
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
-                HashTable.emptyUsingEquality());
+            HashTable.emptyUsingEquality());
         int sum = 0;
         for (Pair<String, Integer> i : t) {
             assertEquals(Integer.toString(i.right), i.left);
             sum += i.right;
         }
         assertEquals(N * (N - 1) / 2, sum);
+    }
+
+    @Test
+    public void clearedIterationTest() {
+        HashTable<String, String> table = HashTable.emptyUsingEquality();
+        table = table.put("key1", "value1")
+            .put("key2", "value2")
+            .put("key3", "value3");
+
+        table = table.remove("key1")
+            .remove("key2")
+            .remove("key3");
+
+        for (Pair<String, String> pair : table) {
+            fail("Empty Hashtable Iterated");
+        }
     }
 
     @Test
