@@ -469,6 +469,9 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
             }
             Maybe<HashTable<K, V>> removed = this.children[subHash].remove(key, hash >>> 5);
             return removed.map(newChild -> {
+                if (Fork.this.length == 1) {
+                    return new Empty<>(Fork.this.hasher);
+                }
                 HashTable<K, V>[] cloned = Fork.this.children.clone();
                 cloned[subHash] = newChild;
                 return new Fork<>(Fork.this.hasher, cloned, Fork.this.length - 1);
