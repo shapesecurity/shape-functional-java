@@ -129,7 +129,7 @@ public class ImmutableSetTest extends TestBase {
             .put("key1")
             .put("key2")
             .put("key3");
-        ImmutableSet<String> mappedSet = expected.flatMap(string -> ImmutableList.of(string + "1", string + "2"));
+        ImmutableSet<String> mappedSet = expected.flatMap(string -> ImmutableSet.of(string + "1", string + "2"));
         assertEquals(prepareForAssertion(ImmutableSet.<String>emptyUsingEquality()
                 .put("key11")
                 .put("key21")

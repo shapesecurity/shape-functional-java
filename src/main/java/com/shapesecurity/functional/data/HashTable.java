@@ -135,24 +135,27 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
     }
 
     @Nonnull
+    public static <K, V> HashTable<K, V> fromUsingEquality(@Nonnull ImmutableList<Pair<K, V>> list) {
+        return HashTable.<K, V>emptyUsingEquality().putAll(list);
+    }
+
+    @Nonnull
+    public static <K, V> HashTable<K, V> fromUsingIdentity(@Nonnull ImmutableList<Pair<K, V>> list) {
+        return HashTable.<K, V>emptyUsingIdentity().putAll(list);
+    }
+
+    @Nonnull
+    public static <K, V> HashTable<K, V> from(@Nonnull Hasher<K> hasher, @Nonnull ImmutableList<Pair<K, V>> list) {
+        return HashTable.<K, V>empty(hasher).putAll(list);
+    }
+
+    @Nonnull
     public final HashMap<K, V> toHashMap() {
         HashMap<K, V> map = new HashMap<>();
         for (Pair<K, V> pair : this) {
             map.put(pair.left, pair.right);
         }
         return map;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Nonnull
-    public final <A, B> HashTable<A, B> mapEntries(F<Pair<K, V>, Pair<A, B>> f) {
-        return this.foldLeft((acc, pair) -> acc.put(f.apply(pair)), empty((Hasher<A>) this.hasher));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Nonnull
-    public final <A, B> HashTable<A, B> flatMapEntries(F<Pair<K, V>, ImmutableList<Pair<A, B>>> f) {
-        return this.foldLeft((acc, pair) -> acc.putAll(f.apply(pair)), empty((Hasher<A>) this.hasher));
     }
 
     @Nonnull

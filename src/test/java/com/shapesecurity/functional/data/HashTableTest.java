@@ -453,43 +453,6 @@ public class HashTableTest extends TestBase {
     }
 
     @Test
-    public void mapEntriesTest() {
-        HashTable<String, String> map = HashTable.<String, String>emptyUsingEquality()
-            .put("key1", "value1")
-            .put("key2", "value2x")
-            .put("key3", "value3xx");
-        HashTable<String, Integer> mappedMap = map.mapEntries(pair -> pair.map(key -> key.substring(2), String::length));
-        assertEquals(prepareForAssertion(HashTable.<String, Integer>emptyUsingEquality()
-                .put("y1", 6)
-                .put("y2", 7)
-                .put("y3", 8)
-            ),
-            prepareForAssertion(mappedMap)
-        );
-    }
-
-    @Test
-    public void flatMapEntriesTest() {
-        HashTable<String, String> map = HashTable.<String, String>emptyUsingEquality()
-            .put("key1", "value1")
-            .put("key2", "value2x")
-            .put("key3", "value3xx");
-        HashTable<String, Integer> mappedMap = map.flatMapEntries(pair -> pair.map((left, right) ->
-            ImmutableList.of(Pair.of(left.substring(1), right.length()), Pair.of(left.substring(2), right.length()))
-        ));
-        assertEquals(prepareForAssertion(HashTable.<String, Integer>emptyUsingEquality()
-                .put("ey1", 6)
-                .put("ey2", 7)
-                .put("ey3", 8)
-                .put("y1", 6)
-                .put("y2", 7)
-                .put("y3", 8)
-            ),
-            prepareForAssertion(mappedMap)
-        );
-    }
-
-    @Test
     public void filterTest() {
         HashTable<String, String> map = HashTable.<String, String>emptyUsingEquality()
             .put("key1", "value1")

@@ -62,6 +62,12 @@ public class ImmutableSet<T> implements Iterable<T> {
     }
 
     @Nonnull
+    @SafeVarargs
+    public static <T> ImmutableSet<T> of(@Nonnull T... items) {
+        return ofUsingEquality(items);
+    }
+
+    @Nonnull
     public static <T> ImmutableSet<T> from(@Nonnull Hasher<T> hasher, @Nonnull Set<T> set) {
         return empty(hasher).union(set);
     }
@@ -112,13 +118,15 @@ public class ImmutableSet<T> implements Iterable<T> {
     }
 
     @Nonnull
+    @SuppressWarnings("unchecked")
     public <A> ImmutableSet<A> map(@Nonnull F<T, A> f) {
-        return new ImmutableSet<>(this.data.mapEntries(pair -> Pair.of(f.apply(pair.left), pair.right)));
+        return new ImmutableSet<>(HashTable.from((Hasher<A>) this.data.hasher, this.data.entries().map(pair -> Pair.of(f.apply(pair.left), pair.right))));
     }
 
     @Nonnull
-    public <A> ImmutableSet<A> flatMap(@Nonnull F<T, ImmutableList<A>> f) {
-        return new ImmutableSet<>(this.data.flatMapEntries(pair -> f.apply(pair.left).map(a -> Pair.of(a, Unit.unit))));
+    @SuppressWarnings("unchecked")
+    public <A> ImmutableSet<A> flatMap(@Nonnull F<T, ImmutableSet<A>> f) {
+        return this.foldAbelian((t, acc) -> acc.union(f.apply(t)), ImmutableSet.empty((Hasher<A>) this.data.hasher));
     }
 
     @Nonnull
@@ -198,7 +206,7 @@ public class ImmutableSet<T> implements Iterable<T> {
 
     @Nonnull
     public <V> HashTable<T, V> mapToTable(@Nonnull F<T, V> f) {
-        return this.data.mapEntries(pair -> Pair.of(pair.left, f.apply(pair.left)));
+        return HashTable.from(this.data.hasher, this.data.entries().map(pair -> Pair.of(pair.left, f.apply(pair.left))));
     }
 
 
