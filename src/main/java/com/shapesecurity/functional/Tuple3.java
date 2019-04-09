@@ -30,6 +30,21 @@ public final class Tuple3<A, B, C> {
     @Nonnull
     public final C c;
 
+    /**
+     * Constructor method to utilize type inference.
+     * @param a first component
+     * @param b second component
+     * @param c third component
+     * @param <A> type of the first component
+     * @param <B> type of the second component
+     * @param <C> type of the third component
+     * @return the pair
+     */
+    @Nonnull
+    public static <A, B, C> Tuple3<A, B, C> of(A a, B b, C c) {
+        return new Tuple3<>(a, b, c);
+    }
+
     public Tuple3(@Nonnull A a, @Nonnull B b, @Nonnull C c) {
         super();
         this.a = a;

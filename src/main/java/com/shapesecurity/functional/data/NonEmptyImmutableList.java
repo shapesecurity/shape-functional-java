@@ -358,6 +358,18 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
         return from(result);
     }
 
+    @Override
+    public boolean all(@Nonnull F<T, Boolean> f) {
+        ImmutableList<T> list = this;
+        while (list instanceof NonEmptyImmutableList) {
+            if (!f.apply(((NonEmptyImmutableList<T>) list).head)) {
+                return false;
+            }
+            list = ((NonEmptyImmutableList<T>) list).tail;
+        }
+        return true;
+    }
+
     @Nonnull
     @Override
     public ImmutableList<T> removeAll(@Nonnull F<T, Boolean> f) {

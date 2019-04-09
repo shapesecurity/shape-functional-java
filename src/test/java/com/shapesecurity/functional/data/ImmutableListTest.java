@@ -17,6 +17,8 @@
 package com.shapesecurity.functional.data;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.Pair;
@@ -300,6 +302,18 @@ public class ImmutableListTest extends TestBase {
     public void testExists() {
         ImmutableList<Integer> list = ImmutableList.empty();
         assertFalse(list.contains(0));
+        list = list.cons(10);
+        assertTrue(list.exists(integer -> integer % 5 == 0));
+        assertTrue(list.any(integer -> integer == 10));
+        assertFalse(list.any(integer -> integer == 11));
+    }
+
+    @Test
+    public void testAll() {
+        ImmutableList<Integer> list = ImmutableList.of(5, 10, 15, 20);
+        assertTrue(list.all(integer -> integer % 5 == 0));
+        list = list.cons(1);
+        assertFalse(list.all(integer -> integer % 5 == 0));
     }
 
     @Test
@@ -372,5 +386,22 @@ public class ImmutableListTest extends TestBase {
         assertTrue(ImmutableList.of(0, 1).findIndex(i -> i == 1).fromJust() == 1);
         assertTrue(ImmutableList.of(0, 1, 1).findIndex(i -> i == 1).fromJust() == 1);
         assertTrue(ImmutableList.of(0, 1).findIndex(i -> i == 2).isNothing());
+    }
+
+    @Test
+    public void testStream() {
+        ImmutableList<Integer> list = ImmutableList.of(1, 2, 3, 4, 5);
+        List<Integer> mutableList = list.stream().collect(Collectors.toList());
+        assertEquals(mutableList, list.toList());
+        mutableList.sort((int1, int2) -> int2 - int1); // reversed
+
+        assertEquals(list.reverse(), ImmutableList.from(mutableList));
+        assertEquals(mutableList, list.stream().sorted((int1, int2) -> int2 - int1).collect(Collectors.toList()));
+    }
+
+    @Test
+    public void testCollector() {
+        ImmutableList<Integer> list = ImmutableList.of(1, 2, 3, 4, 5);
+        assertEquals(list, list.stream().map(x -> x + 1).map(x -> x - 1).collect(ImmutableList.collector()));
     }
 }

@@ -24,6 +24,11 @@ import org.junit.Test;
 
 import javax.annotation.Nonnull;
 
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 public class HashTableTest extends TestBase {
@@ -418,5 +423,97 @@ public class HashTableTest extends TestBase {
             sum += i.right;
         }
         assertEquals(N * N / 4, sum);
+    }
+
+    @Nonnull
+    protected static <V> List<Pair<String, V>> prepareForAssertion(@Nonnull HashTable<String, V> table) {
+        List<Pair<String, V>> list = table.entries().toList();
+        list.sort(Comparator.comparing(pair -> pair.left));
+        return list;
+    }
+
+    @Test
+    public void mutableRoundTripTest() {
+        HashTable<String, String> expected = HashTable.<String, String>emptyUsingEquality()
+            .put("key1", "value1")
+            .put("key2", "value2")
+            .put("key3", "value3");
+        Map<String, String> map = new HashMap<>();
+        map.put("key1", "value1");
+        map.put("key2", "value2");
+        map.put("key3", "value3");
+        HashTable<String, String> table = HashTable.fromUsingEquality(map);
+        assertEquals(prepareForAssertion(expected), prepareForAssertion(table));
+        HashTable<String, String> doubledTable = table.merge(map);
+        assertEquals(prepareForAssertion(table), prepareForAssertion(doubledTable));
+        map.put("key4", "value4");
+        expected = expected.put("key4", "value4");
+        assertEquals(prepareForAssertion(expected), prepareForAssertion(table.merge(map)));
+        assertEquals(map, expected.toHashMap());
+    }
+
+    @Test
+    public void mapEntriesTest() {
+        HashTable<String, String> map = HashTable.<String, String>emptyUsingEquality()
+            .put("key1", "value1")
+            .put("key2", "value2x")
+            .put("key3", "value3xx");
+        HashTable<String, Integer> mappedMap = map.mapEntries(pair -> pair.map(key -> key.substring(2), String::length));
+        assertEquals(prepareForAssertion(HashTable.<String, Integer>emptyUsingEquality()
+                .put("y1", 6)
+                .put("y2", 7)
+                .put("y3", 8)
+            ),
+            prepareForAssertion(mappedMap)
+        );
+    }
+
+    @Test
+    public void flatMapEntriesTest() {
+        HashTable<String, String> map = HashTable.<String, String>emptyUsingEquality()
+            .put("key1", "value1")
+            .put("key2", "value2x")
+            .put("key3", "value3xx");
+        HashTable<String, Integer> mappedMap = map.flatMapEntries(pair -> pair.map((left, right) ->
+            ImmutableList.of(Pair.of(left.substring(1), right.length()), Pair.of(left.substring(2), right.length()))
+        ));
+        assertEquals(prepareForAssertion(HashTable.<String, Integer>emptyUsingEquality()
+                .put("ey1", 6)
+                .put("ey2", 7)
+                .put("ey3", 8)
+                .put("y1", 6)
+                .put("y2", 7)
+                .put("y3", 8)
+            ),
+            prepareForAssertion(mappedMap)
+        );
+    }
+
+    @Test
+    public void filterTest() {
+        HashTable<String, String> map = HashTable.<String, String>emptyUsingEquality()
+            .put("key1", "value1")
+            .put("key2", "value2")
+            .put("keyx2", "value2x")
+            .put("key3", "value3");
+        HashTable<String, String> filteredMap = map.filter(pair -> pair.left.endsWith("2"));
+        assertEquals(prepareForAssertion(HashTable.<String, String>emptyUsingEquality()
+                .put("key2", "value2")
+                .put("keyx2", "value2x")
+            ),
+            prepareForAssertion(filteredMap)
+        );
+    }
+
+    @Test
+    public void putAllTest() {
+        HashTable<String, String> expected = HashTable.<String, String>emptyUsingEquality()
+            .put("key1", "value1")
+            .put("key2", "value2")
+            .put("key3", "value3");
+        assertEquals(
+            prepareForAssertion(expected),
+            prepareForAssertion(HashTable.<String, String>emptyUsingEquality().putAll(expected.entries()))
+        );
     }
 }

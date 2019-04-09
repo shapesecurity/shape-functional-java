@@ -165,6 +165,11 @@ public final class Nil<T> extends ImmutableList<T> {
         return (ImmutableList<B>) this;
     }
 
+    @Override
+    public boolean all(@Nonnull F<T, Boolean> f) {
+        return false;
+    }
+
     @Nonnull
     @Override
     public ImmutableList<T> removeAll(@Nonnull F<T, Boolean> f) {
