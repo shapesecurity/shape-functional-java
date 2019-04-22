@@ -8,6 +8,7 @@ import com.shapesecurity.functional.Unit;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.util.Iterator;
+import java.util.Set;
 
 @CheckReturnValue
 public class ImmutableSet<T> implements Iterable<T> {
@@ -32,6 +33,21 @@ public class ImmutableSet<T> implements Iterable<T> {
 
     public static <T> ImmutableSet<T> emptyUsingIdentity() {
         return new ImmutableSet<>(HashTable.emptyUsingIdentity());
+    }
+
+    @Nonnull
+    public static <T> ImmutableSet<T> from(@Nonnull Hasher<T> hasher, @Nonnull Set<T> set) {
+        return empty(hasher).union(set);
+    }
+
+    @Nonnull
+    public static <T> ImmutableSet<T> fromUsingEquality(@Nonnull Set<T> set) {
+        return ImmutableSet.<T>emptyUsingEquality().union(set);
+    }
+
+    @Nonnull
+    public static <T> ImmutableSet<T> fromUsingIdentity(@Nonnull Set<T> set) {
+        return ImmutableSet.<T>emptyUsingIdentity().union(set);
     }
 
     @Deprecated
@@ -72,6 +88,15 @@ public class ImmutableSet<T> implements Iterable<T> {
 
     public ImmutableSet<T> union(@Nonnull ImmutableSet<T> other) {
         return new ImmutableSet<>(this.data.merge(other.data));
+    }
+
+    @Nonnull
+    public ImmutableSet<T> union(@Nonnull Set<T> other) {
+        ImmutableSet<T> set = this;
+        for (T entry : other) {
+            set = set.put(entry);
+        }
+        return set;
     }
 
     // Does not guarantee ordering of elements in resulting list.

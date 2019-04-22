@@ -18,10 +18,15 @@ package com.shapesecurity.functional.data;
 
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.TestBase;
-import com.shapesecurity.functional.Unit;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -106,5 +111,24 @@ public class ImmutableSetTest extends TestBase {
         assertFalse(m.contains(1));
         assertTrue(m.contains(2));
         assertFalse(m.contains(3));
+    }
+
+    @Test
+    public void mutableUnionTest() {
+        ImmutableSet<String> expected = ImmutableSet.<String>emptyUsingEquality()
+            .put("key1")
+            .put("key2")
+            .put("key3");
+        Set<String> set = new HashSet<>();
+        set.add("key1");
+        set.add("key2");
+        set.add("key3");
+        ImmutableSet<String> table = ImmutableSet.fromUsingEquality(set);
+        assertEquals(expected, table);
+        ImmutableSet<String> doubledSet = table.union(set);
+        assertEquals(table, doubledSet);
+        set.add("key4");
+        expected = expected.put("key4");
+        assertEquals(expected, table.union(set));
     }
 }
