@@ -76,11 +76,6 @@ public final class Pair<A, B> {
     }
 
     @Nonnull
-    public <T> T map(@Nonnull F2<A, B, T> f) {
-        return f.apply(this.left, this.right);
-    }
-
-    @Nonnull
     public <A1> Pair<A1, B> mapLeft(@Nonnull F<A, A1> f) {
         return new Pair<>(f.apply(this.left), this.right);
     }
