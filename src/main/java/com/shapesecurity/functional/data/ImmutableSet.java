@@ -7,7 +7,9 @@ import com.shapesecurity.functional.Unit;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 @CheckReturnValue
 public class ImmutableSet<T> implements Iterable<T> {
@@ -134,6 +136,13 @@ public class ImmutableSet<T> implements Iterable<T> {
     @Nonnull
     public ImmutableList<T> toList() {
         return this.foldAbelian((v, acc) -> acc.cons(v), ImmutableList.empty());
+    }
+
+    @Nonnull
+    public Set<T> toSet() {
+        Set<T> set = new HashSet<>();
+        this.forEach(set::add);
+        return set;
     }
 
     @SuppressWarnings("unchecked")
