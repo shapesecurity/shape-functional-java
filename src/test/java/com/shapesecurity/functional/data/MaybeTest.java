@@ -182,4 +182,21 @@ public class MaybeTest extends TestBase {
             fail("Maybe._try should never allow exceptions to propagate");
         }
     }
+
+    @Test
+    public void testJustIterable() {
+        int iterationCount = 0;
+        for (String item : Maybe.of("test")) {
+            assertEquals("test", item);
+            ++iterationCount;
+        }
+        assertEquals(1, iterationCount);
+    }
+
+    @Test
+    public void testEmptyIterable() {
+        for (String item : Maybe.<String>empty()) {
+            fail("Maybe.empty() should not iterate");
+        }
+    }
 }
