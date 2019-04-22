@@ -96,6 +96,12 @@ public class ImmutableSet<T> implements Iterable<T> {
         }, ImmutableSet.empty((Hasher<A>) this.data.hasher));
     }
 
+    @Nonnull
+    public ImmutableSet<T> filter(@Nonnull F<T, Boolean> f) {
+        return this.foldAbelian((val, acc) -> f.apply(val) ? acc.put(val) : acc, ImmutableSet.empty(this.data.hasher));
+    }
+
+
     public ImmutableSet<T> remove(@Nonnull T datum) {
         return new ImmutableSet<>(this.data.remove(datum));
     }

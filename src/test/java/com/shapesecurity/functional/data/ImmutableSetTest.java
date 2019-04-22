@@ -144,4 +144,20 @@ public class ImmutableSetTest extends TestBase {
             mappedSet
         );
     }
+
+    @Test
+    public void filterTest() {
+        ImmutableSet<String> expected = ImmutableSet.<String>emptyUsingEquality()
+            .put("key1")
+            .put("key2")
+            .put("keyx2")
+            .put("key3");
+        ImmutableSet<String> filteredSet = expected.filter(string -> string.endsWith("2"));
+        assertEquals(ImmutableSet.<String>emptyUsingEquality()
+                .put("key2")
+                .put("keyx2"),
+            filteredSet
+        );
+    }
+
 }
