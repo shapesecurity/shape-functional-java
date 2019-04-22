@@ -68,6 +68,23 @@ public class ImmutableSet<T> implements Iterable<T> {
     public static <T> ImmutableSet<T> fromUsingIdentity(@Nonnull Iterable<T> set) {
         return ImmutableSet.<T>emptyUsingIdentity().union(set);
     }
+        @Nonnull
+    @SafeVarargs
+    public static <T> ImmutableSet<T> ofUsingIdentity(@Nonnull T... items) {
+        return ImmutableSet.<T>emptyUsingIdentity().putAll(items);
+    }
+
+    @Nonnull
+    @SafeVarargs
+    public static <T> ImmutableSet<T> ofUsingEquality(@Nonnull T... items) {
+        return ImmutableSet.<T>emptyUsingEquality().putAll(items);
+    }
+
+    @Nonnull
+    @SafeVarargs
+    public static <T> ImmutableSet<T> of(@Nonnull T... items) {
+        return ofUsingEquality(items);
+    }
 
     @Deprecated
     @Nonnull
@@ -89,6 +106,15 @@ public class ImmutableSet<T> implements Iterable<T> {
     @Nonnull
     public <B extends T> ImmutableSet<T> putAll(@Nonnull ImmutableList<B> list) {
         return list.foldLeft(ImmutableSet::put, this);
+    }
+
+    @Nonnull
+    public <B extends T> ImmutableSet<T> putAll(@Nonnull B... list) {
+        ImmutableSet<T> set = this;
+        for (B b : list) {
+            set = set.put(b);
+        }
+        return set;
     }
 
     public boolean contains(@Nonnull T datum) {
