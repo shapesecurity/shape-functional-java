@@ -171,4 +171,12 @@ public class ImmutableSet<T> implements Iterable<T> {
         };
     }
 
+    @Nonnull
+    public <V> HashTable<T, V> mapToTable(@Nonnull F<T, V> f) {
+        HashTable<T, V> table = HashTable.empty(this.data.hasher);
+        for (T entry : this) {
+            table = table.put(entry, f.apply(entry));
+        }
+        return table;
+    }
 }

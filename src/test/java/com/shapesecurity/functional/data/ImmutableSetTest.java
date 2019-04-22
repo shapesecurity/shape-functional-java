@@ -191,4 +191,18 @@ public class ImmutableSetTest extends TestBase {
         mutable.add("key3");
         assertEquals(mutable, immutable.toSet());
     }
+
+    @Test
+    public void mapToTableTest() {
+        ImmutableSet<String> set = ImmutableSet.<String>emptyUsingEquality()
+            .put("key1")
+            .put("key2")
+            .put("key3");
+        HashTable<String, String> table = set.mapToTable(key -> key.replace("key", "value"));
+
+        assertEquals("value1", table.get("key1").fromJust());
+        assertEquals("value2", table.get("key2").fromJust());
+        assertEquals("value3", table.get("key3").fromJust());
+        assertEquals(set.length(), table.entries().length);
+    }
 }
