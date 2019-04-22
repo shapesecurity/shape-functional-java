@@ -85,6 +85,11 @@ public class ImmutableSet<T> implements Iterable<T> {
     }
 
     @Nonnull
+    @SuppressWarnings("unchecked")
+    public <A> ImmutableSet<A> flatMap(@Nonnull F<T, ImmutableSet<A>> f) {
+        return this.foldAbelian((t, acc) -> acc.union(f.apply(t)), ImmutableSet.empty((Hasher<A>) this.data.hasher));
+    }
+
     public ImmutableSet<T> remove(@Nonnull T datum) {
         return new ImmutableSet<>(this.data.remove(datum));
     }

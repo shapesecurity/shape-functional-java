@@ -16,17 +16,11 @@
 
 package com.shapesecurity.functional.data;
 
-import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.TestBase;
 import org.junit.Test;
 
-import javax.annotation.Nonnull;
-
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -130,5 +124,24 @@ public class ImmutableSetTest extends TestBase {
         set.add("key4");
         expected = expected.put("key4");
         assertEquals(expected, table.union(set));
+    }
+
+
+    @Test
+    public void flatMapTest() {
+        ImmutableSet<String> expected = ImmutableSet.<String>emptyUsingEquality()
+            .put("key1")
+            .put("key2")
+            .put("key3");
+        ImmutableSet<String> mappedSet = expected.flatMap(string -> ImmutableSet.<String>emptyUsingEquality().put(string + "1").put(string + "2"));
+        assertEquals(ImmutableSet.<String>emptyUsingEquality()
+                .put("key11")
+                .put("key21")
+                .put("key31")
+                .put("key12")
+                .put("key22")
+                .put("key32"),
+            mappedSet
+        );
     }
 }
