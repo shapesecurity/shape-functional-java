@@ -300,6 +300,10 @@ public class ImmutableListTest extends TestBase {
     public void testExists() {
         ImmutableList<Integer> list = ImmutableList.empty();
         assertFalse(list.contains(0));
+        list = list.cons(10);
+        assertTrue(list.exists(integer -> integer % 5 == 0));
+        assertTrue(list.any(integer -> integer == 10));
+        assertFalse(list.any(integer -> integer == 11));
     }
 
     @Test

@@ -559,6 +559,17 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     @Nonnull
     public abstract <B> ImmutableList<B> flatMap(@Nonnull F<A, ImmutableList<B>> f);
 
+    /**
+     *
+     * Apply <code>f</code> to each element of the list, returning true if f is true.
+     *
+     * @param f The function to test against
+     * @return true IFF f is true for any entry in this list
+     */
+    public final boolean any(@Nonnull F<A, Boolean> f) {
+        return exists(f);
+    }
+
     public final boolean isNotEmpty() {
         return !this.isEmpty();
     }
