@@ -41,7 +41,7 @@ public final class Tuple3<A, B, C> {
      * @return the pair
      */
     @Nonnull
-    public static <A, B, C> Tuple3<A, B, C> of(A a, B b, C c) {
+    public static <A, B, C> Tuple3<A, B, C> of(@Nonnull A a, @Nonnull B b, @Nonnull C c) {
         return new Tuple3<>(a, b, c);
     }
 
