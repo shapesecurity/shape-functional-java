@@ -25,6 +25,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -454,6 +455,22 @@ public abstract class ImmutableList<A> implements Iterable<A> {
             l = ((NonEmptyImmutableList<A>) l).tail;
         }
         return target;
+    }
+
+    /**
+     * Converts this list into a java.util.List.
+     *
+     * @return The list that contains the elements.
+     */
+    @Nonnull
+    public final List<A> toList() {
+        List<A> list = new ArrayList<>(this.length);
+        ImmutableList<A> l = this;
+        for (int i = 0; i < length; i++) {
+            list.add(((NonEmptyImmutableList<A>) l).head);
+            l = ((NonEmptyImmutableList<A>) l).tail;
+        }
+        return list;
     }
 
     /**
