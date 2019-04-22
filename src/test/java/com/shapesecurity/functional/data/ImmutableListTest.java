@@ -391,4 +391,16 @@ public class ImmutableListTest extends TestBase {
         assertEquals(list, ImmutableList.from(list.toArrayList()));
         assertEquals(list, ImmutableList.from(list.toLinkedList()));
     }
+
+
+    @Test
+    public void testStream() {
+        ImmutableList<Integer> list = ImmutableList.of(1, 2, 3, 4, 5);
+        List<Integer> mutableList = list.stream().collect(Collectors.toList());
+        assertEquals(list, ImmutableList.from(mutableList));
+        mutableList.sort((int1, int2) -> int2 - int1); // reversed
+
+        assertEquals(list.reverse(), ImmutableList.from(mutableList));
+        assertEquals(mutableList, list.stream().sorted((int1, int2) -> int2 - int1).collect(Collectors.toList()));
+    }
 }

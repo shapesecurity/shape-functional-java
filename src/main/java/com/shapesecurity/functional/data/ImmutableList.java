@@ -30,8 +30,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * An immutable singly linked list implementation. None of the operations in {@link ImmutableList}
@@ -257,6 +261,16 @@ public abstract class ImmutableList<A> implements Iterable<A> {
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+    @Override
+    public final Spliterator<A> spliterator() {
+        return Spliterators.spliterator(iterator(), this.length, Spliterator.IMMUTABLE | Spliterator.NONNULL);
+    }
+
+    @Nonnull
+    public final Stream<A> stream() {
+        return StreamSupport.stream(this.spliterator(), false);
     }
 
     // Methods
