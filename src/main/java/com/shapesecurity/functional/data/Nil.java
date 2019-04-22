@@ -148,6 +148,11 @@ public final class Nil<T> extends ImmutableList<T> {
     }
 
     @Override
+    public boolean all(@Nonnull F<T, Boolean> f) {
+        return true;
+    }
+
+    @Override
     public boolean contains(@Nonnull T a) {
         return false;
     }

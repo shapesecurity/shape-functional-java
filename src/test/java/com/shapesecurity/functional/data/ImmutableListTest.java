@@ -303,6 +303,15 @@ public class ImmutableListTest extends TestBase {
     }
 
     @Test
+    public void testAll() {
+        ImmutableList<Integer> list = ImmutableList.of(5, 10, 15, 20);
+        assertTrue(list.all(integer -> integer % 5 == 0));
+        list = list.cons(1);
+        assertFalse(list.all(integer -> integer % 5 == 0));
+        assertTrue(ImmutableList.empty().all(x -> false));
+    }
+
+    @Test
     public void testFoldLeft() {
         testWithSpecialLists(this::testFoldLeft);
     }
