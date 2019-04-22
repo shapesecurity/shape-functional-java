@@ -10,6 +10,10 @@ import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @CheckReturnValue
 public class ImmutableSet<T> implements Iterable<T> {
@@ -178,5 +182,15 @@ public class ImmutableSet<T> implements Iterable<T> {
             table = table.put(entry, f.apply(entry));
         }
         return table;
+    }
+    @Nonnull
+    @Override
+    public final Spliterator<T> spliterator() {
+        return Spliterators.spliterator(this.iterator(), this.length(), Spliterator.IMMUTABLE | Spliterator.NONNULL);
+    }
+
+    @Nonnull
+    public final Stream<T> stream() {
+        return StreamSupport.stream(this.spliterator(), false);
     }
 }

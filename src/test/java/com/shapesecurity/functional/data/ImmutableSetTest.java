@@ -21,6 +21,9 @@ import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.*;
 
@@ -204,5 +207,14 @@ public class ImmutableSetTest extends TestBase {
         assertEquals("value2", table.get("key2").fromJust());
         assertEquals("value3", table.get("key3").fromJust());
         assertEquals(set.length(), table.entries().length);
+    }
+    
+    @Test
+    public void testStream() {
+        ImmutableSet<Integer> set = ImmutableList.of(1, 2, 3, 4, 5).uniqByEquality();
+        List<Integer> mutableList = set.stream().sorted().collect(Collectors.toList());
+        List<Integer> mutableListFromList = StreamSupport.stream(set.toList().spliterator(), false)
+            .sorted(Integer::compareTo).collect(Collectors.toList());
+        assertEquals(mutableList, mutableListFromList);
     }
 }
