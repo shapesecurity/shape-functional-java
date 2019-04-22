@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
@@ -216,5 +217,13 @@ public class ImmutableSetTest extends TestBase {
         List<Integer> mutableListFromList = StreamSupport.stream(set.toList().spliterator(), false)
             .sorted(Integer::compareTo).collect(Collectors.toList());
         assertEquals(mutableList, mutableListFromList);
+    }
+
+    @Test
+    public void testCollector() {
+        ImmutableSet<String> set = ImmutableList.of("1", "2", "3", "4", "5", "5").uniqByEquality();
+        ImmutableSet<String> streamed = Stream.of("1", "2", "3", "4", "5", "5").collect(ImmutableSet.collector());
+        assertEquals(set, streamed);
+        assertEquals(5, set.length());
     }
 }

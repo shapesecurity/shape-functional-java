@@ -14,6 +14,12 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import java.util.ArrayList;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 
 @CheckReturnValue
 public class ImmutableSet<T> implements Iterable<T> {
@@ -192,5 +198,62 @@ public class ImmutableSet<T> implements Iterable<T> {
     @Nonnull
     public final Stream<T> stream() {
         return StreamSupport.stream(this.spliterator(), false);
+    }
+
+    @Nonnull
+    public static <T> Collector<T, ?, ImmutableSet<T>> collector(@Nonnull Hasher<T> hasher) {
+        // we use a list for state because java doesnt support our Hasher type
+        return new Collector<T, ArrayList<T>, ImmutableSet<T>>() {
+            @Override
+            public Supplier<ArrayList<T>> supplier() {
+                return ArrayList::new;
+            }
+
+            @Override
+            public BiConsumer<ArrayList<T>, T> accumulator() {
+                return ArrayList::add;
+            }
+
+            @Override
+            public BinaryOperator<ArrayList<T>> combiner() {
+                return (left, right) -> {
+                    left.addAll(right);
+                    return left;
+                };
+            }
+
+            @Override
+            public Function<ArrayList<T>, ImmutableSet<T>> finisher() {
+                return list -> {
+                    ImmutableSet<T> set = ImmutableSet.empty(hasher);
+                    for (T entry : list) {
+                        set = set.put(entry);
+                    }
+                    return set;
+                };
+            }
+
+            @Override
+            public Set<Characteristics> characteristics() {
+                Set<Characteristics> set = new HashSet<>();
+                set.add(Characteristics.UNORDERED);
+                return set;
+            }
+        };
+    }
+
+    @Nonnull
+    public static <T> Collector<T, ?, ImmutableSet<T>> collector() {
+        return ImmutableSet.collectorUsingEquality();
+    }
+
+    @Nonnull
+    public static <T> Collector<T, ?, ImmutableSet<T>> collectorUsingEquality() {
+        return ImmutableSet.collector(HashTable.equalityHasher());
+    }
+
+    @Nonnull
+    public static <T> Collector<T, ?, ImmutableSet<T>> collectorUsingIdentity() {
+        return ImmutableSet.collector(HashTable.identityHasher());
     }
 }
