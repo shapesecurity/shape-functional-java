@@ -24,6 +24,13 @@ import org.junit.Test;
 
 import javax.annotation.Nonnull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 public class HashTableTest extends TestBase {
@@ -418,5 +425,33 @@ public class HashTableTest extends TestBase {
             sum += i.right;
         }
         assertEquals(N * N / 4, sum);
+    }
+
+    @Nonnull
+    @SuppressWarnings("unchecked")
+    protected static <V> List<Pair<String, V>> prepareForAssertion(@Nonnull HashTable<String, V> table) {
+        List<Pair<String, V>> list = new ArrayList<>(Arrays.asList(table.entries().toArray((Pair<String, V>[]) new Pair[0])));
+        list.sort(Comparator.comparing(pair -> pair.left));
+        return list;
+    }
+
+    @Test
+    public void mutableRoundTripTest() {
+        HashTable<String, String> expected = HashTable.<String, String>emptyUsingEquality()
+            .put("key1", "value1")
+            .put("key2", "value2")
+            .put("key3", "value3");
+        Map<String, String> map = new HashMap<>();
+        map.put("key1", "value1");
+        map.put("key2", "value2");
+        map.put("key3", "value3");
+        HashTable<String, String> table = HashTable.fromUsingEquality(map);
+        assertEquals(prepareForAssertion(expected), prepareForAssertion(table));
+        HashTable<String, String> doubledTable = table.merge(map);
+        assertEquals(prepareForAssertion(table), prepareForAssertion(doubledTable));
+        map.put("key4", "value4");
+        expected = expected.put("key4", "value4");
+        assertEquals(prepareForAssertion(expected), prepareForAssertion(table.merge(map)));
+        assertEquals(map, expected.toHashMap());
     }
 }

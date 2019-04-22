@@ -25,7 +25,9 @@ import com.shapesecurity.functional.Unit;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
@@ -118,6 +120,30 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
     }
 
     @Nonnull
+    public static <K, V> HashTable<K, V> fromUsingEquality(@Nonnull Map<K, V> map) {
+        return HashTable.<K, V>emptyUsingEquality().merge(map);
+    }
+
+    @Nonnull
+    public static <K, V> HashTable<K, V> fromUsingIdentity(@Nonnull Map<K, V> map) {
+        return HashTable.<K, V>emptyUsingIdentity().merge(map);
+    }
+
+    @Nonnull
+    public static <K, V> HashTable<K, V> from(@Nonnull Hasher<K> hasher, @Nonnull Map<K, V> map) {
+        return HashTable.<K, V>empty(hasher).merge(map);
+    }
+
+    @Nonnull
+    public final HashMap<K, V> toHashMap() {
+        HashMap<K, V> map = new HashMap<>();
+        for (Pair<K, V> pair : this) {
+            map.put(pair.left, pair.right);
+        }
+        return map;
+    }
+
+    @Nonnull
     public final HashTable<K, V> put(@Nonnull K key, @Nonnull V value) {
         return this.put(key, value, this.hasher.hash(key));
     }
@@ -145,6 +171,15 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
     @Nonnull
     public final HashTable<K, V> merge(@Nonnull HashTable<K, V> tree) {
         return this.merge(tree, (a, b) -> b);
+    }
+
+    @Nonnull
+    public final HashTable<K, V> merge(@Nonnull Map<K, V> map) {
+        HashTable<K, V> table = this;
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            table = table.put(entry.getKey(), entry.getValue());
+        }
+        return table;
     }
 
     @Nonnull
