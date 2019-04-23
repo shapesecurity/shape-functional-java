@@ -303,12 +303,12 @@ public class ImmutableListTest extends TestBase {
     }
 
     @Test
-    public void testAll() {
+    public void testEvery() {
         ImmutableList<Integer> list = ImmutableList.of(5, 10, 15, 20);
-        assertTrue(list.all(integer -> integer % 5 == 0));
+        assertTrue(list.every(integer -> integer % 5 == 0));
         list = list.cons(1);
-        assertFalse(list.all(integer -> integer % 5 == 0));
-        assertTrue(ImmutableList.empty().all(x -> false));
+        assertFalse(list.every(integer -> integer % 5 == 0));
+        assertTrue(ImmutableList.empty().every(x -> false));
     }
 
     @Test
