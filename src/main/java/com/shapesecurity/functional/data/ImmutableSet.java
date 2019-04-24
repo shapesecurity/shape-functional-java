@@ -202,7 +202,7 @@ public class ImmutableSet<T> implements Iterable<T> {
 
     @Nonnull
     public static <T> Collector<T, ?, ImmutableSet<T>> collector(@Nonnull Hasher<T> hasher) {
-        // we use a list for state because java doesnt support our Hasher type
+        // we use a list for state because java doesn't support our Hasher type
         return new Collector<T, ArrayList<T>, ImmutableSet<T>>() {
             @Override
             public Supplier<ArrayList<T>> supplier() {
