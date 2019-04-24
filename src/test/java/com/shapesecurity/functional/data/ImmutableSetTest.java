@@ -146,16 +146,35 @@ public class ImmutableSetTest extends TestBase {
     }
 
     @Test
-    public void filterTest() {
+    public void filterTestEquality() {
         ImmutableSet<String> expected = ImmutableSet.<String>emptyUsingEquality()
             .put("key1")
             .put("key2")
             .put("keyx2")
             .put("key3");
         ImmutableSet<String> filteredSet = expected.filter(string -> string.endsWith("2"));
+        assertEquals(expected.hasher(), filteredSet.hasher());
+
         assertEquals(ImmutableSet.<String>emptyUsingEquality()
                 .put("key2")
                 .put("keyx2"),
+            filteredSet
+        );
+    }
+
+    @Test
+    public void filterTestIdentity() {
+        ImmutableSet<Integer> expected = ImmutableSet.<Integer>emptyUsingIdentity()
+            .put(2)
+            .put(3)
+            .put(4)
+            .put(5);
+        ImmutableSet<Integer> filteredSet = expected.filter(i -> i % 2 == 0);
+        assertEquals(expected.hasher(), filteredSet.hasher());
+
+        assertEquals(ImmutableSet.<Integer>emptyUsingIdentity()
+                .put(2)
+                .put(4),
             filteredSet
         );
     }

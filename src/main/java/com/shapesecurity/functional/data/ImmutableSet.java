@@ -18,6 +18,11 @@ public class ImmutableSet<T> implements Iterable<T> {
         return this.data.length;
     }
 
+    @Nonnull
+    public Hasher<T> hasher() {
+        return this.data.hasher;
+    }
+
     ImmutableSet(@Nonnull HashTable<T, Unit> data) {
         this.data = data;
     }
