@@ -179,4 +179,16 @@ public class ImmutableSetTest extends TestBase {
         );
     }
 
+    @Test
+    public void toSetTest() {
+        ImmutableSet<String> immutable = ImmutableSet.<String>emptyUsingEquality()
+            .put("key1")
+            .put("key2")
+            .put("key3");
+        Set<String> mutable = new HashSet<>();
+        mutable.add("key1");
+        mutable.add("key2");
+        mutable.add("key3");
+        assertEquals(mutable, immutable.toSet());
+    }
 }
