@@ -37,6 +37,21 @@ public class ImmutableSet<T> implements Iterable<T> {
         return new ImmutableSet<>(HashTable.emptyUsingIdentity());
     }
 
+    @Nonnull
+    public static <T> ImmutableSet<T> from(@Nonnull Hasher<T> hasher, @Nonnull Iterable<T> set) {
+        return empty(hasher).union(set);
+    }
+
+    @Nonnull
+    public static <T> ImmutableSet<T> fromUsingEquality(@Nonnull Iterable<T> set) {
+        return ImmutableSet.<T>emptyUsingEquality().union(set);
+    }
+
+    @Nonnull
+    public static <T> ImmutableSet<T> fromUsingIdentity(@Nonnull Iterable<T> set) {
+        return ImmutableSet.<T>emptyUsingIdentity().union(set);
+    }
+
     @Deprecated
     @Nonnull
     public static <T> ImmutableSet<T> empty() {
@@ -82,6 +97,15 @@ public class ImmutableSet<T> implements Iterable<T> {
     @Nonnull
     public ImmutableSet<T> union(@Nonnull ImmutableSet<T> other) {
         return new ImmutableSet<>(this.data.merge(other.data));
+    }
+
+    @Nonnull
+    public ImmutableSet<T> union(@Nonnull Iterable<T> other) {
+        ImmutableSet<T> set = this;
+        for (T entry : other) {
+            set = set.put(entry);
+        }
+        return set;
     }
 
     // Does not guarantee ordering of elements in resulting list.
