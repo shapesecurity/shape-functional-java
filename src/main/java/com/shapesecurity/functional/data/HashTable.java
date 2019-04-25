@@ -185,8 +185,12 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
     }
 
     @Nonnull
-    public final HashTable<K, V> putAll(@Nonnull ImmutableList<Pair<K, V>> pairs) {
-        return pairs.foldLeft((acc, pair) -> acc.put(pair.left, pair.right), this);
+    public final HashTable<K, V> putAll(@Nonnull Iterable<Pair<K, V>> pairs) {
+        HashTable<K, V> table = this;
+        for (Pair<K, V> pair : pairs) {
+            table = table.put(pair.left, pair.right);
+        }
+        return table;
     }
 
     @Nonnull
