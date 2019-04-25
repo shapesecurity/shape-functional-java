@@ -19,7 +19,7 @@ package com.shapesecurity.functional.data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import java.util.stream.StreamSupport;
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.TestBase;
@@ -402,5 +402,13 @@ public class ImmutableListTest extends TestBase {
 
         assertEquals(list.reverse(), ImmutableList.from(mutableList));
         assertEquals(mutableList, list.stream().sorted((int1, int2) -> int2 - int1).collect(Collectors.toList()));
+    }
+
+
+
+    @Test
+    public void testCollector() {
+        ImmutableList<Integer> list = ImmutableList.of(1, 2, 3, 4, 5);
+        assertEquals(list, StreamSupport.stream(list.spliterator(), false).map(x -> x + 1).map(x -> x - 1).collect(ImmutableList.collector()));
     }
 }
