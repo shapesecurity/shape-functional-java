@@ -25,11 +25,17 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * An immutable singly linked list implementation. None of the operations in {@link ImmutableList}
@@ -257,6 +263,16 @@ public abstract class ImmutableList<A> implements Iterable<A> {
         };
     }
 
+    @Override
+    public final Spliterator<A> spliterator() {
+        return Spliterators.spliterator(iterator(), this.length, Spliterator.IMMUTABLE | Spliterator.NONNULL);
+    }
+
+    @Nonnull
+    public final Stream<A> stream() {
+        return StreamSupport.stream(this.spliterator(), false);
+    }
+
     // Methods
 
     /**
@@ -457,6 +473,38 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     }
 
     /**
+     * Converts this list into a java.util.ArrayList.
+     *
+     * @return The list that contains the elements.
+     */
+    @Nonnull
+    public final ArrayList<A> toArrayList() {
+        ArrayList<A> list = new ArrayList<>(this.length);
+        ImmutableList<A> l = this;
+        for (int i = 0; i < length; i++) {
+            list.add(((NonEmptyImmutableList<A>) l).head);
+            l = ((NonEmptyImmutableList<A>) l).tail;
+        }
+        return list;
+    }
+
+    /**
+     * Converts this list into a java.util.LinkedList.
+     *
+     * @return The list that contains the elements.
+     */
+    @Nonnull
+    public final LinkedList<A> toLinkedList() {
+        LinkedList<A> list = new LinkedList<>();
+        ImmutableList<A> l = this;
+        for (int i = 0; i < length; i++) {
+            list.add(((NonEmptyImmutableList<A>) l).head);
+            l = ((NonEmptyImmutableList<A>) l).tail;
+        }
+        return list;
+    }
+
+    /**
      * Converts this list into an array. <p> Due to type erasure, the type of the resulting array
      * has to be determined at runtime. Fortunately, you can create a zero length array and this
      * method can create an large enough array to contain all the elements. If the given array is
@@ -507,6 +555,16 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @return Whether an elements satisfies the predicate <code>f</code>.
      */
     public abstract boolean exists(@Nonnull F<A, Boolean> f);
+
+    /**
+     *
+     * Apply <code>f</code> to each element of the list, returning false if f is false for an element,
+     * or true if true for all elements.
+     *
+     * @param f The function to test against
+     * @return true IFF f is true for all entries in this list
+     */
+    public abstract boolean every(@Nonnull F<A, Boolean> f);
 
     /**
      * Tests using object identity whether this list contains the element <code>a</code>.

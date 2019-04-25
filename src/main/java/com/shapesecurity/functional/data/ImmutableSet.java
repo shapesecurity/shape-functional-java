@@ -22,14 +22,17 @@ public class ImmutableSet<T> implements Iterable<T> {
         this.data = data;
     }
 
+    @Nonnull
     public static <T> ImmutableSet<T> empty(@Nonnull Hasher<T> hasher) {
         return new ImmutableSet<>(HashTable.empty(hasher));
     }
 
+    @Nonnull
     public static <T> ImmutableSet<T> emptyUsingEquality() {
         return new ImmutableSet<>(HashTable.emptyUsingEquality());
     }
 
+    @Nonnull
     public static <T> ImmutableSet<T> emptyUsingIdentity() {
         return new ImmutableSet<>(HashTable.emptyUsingIdentity());
     }
@@ -50,15 +53,18 @@ public class ImmutableSet<T> implements Iterable<T> {
     }
 
     @Deprecated
+    @Nonnull
     public static <T> ImmutableSet<T> empty() {
         return ImmutableSet.emptyUsingEquality();
     }
 
     @Deprecated
+    @Nonnull
     public static <T> ImmutableSet<T> emptyP() {
         return ImmutableSet.emptyUsingIdentity();
     }
 
+    @Nonnull
     public <B extends T> ImmutableSet<T> put(@Nonnull B datum) {
         return new ImmutableSet<>(this.data.put(datum, Unit.unit));
     }
@@ -72,19 +78,23 @@ public class ImmutableSet<T> implements Iterable<T> {
         return this.data.containsKey(datum);
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
     public <A> ImmutableSet<A> map(@Nonnull F<T, A> f) {
         return this.foldAbelian((val, acc) -> acc.put(f.apply(val)), ImmutableSet.empty((Hasher<A>) this.data.hasher));
     }
 
+    @Nonnull
     public ImmutableSet<T> remove(@Nonnull T datum) {
         return new ImmutableSet<>(this.data.remove(datum));
     }
 
+    @Nonnull
     public <A> A foldAbelian(@Nonnull F2<T, A, A> f, @Nonnull A init) {
         return this.data.foldRight((p, acc) -> f.apply(p.left, acc), init);
     }
 
+    @Nonnull
     public ImmutableSet<T> union(@Nonnull ImmutableSet<T> other) {
         return new ImmutableSet<>(this.data.merge(other.data));
     }
@@ -99,6 +109,7 @@ public class ImmutableSet<T> implements Iterable<T> {
     }
 
     // Does not guarantee ordering of elements in resulting list.
+    @Nonnull
     public ImmutableList<T> toList() {
         return this.foldAbelian((v, acc) -> acc.cons(v), ImmutableList.empty());
     }
@@ -110,6 +121,7 @@ public class ImmutableSet<T> implements Iterable<T> {
     }
 
     @Override
+    @Nonnull
     public Iterator<T> iterator() {
         final Iterator<Pair<T, Unit>> mapIterator = this.data.iterator();
         return new Iterator<T>() {

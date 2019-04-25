@@ -309,6 +309,20 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
     }
 
     @Override
+    public boolean every(@Nonnull F<T, Boolean> f) {
+        NonEmptyImmutableList<T> list = this;
+        while (true) {
+            if (!f.apply(list.head)) {
+                return false;
+            }
+            if (list.tail instanceof Nil) {
+                return true;
+            }
+            list = ((NonEmptyImmutableList<T>) list.tail);
+        }
+    }
+
+    @Override
     public boolean contains(@Nonnull T a) {
         NonEmptyImmutableList<T> list = this;
         while (true) {

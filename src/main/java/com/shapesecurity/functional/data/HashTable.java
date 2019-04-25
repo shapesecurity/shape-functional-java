@@ -25,7 +25,10 @@ import com.shapesecurity.functional.Unit;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
@@ -118,8 +121,76 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
     }
 
     @Nonnull
+    public static <K, V> HashTable<K, V> fromUsingEquality(@Nonnull Map<K, V> map) {
+        return HashTable.<K, V>emptyUsingEquality().putAllFrom(map);
+    }
+
+    @Nonnull
+    public static <K, V> HashTable<K, V> fromUsingIdentity(@Nonnull IdentityHashMap<K, V> map) {
+        return HashTable.<K, V>emptyUsingIdentity().putAllFrom(map);
+    }
+
+    @Nonnull
+    public static <K, V> HashTable<K, V> from(@Nonnull Hasher<K> hasher, @Nonnull Map<K, V> map) {
+        return HashTable.<K, V>empty(hasher).putAllFrom(map);
+    }
+
+    @Nonnull
+    public final HashMap<K, V> toHashMap() {
+        if (!this.hasher.equals(HashTable.equalityHasher())) {
+            throw new UnsupportedOperationException("HashTable::toHashMap requires an equality hasher.");
+        }
+        HashMap<K, V> map = new HashMap<>();
+        for (Pair<K, V> pair : this) {
+            map.put(pair.left, pair.right);
+        }
+        return map;
+    }
+
+    @Nonnull
+    public final IdentityHashMap<K, V> toIdentityHashMap() {
+        if (!this.hasher.equals(HashTable.identityHasher())) {
+            throw new UnsupportedOperationException("HashTable::toIdentityHashMap requires an identity hasher.");
+        }
+        IdentityHashMap<K, V> map = new IdentityHashMap<>();
+        for (Pair<K, V> pair : this) {
+            map.put(pair.left, pair.right);
+        }
+        return map;
+    }
+
+    @Nonnull
+    public static <K, V> HashTable<K, V> fromUsingEquality(@Nonnull Iterable<Pair<K, V>> list) {
+        return HashTable.<K, V>emptyUsingEquality().putAll(list);
+    }
+
+    @Nonnull
+    public static <K, V> HashTable<K, V> fromUsingIdentity(@Nonnull Iterable<Pair<K, V>> list) {
+        return HashTable.<K, V>emptyUsingIdentity().putAll(list);
+    }
+
+    @Nonnull
+    public static <K, V> HashTable<K, V> from(@Nonnull Hasher<K> hasher, @Nonnull Iterable<Pair<K, V>> list) {
+        return HashTable.<K, V>empty(hasher).putAll(list);
+    }
+
+    @Nonnull
     public final HashTable<K, V> put(@Nonnull K key, @Nonnull V value) {
         return this.put(key, value, this.hasher.hash(key));
+    }
+
+    @Nonnull
+    public final HashTable<K, V> put(@Nonnull Pair<K, V> pair) {
+        return this.put(pair.left, pair.right);
+    }
+
+    @Nonnull
+    public final HashTable<K, V> putAll(@Nonnull Iterable<Pair<K, V>> pairs) {
+        HashTable<K, V> table = this;
+        for (Pair<K, V> pair : pairs) {
+            table = table.put(pair.left, pair.right);
+        }
+        return table;
     }
 
     @Nonnull
@@ -145,6 +216,15 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
     @Nonnull
     public final HashTable<K, V> merge(@Nonnull HashTable<K, V> tree) {
         return this.merge(tree, (a, b) -> b);
+    }
+
+    @Nonnull
+    public final HashTable<K, V> putAllFrom(@Nonnull Map<K, V> map) {
+        HashTable<K, V> table = this;
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            table = table.put(entry.getKey(), entry.getValue());
+        }
+        return table;
     }
 
     @Nonnull
@@ -176,6 +256,11 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
 
     @Nonnull
     public abstract <R> Maybe<R> findMap(@Nonnull F<Pair<K, V>, Maybe<R>> f);
+
+    @Nonnull
+    public final HashTable<K, V> filter(F<Pair<K, V>, Boolean> f) {
+        return this.foldLeft((acc, pair) -> f.apply(pair) ? acc.put(pair.left, pair.right) : acc, empty(this.hasher));
+    }
 
     public abstract <B> HashTable<K, B> map(@Nonnull F<V, B> f);
 

@@ -17,6 +17,8 @@
 package com.shapesecurity.functional.data;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.Pair;
@@ -303,6 +305,15 @@ public class ImmutableListTest extends TestBase {
     }
 
     @Test
+    public void testEvery() {
+        ImmutableList<Integer> list = ImmutableList.of(5, 10, 15, 20);
+        assertTrue(list.every(integer -> integer % 5 == 0));
+        list = list.cons(1);
+        assertFalse(list.every(integer -> integer % 5 == 0));
+        assertTrue(ImmutableList.empty().every(x -> false));
+    }
+
+    @Test
     public void testFoldLeft() {
         testWithSpecialLists(this::testFoldLeft);
     }
@@ -372,5 +383,24 @@ public class ImmutableListTest extends TestBase {
         assertTrue(ImmutableList.of(0, 1).findIndex(i -> i == 1).fromJust() == 1);
         assertTrue(ImmutableList.of(0, 1, 1).findIndex(i -> i == 1).fromJust() == 1);
         assertTrue(ImmutableList.of(0, 1).findIndex(i -> i == 2).isNothing());
+    }
+
+    @Test
+    public void testMutableRoundTrip() {
+        ImmutableList<Integer> list = ImmutableList.of(1, 2, 3, 4, 5);
+        assertEquals(list, ImmutableList.from(list.toArrayList()));
+        assertEquals(list, ImmutableList.from(list.toLinkedList()));
+    }
+
+
+    @Test
+    public void testStream() {
+        ImmutableList<Integer> list = ImmutableList.of(1, 2, 3, 4, 5);
+        List<Integer> mutableList = list.stream().collect(Collectors.toList());
+        assertEquals(list, ImmutableList.from(mutableList));
+        mutableList.sort((int1, int2) -> int2 - int1); // reversed
+
+        assertEquals(list.reverse(), ImmutableList.from(mutableList));
+        assertEquals(mutableList, list.stream().sorted((int1, int2) -> int2 - int1).collect(Collectors.toList()));
     }
 }
