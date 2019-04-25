@@ -125,8 +125,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     @Nonnull
     public static <A> ImmutableList<A> from(@Nonnull Iterable<A> list) {
         ImmutableList<A> l = empty();
-        for (Iterator<A> iterator = list.iterator(); iterator.hasNext();) {
-            A item = iterator.next();
+        for (A item : list) {
             l = cons(item, l);
         }
         return l.reverse();
