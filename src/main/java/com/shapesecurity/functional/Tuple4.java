@@ -32,6 +32,23 @@ public final class Tuple4<A, B, C, D> {
     @Nonnull
     public final D d;
 
+    /**
+     * Constructor method to utilize type inference.
+     * @param a first component
+     * @param b second component
+     * @param c third component
+     * @param d fourth component
+     * @param <A> type of the first component
+     * @param <B> type of the second component
+     * @param <C> type of the third component
+     * @param <D> type of the fourth component
+     * @return the pair
+     */
+    @Nonnull
+    public static <A, B, C, D> Tuple4<A, B, C, D> of(@Nonnull A a, @Nonnull B b, @Nonnull C c, @Nonnull D d) {
+        return new Tuple4<>(a, b, c, d);
+    }
+
     public Tuple4(@Nonnull A a, @Nonnull B b, @Nonnull C c, @Nonnull D d) {
         super();
         this.a = a;
