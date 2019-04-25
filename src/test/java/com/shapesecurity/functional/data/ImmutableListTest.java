@@ -17,6 +17,8 @@
 package com.shapesecurity.functional.data;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.Pair;
@@ -372,5 +374,12 @@ public class ImmutableListTest extends TestBase {
         assertTrue(ImmutableList.of(0, 1).findIndex(i -> i == 1).fromJust() == 1);
         assertTrue(ImmutableList.of(0, 1, 1).findIndex(i -> i == 1).fromJust() == 1);
         assertTrue(ImmutableList.of(0, 1).findIndex(i -> i == 2).isNothing());
+    }
+
+    @Test
+    public void testMutableRoundTrip() {
+        ImmutableList<Integer> list = ImmutableList.of(1, 2, 3, 4, 5);
+        assertEquals(list, ImmutableList.from(list.toArrayList()));
+        assertEquals(list, ImmutableList.from(list.toLinkedList()));
     }
 }
