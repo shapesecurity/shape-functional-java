@@ -463,8 +463,8 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * @return The list that contains the elements.
      */
     @Nonnull
-    public final List<A> toList() {
-        List<A> list = new ArrayList<>(this.length);
+    public final ArrayList<A> toArrayList() {
+        ArrayList<A> list = new ArrayList<>(this.length);
         ImmutableList<A> l = this;
         for (int i = 0; i < length; i++) {
             list.add(((NonEmptyImmutableList<A>) l).head);
