@@ -257,6 +257,11 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
     @Nonnull
     public abstract <R> Maybe<R> findMap(@Nonnull F<Pair<K, V>, Maybe<R>> f);
 
+    @Nonnull
+    public final HashTable<K, V> filter(F<Pair<K, V>, Boolean> f) {
+        return this.foldLeft((acc, pair) -> f.apply(pair) ? acc.put(pair.left, pair.right) : acc, empty(this.hasher));
+    }
+
     public abstract <B> HashTable<K, B> map(@Nonnull F<V, B> f);
 
     public boolean containsKey(@Nonnull K key) {
