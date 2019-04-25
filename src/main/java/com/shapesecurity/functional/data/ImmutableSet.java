@@ -71,13 +71,13 @@ public class ImmutableSet<T> implements Iterable<T> {
         @Nonnull
     @SafeVarargs
     public static <T> ImmutableSet<T> ofUsingIdentity(@Nonnull T... items) {
-        return ImmutableSet.<T>emptyUsingIdentity().putAll(items);
+        return ImmutableSet.<T>emptyUsingIdentity().putArray(items);
     }
 
     @Nonnull
     @SafeVarargs
     public static <T> ImmutableSet<T> ofUsingEquality(@Nonnull T... items) {
-        return ImmutableSet.<T>emptyUsingEquality().putAll(items);
+        return ImmutableSet.<T>emptyUsingEquality().putArray(items);
     }
 
     @Nonnull
@@ -108,8 +108,9 @@ public class ImmutableSet<T> implements Iterable<T> {
         return list.foldLeft(ImmutableSet::put, this);
     }
 
+    @SafeVarargs
     @Nonnull
-    public <B extends T> ImmutableSet<T> putAll(@Nonnull B... list) {
+    public final <B extends T> ImmutableSet<T> putArray(@Nonnull B... list) {
         ImmutableSet<T> set = this;
         for (B b : list) {
             set = set.put(b);

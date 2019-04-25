@@ -26,14 +26,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import java.util.stream.Stream;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import static org.junit.Assert.*;
 
 public class ImmutableSetTest extends TestBase {
@@ -238,8 +230,8 @@ public class ImmutableSetTest extends TestBase {
     @Test
     public void testPutAll() {
         ImmutableSet<String> set = ImmutableSet.of("key1", "key2", "key3");
-        assertEquals(set, set.putAll());
-        ImmutableSet<String> set2 = set.putAll("key4", "key5");
+        assertEquals(set, set.putArray());
+        ImmutableSet<String> set2 = set.putArray("key4", "key5");
         assertTrue(set2.contains("key4"));
         assertTrue(set2.contains("key2"));
         assertEquals(set2, ImmutableList.of("key1", "key2", "key3", "key4", "key5").uniqByEquality());
