@@ -24,7 +24,8 @@ import org.junit.Test;
 public class PairTest {
     @Test
     public void testPair() {
-        Pair p = new Pair<>(3, 5);
+        Pair<Integer, Integer> p = new Pair<>(3, 5);
+        assertEquals(Pair.of(4, 4), p.map(n -> n + 1, n -> n - 1));
         assertEquals(p, p);
         assertEquals(new Pair<>(3, 5), new Pair<>(3, 5));
         assertNotEquals(new Pair<>(3, 5), new Pair<>(3, 6));
