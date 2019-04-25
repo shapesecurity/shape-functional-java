@@ -481,4 +481,21 @@ public class HashTableTest extends TestBase {
             prepareForAssertion(HashTable.fromUsingEquality(expected.entries()))
         );
     }
+
+    @Test
+    public void filterTest() {
+        HashTable<String, String> map = HashTable.<String, String>emptyUsingEquality()
+            .put("key1", "value1")
+            .put("key2", "value2")
+            .put("keyx2", "value2x")
+            .put("key3", "value3");
+        HashTable<String, String> filteredMap = map.filter(pair -> pair.left.endsWith("2"));
+        assertEquals(prepareForAssertion(HashTable.<String, String>emptyUsingEquality()
+                .put("key2", "value2")
+                .put("keyx2", "value2x")
+            ),
+            prepareForAssertion(filteredMap)
+        );
+    }
+
 }
