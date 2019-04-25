@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -447,11 +448,21 @@ public class HashTableTest extends TestBase {
         map.put("key3", "value3");
         HashTable<String, String> table = HashTable.fromUsingEquality(map);
         assertEquals(prepareForAssertion(expected), prepareForAssertion(table));
-        HashTable<String, String> doubledTable = table.merge(map);
+        HashTable<String, String> doubledTable = table.putAllFrom(map);
         assertEquals(prepareForAssertion(table), prepareForAssertion(doubledTable));
         map.put("key4", "value4");
         expected = expected.put("key4", "value4");
-        assertEquals(prepareForAssertion(expected), prepareForAssertion(table.merge(map)));
+        assertEquals(prepareForAssertion(expected), prepareForAssertion(table.putAllFrom(map)));
         assertEquals(map, expected.toHashMap());
+
+        IdentityHashMap<Integer, Integer> mapIdentity = new IdentityHashMap<>();
+        mapIdentity.put(1, 2);
+        mapIdentity.put(2, 3);
+        mapIdentity.put(3, 4);
+        HashTable<Integer, Integer> tableIdentity = HashTable.<Integer, Integer>emptyUsingIdentity()
+            .put(1, 2)
+            .put(2, 3)
+            .put(3, 4);
+        assertEquals(mapIdentity, tableIdentity.toIdentityHashMap());
     }
 }
