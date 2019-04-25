@@ -379,6 +379,7 @@ public class ImmutableListTest extends TestBase {
     @Test
     public void testMutableRoundTrip() {
         ImmutableList<Integer> list = ImmutableList.of(1, 2, 3, 4, 5);
-        assertEquals(list, ImmutableList.from(list.toList()));
+        assertEquals(list, ImmutableList.from(list.toArrayList()));
+        assertEquals(list, ImmutableList.from(list.toLinkedList()));
     }
 }
