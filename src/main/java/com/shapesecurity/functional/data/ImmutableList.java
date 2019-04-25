@@ -26,16 +26,23 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 
 /**
  * An immutable singly linked list implementation. None of the operations in {@link ImmutableList}
@@ -793,6 +800,39 @@ public abstract class ImmutableList<A> implements Iterable<A> {
             right = right.cons(result[i]);
         }
         return Pair.of(fromBounded(result, 0, l[0]), right);
+    }
+
+    @Nonnull
+    public static <T> Collector<T, ?, ImmutableList<T>> collector() {
+        return new Collector<T, ArrayList<T>, ImmutableList<T>>() {
+            @Override
+            public Supplier<ArrayList<T>> supplier() {
+                return ArrayList::new;
+            }
+
+            @Override
+            public BiConsumer<ArrayList<T>, T> accumulator() {
+                return ArrayList::add;
+            }
+
+            @Override
+            public BinaryOperator<ArrayList<T>> combiner() {
+                return (left, right) -> {
+                    left.addAll(right);
+                    return left;
+                };
+            }
+
+            @Override
+            public Function<ArrayList<T>, ImmutableList<T>> finisher() {
+                return ImmutableList::from;
+            }
+
+            @Override
+            public Set<Characteristics> characteristics() {
+                return new HashSet<>();
+            }
+        };
     }
 }
 
