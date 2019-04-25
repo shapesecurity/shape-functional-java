@@ -20,16 +20,18 @@ import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.ThrowingSupplier;
 import com.shapesecurity.functional.Thunk;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 @CheckReturnValue
-public final class Maybe<A> {
+public final class Maybe<A> implements Iterable<A> {
     private final static int NOTHING_HASH_CODE = HashCodeBuilder.put(HashCodeBuilder.init(), "Nothing");
 
     @SuppressWarnings("unchecked")
@@ -213,5 +215,27 @@ public final class Maybe<A> {
     @Nonnull
     public Maybe<A> filterByPredicate(@Nonnull Predicate<A> f) {
         return this.value == null ? this : (f.test(this.value) ? this : empty());
+    }
+
+    @NotNull
+    @Override
+    public Iterator<A> iterator() {
+        return new Iterator<A>() {
+            private boolean hasNext = Maybe.this.isJust();
+
+            @Override
+            public boolean hasNext() {
+                return this.hasNext;
+            }
+
+            @Override
+            public A next() {
+                if (this.hasNext) {
+                    this.hasNext = false;
+                    return Maybe.this.value;
+                }
+                return null;
+            }
+        };
     }
 }
