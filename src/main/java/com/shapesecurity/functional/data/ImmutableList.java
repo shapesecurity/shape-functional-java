@@ -543,6 +543,16 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract boolean exists(@Nonnull F<A, Boolean> f);
 
     /**
+     *
+     * Apply <code>f</code> to each element of the list, returning false if f is false for an element,
+     * or true if true for all elements.
+     *
+     * @param f The function to test against
+     * @return true IFF f is true for all entries in this list
+     */
+    public abstract boolean every(@Nonnull F<A, Boolean> f);
+
+    /**
      * Tests using object identity whether this list contains the element <code>a</code>.
      * <p>
      * WARNING: object identity is tests using the <code>==</code> operator.
