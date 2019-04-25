@@ -160,8 +160,37 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
     }
 
     @Nonnull
+    public static <K, V> HashTable<K, V> fromUsingEquality(@Nonnull Iterable<Pair<K, V>> list) {
+        return HashTable.<K, V>emptyUsingEquality().putAll(list);
+    }
+
+    @Nonnull
+    public static <K, V> HashTable<K, V> fromUsingIdentity(@Nonnull Iterable<Pair<K, V>> list) {
+        return HashTable.<K, V>emptyUsingIdentity().putAll(list);
+    }
+
+    @Nonnull
+    public static <K, V> HashTable<K, V> from(@Nonnull Hasher<K> hasher, @Nonnull Iterable<Pair<K, V>> list) {
+        return HashTable.<K, V>empty(hasher).putAll(list);
+    }
+
+    @Nonnull
     public final HashTable<K, V> put(@Nonnull K key, @Nonnull V value) {
         return this.put(key, value, this.hasher.hash(key));
+    }
+
+    @Nonnull
+    public final HashTable<K, V> put(@Nonnull Pair<K, V> pair) {
+        return this.put(pair.left, pair.right);
+    }
+
+    @Nonnull
+    public final HashTable<K, V> putAll(@Nonnull Iterable<Pair<K, V>> pairs) {
+        HashTable<K, V> table = this;
+        for (Pair<K, V> pair : pairs) {
+            table = table.put(pair.left, pair.right);
+        }
+        return table;
     }
 
     @Nonnull

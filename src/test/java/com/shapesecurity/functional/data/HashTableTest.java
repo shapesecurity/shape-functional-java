@@ -287,7 +287,7 @@ public class HashTableTest extends TestBase {
         }, 0);
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
-                HashTable.<String, Integer>emptyUsingEquality());
+            HashTable.<String, Integer>emptyUsingEquality());
         assertEquals(N * (N - 1) / 2, (int) t.foldLeft((a, i) -> a + i.right, 0));
     }
 
@@ -298,7 +298,7 @@ public class HashTableTest extends TestBase {
         }, 0);
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
-                HashTable.<String, Integer>emptyUsingEquality());
+            HashTable.<String, Integer>emptyUsingEquality());
         assertEquals(N * (N - 1) / 2, (int) t.foldRight((i, a) -> a + i.right, 0));
     }
 
@@ -309,7 +309,7 @@ public class HashTableTest extends TestBase {
         });
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
-                HashTable.<String, Integer>emptyUsingEquality());
+            HashTable.<String, Integer>emptyUsingEquality());
         int a[] = new int[1];
         t.foreach(entry -> a[0] += entry.right);
         assertEquals(N * (N - 1) / 2, a[0]);
@@ -320,7 +320,7 @@ public class HashTableTest extends TestBase {
         assertEquals(0, HashTable.<String, Integer>emptyUsingEquality().map(x -> x + 1).length);
         int N = 10000;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
-                HashTable.<String, Integer>emptyUsingEquality());
+            HashTable.<String, Integer>emptyUsingEquality());
         t = t.map(x -> x + 1);
         t.foreach(pair -> {
             assertEquals(Integer.parseInt(pair.left), pair.right - 1);
@@ -363,8 +363,8 @@ public class HashTableTest extends TestBase {
         table = table.remove(one);
         table = table.put(one, 1);
         table = table.put(two, 2);
-		assertEquals(1, (int) table.get(one).fromJust());
-		assertEquals(2, (int) table.get(two).fromJust());
+        assertEquals(1, (int) table.get(one).fromJust());
+        assertEquals(2, (int) table.get(two).fromJust());
     }
 
     @Test
@@ -376,8 +376,8 @@ public class HashTableTest extends TestBase {
         DummyWithEquals two = new DummyWithEquals();
         table = table.put(one, 1);
         table = table.put(two, 2);
-		assertEquals(1, (int) table.get(one).fromJust());
-		assertEquals(2, (int) table.get(two).fromJust());
+        assertEquals(1, (int) table.get(one).fromJust());
+        assertEquals(2, (int) table.get(two).fromJust());
     }
 
     @Test
@@ -416,7 +416,7 @@ public class HashTableTest extends TestBase {
     public void postRemovalIterationTest() {
         int N = 10;
         HashTable<String, Integer> t = range(0, N).foldLeft((ht, i) -> ht.put(Integer.toString(i), i),
-                HashTable.emptyUsingEquality());
+            HashTable.emptyUsingEquality());
         for (int i = 0; i < N; i += 2) {
             t = t.remove(Integer.toString(i));
         }
@@ -464,5 +464,21 @@ public class HashTableTest extends TestBase {
             .put(2, 3)
             .put(3, 4);
         assertEquals(mapIdentity, tableIdentity.toIdentityHashMap());
+    }
+
+    @Test
+    public void putAllTest() {
+        HashTable<String, String> expected = HashTable.<String, String>emptyUsingEquality()
+            .put("key1", "value1")
+            .put("key2", "value2")
+            .put("key3", "value3");
+        assertEquals(
+            prepareForAssertion(expected),
+            prepareForAssertion(HashTable.<String, String>emptyUsingEquality().putAll(expected.entries()))
+        );
+        assertEquals(
+            prepareForAssertion(expected),
+            prepareForAssertion(HashTable.fromUsingEquality(expected.entries()))
+        );
     }
 }
