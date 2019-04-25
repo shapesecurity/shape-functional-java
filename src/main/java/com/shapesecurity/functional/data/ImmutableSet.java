@@ -141,7 +141,7 @@ public class ImmutableSet<T> implements Iterable<T> {
     @Nonnull
     public Set<T> toSet() {
         if (this.data.hasher != HashTable.equalityHasher()) {
-            throw new RuntimeException("Cannot call ImmutableSet::toSet on a ImmutableSet without equality hashing.");
+            throw new UnsupportedOperationException("Cannot call ImmutableSet::toSet on a ImmutableSet without equality hashing.");
         }
         Set<T> set = new HashSet<>();
         this.forEach(set::add);
