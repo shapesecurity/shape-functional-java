@@ -87,7 +87,7 @@ public class ImmutableSet<T> implements Iterable<T> {
     }
 
     @Nonnull
-    public <B extends T> ImmutableSet<T> putAll(@Nonnull ImmutableList<B> list) {
+    public <B extends T> ImmutableSet<T> putAll(@Nonnull IImmutableList<B> list) {
         return list.foldLeft(ImmutableSet::put, this);
     }
 
