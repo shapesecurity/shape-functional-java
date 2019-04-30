@@ -123,11 +123,11 @@ public class ImmutableSetTest extends TestBase {
         set.add("key3");
         ImmutableSet<String> table = ImmutableSet.fromUsingEquality(set);
         assertEquals(expected, table);
-        ImmutableSet<String> doubledSet = table.union(set);
+        ImmutableSet<String> doubledSet = table.putAll(set);
         assertEquals(table, doubledSet);
         set.add("key4");
         expected = expected.put("key4");
-        assertEquals(expected, table.union(set));
+        assertEquals(expected, table.putAll(set));
     }
 
 
@@ -225,5 +225,15 @@ public class ImmutableSetTest extends TestBase {
         ImmutableSet<String> streamed = Stream.of("1", "2", "3", "4", "5", "5").collect(ImmutableSet.collector());
         assertEquals(set, streamed);
         assertEquals(5, set.length());
+    }
+
+    @Test
+    public void testPutAll() {
+        ImmutableSet<String> set = ImmutableSet.of("key1", "key2", "key3");
+        assertEquals(set, set.putArray());
+        ImmutableSet<String> set2 = set.putArray("key4", "key5");
+        assertTrue(set2.contains("key4"));
+        assertTrue(set2.contains("key2"));
+        assertEquals(set2, ImmutableList.of("key1", "key2", "key3", "key4", "key5").uniqByEquality());
     }
 }
