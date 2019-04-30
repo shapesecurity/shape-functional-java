@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,31 +76,62 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     }
 
     /**
-     * Creating List from.
+     * Creating ImmutableList from an ArrayList.
      *
-     * @param arrayList The {@link java.util.ArrayList} to construct the {@link ImmutableList}
+     * @param list      The {@link java.util.ArrayList} to construct the {@link ImmutableList}
      *                  from.
      * @param <A>       The type of the elements of the list.
      * @return a new {@link ImmutableList} that is comprised of all the elements in the {@link
      * java.util.ArrayList}.
      */
     @Nonnull
-    public static <A> ImmutableList<A> from(@Nonnull List<A> arrayList) {
-        // Manual expansion of tail recursion.
+    public static <A> ImmutableList<A> from(@Nonnull ArrayList<A> list) {
         ImmutableList<A> l = empty();
-        int size = arrayList.size();
+        int size = list.size();
         for (int i = size - 1; i >= 0; i--) {
-            l = cons(arrayList.get(i), l);
+            l = cons(list.get(i), l);
         }
         return l;
-    /* TODO: use Collection here if it doesn't incur performance penalties
-    ImmutableList<A> list = empty();
-    int size = collection.size();
-    for (A element : collection) {
-      list = cons(element, list);
     }
-    return list;
+
+    /**
+     * Creating ImmutableList from a Deque. Generally used for {@link java.util.LinkedList}, but applicable to reverse iterable types in general.
+     *
+     * @param list      The {@link java.util.Deque} to construct the {@link ImmutableList}
+     *                  from.
+     * @param <A>       The type of the elements of the list.
+     * @return a new {@link ImmutableList} that is comprised of all the elements in the {@link
+     * java.util.Deque}.
      */
+    @Nonnull
+    public static <A> ImmutableList<A> from(@Nonnull Deque<A> list) {
+        ImmutableList<A> l = empty();
+        for (Iterator<A> iterator = list.descendingIterator(); iterator.hasNext();) {
+            A item = iterator.next();
+            l = cons(item, l);
+        }
+        return l;
+    }
+
+    /**
+     * Creating ImmutableList from an Iterable.
+     *
+     * @param list      The {@link java.lang.Iterable} to construct the {@link ImmutableList}
+     *                  from.
+     * @param <A>       The type of the elements of the list.
+     * @return a new {@link ImmutableList} that is comprised of all the elements in the {@link
+     * java.util.ArrayList}.
+     */
+    @Nonnull
+    public static <A> ImmutableList<A> from(@Nonnull Iterable<A> list) {
+		if (list instanceof ArrayList) {
+			return from((ArrayList<A>) list);
+		} else if (list instanceof LinkedList) {
+			return from((LinkedList<A>) list);
+		}
+		ArrayList<A> arrayList = new ArrayList<>();
+		list.forEach(arrayList::add);
+		return from(arrayList);
     }
 
     @Nonnull
