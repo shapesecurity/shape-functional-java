@@ -124,11 +124,14 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      */
     @Nonnull
     public static <A> ImmutableList<A> from(@Nonnull Iterable<A> list) {
-        ImmutableList<A> l = empty();
-        for (A item : list) {
-            l = cons(item, l);
-        }
-        return l.reverse();
+		if (list instanceof ArrayList) {
+			return from((ArrayList<A>) list);
+		} else if (list instanceof LinkedList) {
+			return from((LinkedList<A>) list);
+		}
+		ArrayList<A> arrayList = new ArrayList<>();
+		list.forEach(arrayList::add);
+		return from(arrayList);
     }
 
     @Nonnull

@@ -125,7 +125,8 @@ public class ImmutableListTest extends TestBase {
     }
 
     private void testFromIterable(ImmutableList<Integer> list) {
-        ImmutableList<Integer> listP = ImmutableList.from(list); // ImmutableList itself is Iterable
+        // ImmutableList itself is Iterable, cast is redundant for clarity
+        ImmutableList<Integer> listP = ImmutableList.from((Iterable<Integer>) list);
         assertEquals(list, listP);
     }
 
