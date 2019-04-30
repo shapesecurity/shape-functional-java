@@ -123,11 +123,11 @@ public class ImmutableSetTest extends TestBase {
         set.add("key3");
         ImmutableSet<String> table = ImmutableSet.fromUsingEquality(set);
         assertEquals(expected, table);
-        ImmutableSet<String> doubledSet = table.union(set);
+        ImmutableSet<String> doubledSet = table.putAll(set);
         assertEquals(table, doubledSet);
         set.add("key4");
         expected = expected.put("key4");
-        assertEquals(expected, table.union(set));
+        assertEquals(expected, table.putAll(set));
     }
 
 
