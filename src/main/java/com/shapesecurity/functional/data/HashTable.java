@@ -27,6 +27,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -243,6 +245,16 @@ public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
         int[] i = new int[1];
         this.forEach(x -> pairs[i[0]++] = x);
         return ImmutableList.from(pairs);
+    }
+
+    @Nonnull
+    public ImmutableList<Pair<K, V>> orderedEntries(Comparator<? super K> comparator) {
+        ArrayList<Pair<K, V>> entries = new ArrayList<>(this.length);
+        for (Pair<K, V> entry : this) {
+            entries.add(entry);
+        }
+        entries.sort((e1, e2) -> comparator.compare(e1.left, e2.left));
+        return ImmutableList.from(entries);
     }
 
     public final void foreach(@Nonnull Effect<Pair<K, V>> e) {

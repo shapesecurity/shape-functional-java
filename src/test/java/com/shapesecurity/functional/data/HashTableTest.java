@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Comparator;
 
 import static org.junit.Assert.*;
 
@@ -498,4 +499,27 @@ public class HashTableTest extends TestBase {
         );
     }
 
+    @Test
+    public void orderedEntriesTest() {
+        class Wrapper {
+            private final double wrapped;
+            private Wrapper(double wrapped) {
+                this.wrapped = wrapped;
+            }
+        }
+        int N = 1000;
+        HashTable<Double, Wrapper> t = HashTable.emptyUsingEquality();
+        for (int i = 0; i < N; ++i) {
+            double x = Math.random();
+            t = t.put(x, new Wrapper(x));
+        }
+        double previous = -1;
+        ImmutableList<Pair<Double, Wrapper>> sorted = t.orderedEntries(Comparator.naturalOrder());
+        assertEquals(sorted.length, N);
+        for (Pair<Double, Wrapper> pair : sorted) {
+            assertEquals(pair.left, pair.right.wrapped, 0);
+            assertTrue(pair.left >= previous);
+            previous = pair.left;
+        }
+    }
 }
