@@ -56,17 +56,34 @@ public class ImmutableSet<T> implements Iterable<T> {
 
     @Nonnull
     public static <T> ImmutableSet<T> from(@Nonnull Hasher<T> hasher, @Nonnull Iterable<T> set) {
-        return empty(hasher).union(set);
+        return empty(hasher).putAll(set);
     }
 
     @Nonnull
     public static <T> ImmutableSet<T> fromUsingEquality(@Nonnull Iterable<T> set) {
-        return ImmutableSet.<T>emptyUsingEquality().union(set);
+        return ImmutableSet.<T>emptyUsingEquality().putAll(set);
     }
 
     @Nonnull
     public static <T> ImmutableSet<T> fromUsingIdentity(@Nonnull Iterable<T> set) {
-        return ImmutableSet.<T>emptyUsingIdentity().union(set);
+        return ImmutableSet.<T>emptyUsingIdentity().putAll(set);
+    }
+        @Nonnull
+    @SafeVarargs
+    public static <T> ImmutableSet<T> ofUsingIdentity(@Nonnull T... items) {
+        return ImmutableSet.<T>emptyUsingIdentity().putArray(items);
+    }
+
+    @Nonnull
+    @SafeVarargs
+    public static <T> ImmutableSet<T> ofUsingEquality(@Nonnull T... items) {
+        return ImmutableSet.<T>emptyUsingEquality().putArray(items);
+    }
+
+    @Nonnull
+    @SafeVarargs
+    public static <T> ImmutableSet<T> of(@Nonnull T... items) {
+        return ofUsingEquality(items);
     }
 
     @Deprecated
@@ -87,8 +104,22 @@ public class ImmutableSet<T> implements Iterable<T> {
     }
 
     @Nonnull
-    public <B extends T> ImmutableSet<T> putAll(@Nonnull ImmutableList<B> list) {
-        return list.foldLeft(ImmutableSet::put, this);
+    public <B extends T> ImmutableSet<T> putAll(@Nonnull Iterable<B> list) {
+        ImmutableSet<T> set = this;
+        for (B item : list) {
+            set = set.put(item);
+        }
+        return set;
+    }
+
+    @SafeVarargs
+    @Nonnull
+    public final <B extends T> ImmutableSet<T> putArray(@Nonnull B... list) {
+        ImmutableSet<T> set = this;
+        for (B b : list) {
+            set = set.put(b);
+        }
+        return set;
     }
 
     public boolean contains(@Nonnull T datum) {
@@ -131,15 +162,6 @@ public class ImmutableSet<T> implements Iterable<T> {
     @Nonnull
     public ImmutableSet<T> union(@Nonnull ImmutableSet<T> other) {
         return new ImmutableSet<>(this.data.merge(other.data));
-    }
-
-    @Nonnull
-    public ImmutableSet<T> union(@Nonnull Iterable<T> other) {
-        ImmutableSet<T> set = this;
-        for (T entry : other) {
-            set = set.put(entry);
-        }
-        return set;
     }
 
     // Does not guarantee ordering of elements in resulting list.
