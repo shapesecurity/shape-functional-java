@@ -95,43 +95,44 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     }
 
     /**
-     * Creating ImmutableList from a Deque. Generally used for {@link java.util.LinkedList}, but applicable to reverse iterable types in general.
-     *
-     * @param list      The {@link java.util.Deque} to construct the {@link ImmutableList}
-     *                  from.
-     * @param <A>       The type of the elements of the list.
-     * @return a new {@link ImmutableList} that is comprised of all the elements in the {@link
-     * java.util.Deque}.
-     */
-    @Nonnull
-    public static <A> ImmutableList<A> from(@Nonnull Deque<A> list) {
-        ImmutableList<A> l = empty();
-        for (Iterator<A> iterator = list.descendingIterator(); iterator.hasNext();) {
-            A item = iterator.next();
-            l = cons(item, l);
-        }
-        return l;
-    }
-
-    /**
      * Creating ImmutableList from an Iterable.
      *
      * @param list      The {@link java.lang.Iterable} to construct the {@link ImmutableList}
      *                  from.
      * @param <A>       The type of the elements of the list.
      * @return a new {@link ImmutableList} that is comprised of all the elements in the {@link
-     * java.util.ArrayList}.
+     * java.lang.Iterable}.
      */
     @Nonnull
     public static <A> ImmutableList<A> from(@Nonnull Iterable<A> list) {
-		if (list instanceof ArrayList) {
-			return from((ArrayList<A>) list);
-		} else if (list instanceof LinkedList) {
-			return from((LinkedList<A>) list);
-		}
-		ArrayList<A> arrayList = new ArrayList<>();
-		list.forEach(arrayList::add);
-		return from(arrayList);
+        if (list instanceof ArrayList) {
+            return from((ArrayList<A>) list);
+        } else if (list instanceof Deque) {
+            // Deque is inlined here to prevent ambiguous method call errors when passing `LinkedList` types to `from`.
+            ImmutableList<A> l = empty();
+            for (Iterator<A> iterator = ((Deque<A>) list).descendingIterator(); iterator.hasNext();) {
+                A item = iterator.next();
+                l = cons(item, l);
+            }
+            return l;
+        }
+        ArrayList<A> arrayList = new ArrayList<>();
+        list.forEach(arrayList::add);
+        return from(arrayList);
+    }
+
+    /**
+     * Creating ImmutableList from a list. While redundant, this method provides ABI compatibility with prior releases.
+     *
+     * @param list      The {@link java.util.List} to construct the {@link ImmutableList}
+     *                  from.
+     * @param <A>       The type of the elements of the list.
+     * @return a new {@link ImmutableList} that is comprised of all the elements in the {@link
+     * java.util.ArrayList}.
+     */
+    @Nonnull
+    public static <A> ImmutableList<A> from(@Nonnull List<A> list) {
+        return from((Iterable<A>) list);
     }
 
     @Nonnull
@@ -691,7 +692,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
      * <code>Maybe.empty()</code> if none is found.
      */
     @Nonnull
-	public final Maybe<Integer> findIndex(@Nonnull F<A, Boolean> f) {
+    public final Maybe<Integer> findIndex(@Nonnull F<A, Boolean> f) {
         ImmutableList<A> self = this;
         int i = 0;
         while (self instanceof NonEmptyImmutableList) {
@@ -703,7 +704,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
             ++i;
         }
         return Maybe.empty();
-	}
+    }
 
     /**
      * Run <code>f</code> on each element of the list and return the result immediately if it is a

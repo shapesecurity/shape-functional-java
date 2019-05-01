@@ -19,6 +19,7 @@ package com.shapesecurity.functional.data;
 import com.shapesecurity.functional.TestBase;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
@@ -232,8 +233,13 @@ public class ImmutableSetTest extends TestBase {
         ImmutableSet<String> set = ImmutableSet.of("key1", "key2", "key3");
         assertEquals(set, set.putArray());
         ImmutableSet<String> set2 = set.putArray("key4", "key5");
-        assertTrue(set2.contains("key4"));
         assertTrue(set2.contains("key2"));
+        assertTrue(set2.contains("key4"));
+        assertTrue(set2.contains("key5"));
+        ImmutableSet<String> set3 = set.putAll(ImmutableList.of("key5", "key4"));
+        ImmutableSet<String> set4 = set.putAll(Arrays.asList("key5", "key4"));
+        assertEquals(set2, set3);
+        assertEquals(set2, set4);
         assertEquals(set2, ImmutableList.of("key1", "key2", "key3", "key4", "key5").uniqByEquality());
     }
 }
