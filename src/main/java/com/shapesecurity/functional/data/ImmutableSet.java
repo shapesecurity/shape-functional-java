@@ -112,6 +112,12 @@ public class ImmutableSet<T> implements Iterable<T> {
         return set;
     }
 
+    // to prevent ABI breaking, this function must exist
+    @Nonnull
+    public <B extends T> ImmutableSet<T> putAll(@Nonnull ImmutableList<B> list) {
+        return this.putAll((Iterable<B>) list);
+    }
+
     @SafeVarargs
     @Nonnull
     public final <B extends T> ImmutableSet<T> putArray(@Nonnull B... list) {

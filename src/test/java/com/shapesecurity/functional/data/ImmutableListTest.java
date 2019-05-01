@@ -99,6 +99,7 @@ public class ImmutableListTest extends TestBase {
     public void testFrom() {
         testWithSpecialLists(this::testFromArray);
         testWithSpecialLists(this::testFromArrayList);
+        testWithSpecialLists(this::testFromList);
         testWithSpecialLists(this::testFromLinkedList);
         testWithSpecialLists(this::testFromIterable);
     }
@@ -112,6 +113,13 @@ public class ImmutableListTest extends TestBase {
 
     private void testFromArrayList(ImmutableList<Integer> list) {
         final ArrayList<Integer> arrList = new ArrayList<>();
+        list.forEach(arrList::add);
+        ImmutableList<Integer> listP = ImmutableList.from(arrList);
+        assertEquals(list, listP);
+    }
+
+    private void testFromList(ImmutableList<Integer> list) {
+        final List<Integer> arrList = new ArrayList<>();
         list.forEach(arrList::add);
         ImmutableList<Integer> listP = ImmutableList.from(arrList);
         assertEquals(list, listP);
