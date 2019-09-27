@@ -17,7 +17,7 @@
 package com.shapesecurity.functional.data;
 
 import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * HasCodeBuilder is a simple FNV hash builder for hash code generation of
@@ -27,13 +27,14 @@ public final class HashCodeBuilder {
     //int is a 32 bit integer
     private static final int INITIAL_VALUE = -2128831035;
     private static final int MULT = 16777619;
+    private static final int NULL_SIGIL = -1150993239;
 
     public static int init() {
         return INITIAL_VALUE;
     }
 
-    public static int put(int hash, @Nonnull Object os) {
-        int p = os.hashCode();
+    public static int put(int hash, @Nullable Object os) {
+        int p = os == null ? NULL_SIGIL : os.hashCode();
         hash = hash * MULT ^ (p & 255);
         p >>>= 8;
         hash = hash * MULT ^ (p & 255);
