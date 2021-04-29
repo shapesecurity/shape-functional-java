@@ -20,7 +20,6 @@ import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.ThrowingSupplier;
 import com.shapesecurity.functional.Thunk;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -217,7 +216,7 @@ public final class Maybe<A> implements Iterable<A> {
         return this.value == null ? this : (f.test(this.value) ? this : empty());
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Iterator<A> iterator() {
         return new Iterator<A>() {
