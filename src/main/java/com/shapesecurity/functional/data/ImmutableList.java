@@ -395,6 +395,17 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     public abstract ImmutableList<A> filter(@Nonnull F<A, Boolean> f);
 
     /**
+     * Returns a new list of elements when applying <code>f</code> to an element returns true.
+     * This method also provides an extra index parameter to <code>f</code> function as the
+     * first parameter.
+     *
+     * @param f The "predicate" function.
+     * @return A new list of elements that satisfies the predicate.
+     */
+    @Nonnull
+    public abstract ImmutableList<A> filterWithIndex(@Nonnull F2<Integer, A, Boolean> f);
+
+    /**
      * Returns a count of elements for which applying <code>f</code> returns true.
      *
      * @param f The "predicate" function.

@@ -88,6 +88,12 @@ public final class Nil<T> extends ImmutableList<T> {
 
     @Nonnull
     @Override
+    public ImmutableList<T> filterWithIndex(@Nonnull F2<Integer, T, Boolean> f) {
+        return this;
+    }
+
+    @Nonnull
+    @Override
     public <B> ImmutableList<B> map(@Nonnull F<T, B> f) {
         return empty();
     }

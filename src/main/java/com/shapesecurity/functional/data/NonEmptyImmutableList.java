@@ -67,7 +67,7 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
         if (l.length != r.length) {
             return false;
         }
-        
+
         while (l instanceof NonEmptyImmutableList && r instanceof NonEmptyImmutableList) {
             if (l == r) {
                 return true;
@@ -179,6 +179,24 @@ public final class NonEmptyImmutableList<T> extends ImmutableList<T> {
         for (int i = 0; i < this.length; i++) {
             T el = ((NonEmptyImmutableList<T>) list).head;
             if (f.apply(el)) {
+                result[j] = el;
+                j++;
+            }
+            list = ((NonEmptyImmutableList<T>) list).tail;
+        }
+        return fromBounded(result, 0, j);
+    }
+
+    @Nonnull
+    @Override
+    public ImmutableList<T> filterWithIndex(@Nonnull F2<Integer, T, Boolean> f) {
+        @SuppressWarnings("unchecked")
+        T[] result = (T[]) new Object[this.length];
+        ImmutableList<T> list = this;
+        int j = 0;
+        for (int i = 0; i < this.length; i++) {
+            T el = ((NonEmptyImmutableList<T>) list).head;
+            if (f.apply(i, el)) {
                 result[j] = el;
                 j++;
             }
