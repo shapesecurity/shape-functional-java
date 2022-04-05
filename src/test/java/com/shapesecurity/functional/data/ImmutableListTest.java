@@ -86,6 +86,21 @@ public class ImmutableListTest extends TestBase {
     }
 
     @Test
+    public void testToArrayWithJustClass() {
+        testWithSpecialLists(this::testToArrayWithJustClass);
+    }
+
+    private void testToArrayWithJustClass(ImmutableList<Integer> list) {
+        final Integer[] a = new Integer[list.length];
+        list.mapWithIndex((i, x) -> a[i] = x);
+        Integer[] a2 = list.toArray(Integer.class);
+        assertEquals(a.length, a2.length);
+        for (int i = 0; i < a.length; i++) {
+            assertEquals(a[i], a2[i]);
+        }
+    }
+
+    @Test
     public void testIndex() {
         ImmutableList<Integer> l = ImmutableList.of(0, 1, 2, 3, 4);
         assertTrue(l.index(0).fromJust() == 0);
