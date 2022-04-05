@@ -327,6 +327,12 @@ public class ImmutableListTest extends TestBase {
     }
 
     @Test
+    public void testFilterWithIndex() {
+        ImmutableList<String> strs = ImmutableList.of("a", "b", "c").filterWithIndex((idx, s) -> idx >= 1);
+        assertEquals(2, strs.length);
+    }
+
+    @Test
     public void testRemoveAll() {
         ImmutableList<Integer> integers = range(100).removeAll(i -> i <= 15);
         assertEquals(84, integers.length);
