@@ -500,7 +500,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
     /**
      * Converts this list into an array. <p> Due to type erasure, the type of the resulting array
      * has to be determined at runtime. Fortunately, you can create a zero length array and this
-     * method can create an large enough array to contain all the elements. If the given array is
+     * method can create a large enough array to contain all the elements. If the given array is
      * large enough, this method will put elements in it.
      *
      * @param target The target array.
@@ -513,7 +513,7 @@ public abstract class ImmutableList<A> implements Iterable<A> {
         int length = this.length;
         if (target.length < length) {
             // noinspection unchecked
-            target = (A[]) Array.newInstance(target.getClass().getComponentType(), length);
+            return this.toArray((Class<A>) target.getClass().getComponentType());
         }
         ImmutableList<A> l = this;
         for (int i = 0; i < length; i++) {
@@ -521,6 +521,22 @@ public abstract class ImmutableList<A> implements Iterable<A> {
             l = ((NonEmptyImmutableList<A>) l).tail;
         }
         return target;
+    }
+
+    /**
+     * Converts this list into an array. <p> Unfortunately, due to type erasure, the type of the
+     * resulting array cannot be determined at runtime and must be passed as an argument.
+     *
+     * @param targetClass Class, parameterised by the same type parameter as this ImmutableList
+     * @return The array that contains the elements.
+     */
+    @SuppressWarnings("unchecked")
+    @Nonnull
+    public final A[] toArray(@Nonnull Class<A> targetClass) {
+        int length = this.length;
+        // noinspection unchecked
+        A[] target = (A[]) Array.newInstance(targetClass, length);
+        return this.toArray(target);
     }
 
     /**
