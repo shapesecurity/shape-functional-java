@@ -117,6 +117,24 @@ public final class Either<A, B> {
         return this.tag == Tag.RIGHT ? Maybe.of((B) this.data) : Maybe.empty();
     }
 
+    @SuppressWarnings("unchecked")
+    @Nonnull
+    public A fromLeft() {
+        if (this.tag != Tag.LEFT) {
+            throw new RuntimeException("Either fromLeft called on right");
+        }
+        return (A) this.data;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nonnull
+    public B fromRight() {
+        if (this.tag != Tag.RIGHT) {
+            throw new RuntimeException("Either fromRight called on left");
+        }
+        return (B) this.data;
+    }
+
     private boolean eq(@Nonnull Either<A, B> either) {
         return either.tag == this.tag && either.data.equals(this.data);
     }

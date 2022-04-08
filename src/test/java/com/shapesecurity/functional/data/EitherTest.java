@@ -41,6 +41,7 @@ public class EitherTest {
         assertTrue(e1.right().isNothing());
         assertEquals("a", e1.left().fromJust());
         assertEquals("a", e1.left().fromJust());
+        assertEquals("a", e1.fromLeft());
         assertTrue(e1.mapRight(plusOne).left().isJust());
         assertTrue(e1.mapRight(plusOne).right().isNothing());
         assertEquals("a", e1.mapRight(plusOne).left().fromJust());
@@ -54,6 +55,7 @@ public class EitherTest {
         assertTrue(e2.right().isJust());
         assertEquals(1, (int) e2.right().fromJust());
         assertEquals(1, (int) e2.right().fromJust());
+        assertEquals(1, (int) e2.fromRight());
         assertTrue(e2.mapRight(plusOne).left().isNothing());
         assertTrue(e2.mapRight(plusOne).right().isJust());
         assertEquals(2, (int) e2.mapRight(plusOne).right().fromJust());
@@ -95,5 +97,15 @@ public class EitherTest {
         } catch (Exception e) {
             fail("Either._try should never allow exceptions to propagate");
         }
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testFromLeft() {
+        Either.right("x").fromLeft();
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testFromRight() {
+        Either.left("x").fromRight();
     }
 }
