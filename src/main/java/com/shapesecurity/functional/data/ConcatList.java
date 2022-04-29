@@ -171,6 +171,9 @@ public abstract class ConcatList<T> implements Iterable<T> {
     @Override
     public final void forEach(@Nonnull Consumer<? super T> action) {
         // Manually expanded recursion
+        if (this.length == 0) {
+            return;
+        }
         @SuppressWarnings("unchecked")
         ConcatList<T>[] stack = new ConcatList[this.length];
         int i = 0;
