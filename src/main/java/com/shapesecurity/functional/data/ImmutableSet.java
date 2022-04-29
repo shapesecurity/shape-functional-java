@@ -7,6 +7,7 @@ import com.shapesecurity.functional.Unit;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -25,6 +26,9 @@ import java.util.stream.Collector;
 public class ImmutableSet<T> implements Iterable<T> {
     @Nonnull
     private final HashTable<T, Unit> data;
+
+    @Nullable
+    private Integer hashCode = null;
 
     public int length() {
         return this.data.length;
@@ -190,6 +194,21 @@ public class ImmutableSet<T> implements Iterable<T> {
     @Override
     public boolean equals(Object other) {
         return other instanceof ImmutableSet && this.data.length == ((ImmutableSet) other).data.length && this.data.foldLeft((memo, pair) -> memo && ((ImmutableSet) other).data.containsKey(pair.left), true);
+    }
+
+    @Override
+    public int hashCode() {
+        Integer hashCodeCached = this.hashCode;
+        if (hashCodeCached == null) {
+            int h = 0;
+            for (T value : this) {
+                h += value.hashCode();
+            }
+            this.hashCode = h;
+            return h;
+        } else {
+            return hashCodeCached;
+        }
     }
 
     @Override
