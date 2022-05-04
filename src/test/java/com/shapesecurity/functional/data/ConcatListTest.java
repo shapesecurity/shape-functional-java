@@ -185,4 +185,21 @@ public class ConcatListTest {
             assertEquals(i + 1, (int) list.index(i).fromJust());
         }
     }
+
+    @Test
+    public void forEachTest() {
+        for (int N = 0; N < 20; ++N) {
+            int[] sumBox = { 0 };
+            for (int i : generator.apply(N)) {
+                sumBox[0] += i;
+            }
+            assertEquals("loop over " + N, N * (N - 1) / 2, sumBox[0]);
+
+            sumBox[0] = 0;
+            generator.apply(N).forEach(i -> {
+                sumBox[0] += i;
+            });
+            assertEquals("foreach over over " + N, N * (N - 1) / 2, sumBox[0]);
+        }
+    }
 }
