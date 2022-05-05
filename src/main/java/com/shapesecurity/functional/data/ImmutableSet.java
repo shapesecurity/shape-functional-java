@@ -4,6 +4,7 @@ import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.Unit;
+import org.jetbrains.annotations.Debug;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -23,6 +24,11 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 
 @CheckReturnValue
+@Debug.Renderer(
+    text = "\"size = \" + this.data.length",
+    childrenArray = "this.stream().toArray()",
+    hasChildren = "this.data.length > 0"
+)
 public class ImmutableSet<T> implements Iterable<T> {
     @Nonnull
     private final HashTable<T, Unit> data;
@@ -159,7 +165,7 @@ public class ImmutableSet<T> implements Iterable<T> {
         return this.foldAbelian((val, acc) -> f.apply(val) ? acc.put(val) : acc, ImmutableSet.empty(this.data.hasher));
     }
 
-
+    @Nonnull
     public ImmutableSet<T> remove(@Nonnull T datum) {
         return new ImmutableSet<>(this.data.remove(datum));
     }
@@ -236,6 +242,7 @@ public class ImmutableSet<T> implements Iterable<T> {
         }
         return table;
     }
+
     @Nonnull
     @Override
     public final Spliterator<T> spliterator() {
