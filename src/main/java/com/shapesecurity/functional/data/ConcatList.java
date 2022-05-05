@@ -20,6 +20,7 @@ import com.shapesecurity.functional.Effect;
 import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
+import org.jetbrains.annotations.Debug;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -36,6 +37,11 @@ import java.util.Stack;
 import java.util.function.Consumer;
 
 @CheckReturnValue
+@Debug.Renderer(
+    text = "\"size = \" + this.length",
+    childrenArray = "this.toArray()",
+    hasChildren = "!this.isEmpty()"
+)
 public abstract class ConcatList<T> implements Iterable<T> {
     @SuppressWarnings("StaticInitializerReferencesSubClass")
     private static final Empty<Object> EMPTY = new Empty<>();
@@ -269,6 +275,17 @@ public abstract class ConcatList<T> implements Iterable<T> {
     @Nonnull
     public final Maybe<ConcatList<T>> update(int index, @Nonnull T element) {
         return Maybe.fromNullable(this.updateInternal(index, element));
+    }
+
+    // used for the debug renderer
+    private Object[] toArray() {
+        Object[] out = new Object[this.length];
+        int i = 0;
+        for (T item : this) {
+            out[i] = item;
+            ++i;
+        }
+        return out;
     }
 
     private final static class Empty<T> extends ConcatList<T> {

@@ -21,6 +21,7 @@ import com.shapesecurity.functional.F;
 import com.shapesecurity.functional.F2;
 import com.shapesecurity.functional.Pair;
 import com.shapesecurity.functional.Unit;
+import org.jetbrains.annotations.Debug;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -41,6 +42,11 @@ import java.util.function.Consumer;
  * @param <V> Value type
  */
 @CheckReturnValue
+@Debug.Renderer(
+    text = "\"size = \" + this.length",
+    childrenArray = "this.hasher.equals(HashTable.equalityHasher()) ? this.toHashMap().entrySet().toArray() : this.toIdentityHashMap().entrySet().toArray()",
+    hasChildren = "this.length > 0"
+)
 public abstract class HashTable<K, V> implements Iterable<Pair<K, V>> {
     private final static Hasher<Object> EQUALITY_HASHER = new Hasher<Object>() {
         @Override

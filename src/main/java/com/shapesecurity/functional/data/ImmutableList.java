@@ -45,6 +45,8 @@ import java.util.stream.StreamSupport;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
+import org.jetbrains.annotations.Debug.Renderer;
+
 /**
  * An immutable singly linked list implementation. None of the operations in {@link ImmutableList}
  * changes the list itself. Therefore you can freely share the list in your system. <p> This is a
@@ -58,6 +60,11 @@ import java.util.stream.Collector;
  * @param <A> The super type of all the elements.
  */
 @CheckReturnValue
+@Renderer(
+    text = "\"size = \" + this.length",
+    childrenArray = "this.toArray(new Object[0])",
+    hasChildren = "!this.isEmpty()"
+)
 public abstract class ImmutableList<A> implements Iterable<A> {
     @SuppressWarnings("StaticInitializerReferencesSubClass")
     private static final ImmutableList<Object> EMPTY = new Nil<>();
